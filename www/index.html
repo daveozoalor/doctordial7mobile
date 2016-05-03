@@ -70,6 +70,7 @@
             <div class="navbar">
               <div class="navbar-inner">
                 <div class="center">Doctor Dial</div>
+                <div class="right"><a href="#" class="link">Settings</a></div>
               </div>
               
    
@@ -84,136 +85,37 @@
     </div>
  
             <!-- Bottom Toolbar. In Material theme it should be inside of the page-->
-            <div class="toolbar toolbar-bottom">
-              <div class="toolbar-inner">
-                <!-- Toolbar links -->
-                <a href="#" class="link">Link 1</a>
-                <a href="#" class="link">Link 2</a>
-              </div>
-            </div>
+           
  
             <!-- Scrollable page content -->
               <!-- messagebar -->
 				  <div class="toolbar messagebar theme-white" style="border: 1px solid #c0c2c0;">
 				    <div class="toolbar-inner">
-				      <textarea placeholder="Message" id='messageInput'></textarea><a href="#" class="link theme-green" id="sendMessageButton">Send</a>
+				      <textarea placeholder="Message" id='messageInput'></textarea><a href="#" class="link theme-green" id="sendMessageButton" style="border-radius: 15px; border-left: 1px solid #c0c2c0">Send</a>
 				    </div>
 				  </div>
 				  <!-- messages-content -->
-				  
+
   
 			<div class="page-content messages-content">
 			
-			<!-- CHAT MARKUP -->
-			<div class="example-chat l-demo-container">
-			  <div class='example-chat-toolbar'>
-			    <label for="nameInput">Username:</label>
-			    <input type='text' id='nameInput' placeholder='enter a username...'>
-			  </div>
-			</div>
+			
 			
 			
 			    <div class="messages">
-			    <ul class="message-list">
-			    
+			    <!-- CHAT MARKUP -->
+			  <div class='example-chat-toolbar'>
+			    <label for="nameInput">Username:</label><br/>
+			    <input type='text' id='nameInput' placeholder='enter a username...'>
+			  </div>
+			  <div class="message"></div>
 			      <!-- Date stamp -->
 			      <div class="messages-date">Sunday, Feb 9 <span>12:58</span></div>
 			 
-			      <!-- Sent message (by default - green and on right side) -->
-			      <div class="message message-sent">
-			        <!-- Bubble with text -->
-			        <div class="message-text">Hello</div>
-			      </div>
-			 
-			      <!-- Another sent message -->
-			      <div class="message message-sent">
-			        <!-- Bubble with text -->
-			        <div class="message-text">How are you?</div>
-			      </div>
-			 
-			      <!-- Received message (by default - grey on left side) -->
-			      <div class="message message-with-avatar message-received">
-			        <!-- Sender name -->
-			        <div class="message-name">Kate</div>
-			 
-			        <!-- Bubble with text -->
-			        <div class="message-text">I am fine, thanks</div>
-			 
-			        <!-- Sender avatar -->
-			        <div style="background-image:url(http://lorempixel.com/output/people-q-c-100-100-9.jpg)" class="message-avatar"></div>
-			      </div>
-			 
-			      <!-- Another date stamp -->
-			      <div class="messages-date">Sunday, Feb 3 <span>11:58</span></div>
-			 
-			      <!-- Sent message with image -->
-			      <div class="message message-pic message-sent">
-			        <!-- Bubble with image -->
-			        <div class="message-text"><img src="http://lorempixel.com/300/300/"></div>
-			        <!-- Message label -->
-			        <div class="message-label">Delivered 2 days ago</div>
-			      </div>
 			      	
-			    </ul>
 			    </div>
 			  </div>
-            
-            <div class="page-content">
-              
-			          
-			
-
-			<!-- CHAT JAVACRIPT -->
-			<script>
-			
-			var scrolled = 0;
-			  // CREATE A REFERENCE TO FIREBASE
-			  var messagesRef = new Firebase('https://doctordial.firebaseio.com/');
-
-			  // REGISTER DOM ELEMENTS
-			  var messageField = $('#messageInput');
-			  var nameField = $('#nameInput');
-			  var messageList = $('.message-list');
-			  var sendMessageButton = $('#sendMessageButton');
-
-			  // LISTEN FOR KEYPRESS EVENT
-			  sendMessageButton.click(function (e) {
-			      //FIELD VALUES
-			      var username = nameField.val();
-			      var message = messageField.val();
-                  messageField.val('');
-			      if(message != ''){
-			      	 
-			      //SAVE DATA TO FIREBASE AND EMPTY FIELD
-			      messagesRef.push({name:username, text:message});
-			      
-			      }
-			     
-			   
-			  });
-
-			  // Add a callback that is triggered for each chat message.
-			  messagesRef.limitToLast(10).on('child_added', function (snapshot) {
-			    //GET DATA
-			    var data = snapshot.val();
-			    var username = data.name || "anonymous";
-			    var message = data.text;
-
-			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
-			    var messageElement = $$('<li>');
-			    var nameElement = $$("<strong class='example-chat-username'></strong>");
-			    nameElement.text(username+" ");
-			    messageElement.text(message).prepend(nameElement);
-
-			    //ADD MESSAGE
-			    messageList.append(messageElement)
-
-			    //SCROLL TO BOTTOM OF MESSAGE LIST
-			    messageList[0].scrollTop = messageList[0].scrollHeight;
-			   
-			  });
-			</script>
-            </div>
+        
           </div>
         </div>
       </div>
@@ -228,5 +130,6 @@
         app.initialize();
     </script>
 </body>
+
 
 </html>
