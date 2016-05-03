@@ -11,8 +11,9 @@ var mainView = myApp.addView('.view-main', {
 });
 
 
-
 $$(document).on('pageInit', function (e) {
+	
+	//messages must be initialized here
   
 });
 // Callbacks to run specific code for specific pages, for example for About page:
@@ -52,16 +53,28 @@ function createContentPage() {
 	return;
 }
 
-var myMessagebar = myApp.messagebar('.messagebar', {
-    maxHeight: 150
-});  
- 
+ myApp.onPageInit('index', function(page) {
+
+
+
+
 // Conversation flag
 var conversationStarted = false;
 
+try{
+var myMessages = myApp.messages('.messages', {
+  autoLayout:true
+});
+}catch(err1){
+	alert(err1.message);
+}
+
+ var myMessagebar = myApp.messagebar('.messagebar', {
+    maxHeight: 150
+});  
 
 // Do something here when page loaded and initialized
-	var scrolled = 0;
+	//var scrolled = 0;
 			  // CREATE A REFERENCE TO FIREBASE
 			  var messagesRef = new Firebase('https://doctordial.firebaseio.com/');
 
@@ -94,6 +107,7 @@ var conversationStarted = false;
 				 
 				// Handle message
 				$$('.messagebar .link').on('click', function () {
+					
 				  // Message text
 				  var messageText = myMessagebar.value().trim();
 				  // Exit if empy message
@@ -115,9 +129,14 @@ var conversationStarted = false;
 				    avatar = 'http://lorempixel.com/output/people-q-c-100-100-9.jpg';
 				    name = 'Kate';
 				  }
-				   
+				  
+			
+			  
+	
+				
 				  // Add message
 				  messagesRef.push({
+				  	
 				    // Message text
 				    text: messageText,
 				    // Random message type
@@ -129,6 +148,7 @@ var conversationStarted = false;
 				    day: !conversationStarted ? 'Today' : false,
 				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
 				  })
+				  
 				
 				  // Update conversation flag
 				  conversationStarted = true;
@@ -146,21 +166,43 @@ var conversationStarted = false;
 			    var time = data.time;
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
-			    var messageElement = $$('<div class="message message-'+messageType+'"><div class="message-text">');
-			    var nameElement = $$("<strong class='example-chat-username'></strong>");
+			   // var messageElement = $$('<div class="message message-'+messageType+'"><div class="message-text">');
+			   // var nameElement = $$("<strong class='example-chat-username'></strong>");
 			    
 			    var newMessageContent =     '<div class="message message-sent">'+
 									        '<div class="message-text">'+message+'</div>'+
 									        '</div>';
-			    $$(newMessageContent ).insertAfter( ".message" );
+			    //$$(newMessageContent ).insertAfter( ".message" );
 			    
-			    nameElement.text(username+" ");
-			    messageElement.text(message).prepend(nameElement);
+			   // nameElement.text(username+" ");
+			   // messageElement.text(message).prepend(nameElement);
           
 
 			    //SCROLL TO BOTTOM OF MESSAGE LIST
-			    messageList[0].scrollTop = messageList[0].scrollHeight;
-			   
+			   // messageList[0].scrollTop = messageList[0].scrollHeight;
+			      // Add message
+			     
+				try{
+					myMessages.addMessage({
+				  	
+				    // Message text
+				    text: message,
+				    // Random message type
+				    type: messageType,
+				    // Avatar and name:
+				    //avatar: avatar,
+				    name: name,
+				    // Day
+				    day: !conversationStarted ? 'Today' : false,
+				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				  });
+				}catch(err){
+					alert(err);
+				}
+				  
+				  
+				  
+				  
 			  });
 
 
@@ -169,4 +211,19 @@ var conversationStarted = false;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}).trigger();
 
