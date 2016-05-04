@@ -1,5 +1,23 @@
 // Initialize your app
-var myApp = new Framework7();
+var myApp = new Framework7(
+{
+	swipeBackPage: true,
+   // Hide and show indicator during ajax requests
+    onAjaxStart: function (xhr) {
+        myApp.showIndicator();
+    },
+    onAjaxComplete: function (xhr) {
+        myApp.hideIndicator();
+    },
+    
+    preroute: function (view, options) {
+        if (!userLoggedIn) {
+            view.router.loadPage('auth.html'); //load another page with auth form
+            return false; //required to prevent default router action
+        }
+    }
+    
+ });
 
 // Export selectors engine
 var $$ = Dom7;
@@ -9,6 +27,21 @@ var mainView = myApp.addView('.view-main', {
     // Because we use fixed-through navbar we can enable dynamic navbar
     domCache: true,
 });
+
+
+
+myApp.onPageInit('login-screen', function (page) {
+  var pageContainer = $$(page.container);
+  pageContainer.find('.list-button').on('click', function () {
+    var username = pageContainer.find('input[name="username"]').val();
+    var password = pageContainer.find('input[name="password"]').val();
+    
+    // Handle username and password
+    myApp.alert('Username: ' + username + ', 2Password: ' + password, function () {
+      mainView.goBack();
+    });
+  });
+});    
 
 
 $$(document).on('pageInit', function (e) {
@@ -135,7 +168,6 @@ var myMessages = myApp.messages('.messages', {
 				
 				  // Add message
 				  messagesRef.push({
-				  	
 				    // Message text
 				    text: messageText,
 				    // Random message type
