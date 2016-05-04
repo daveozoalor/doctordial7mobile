@@ -132,7 +132,6 @@ var myMessages = myApp.messages('.messages', {
 				  
 			
 			  
-	
 				
 				  // Add message
 				  messagesRef.push({
