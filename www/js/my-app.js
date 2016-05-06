@@ -1,6 +1,7 @@
 // Initialize your app
 var myApp = new Framework7(
 {
+	pushState: 0,
 	swipeBackPage: true,
    // Hide and show indicator during ajax requests
     onAjaxStart: function (xhr) {
@@ -10,11 +11,8 @@ var myApp = new Framework7(
         myApp.hideIndicator();
     },
     
-    preroute: function (view, options) {
-        if (!userLoggedIn) {
-            view.router.loadPage('auth.html'); //load another page with auth form
-            return false; //required to prevent default router action
-        }
+    preroute: function (mainView, options) {
+    	
     }
     
  });
@@ -30,22 +28,165 @@ var mainView = myApp.addView('.view-main', {
 
 
 
+
+
+function createUserAccount(formData){
+	var ref = new Firebase("https://doctordial.firebaseio.com");
+ref.createUser(formData,
+
+ function(error, userData) {
+  if (error) {
+    myApp.alert("Error creating account:"+error.message, error);
+  } else {
+    //alert("Successfully created user account with uid:", userData.uid);
+    alert("Successfully created account. Please login");
+    mainView.router.loadPage('login-screen-page.html'); //load another page with auth form
+  }
+});
+}
+
+
+function loginFire(sentEmail,sentPassword){ //get this login from database 
+	var ref = new Firebase("https://doctordial.firebaseio.com");
+ref.authWithPassword({
+  email    : sentEmail,
+  password : sentPassword
+}, function(error, authData) {
+  if (error) {
+  	myApp.alert("Error loging in, if you are sure you are registered, please try again or use the forgot password feature", "Incorrect Login");
+    mainView.router.loadPage('login-screen-page.html'); //load another page with auth form
+    return false; //required to prevent default router action
+  } else {
+     //myApp.alert("Login successful", authData);
+     myApp.alert("Login successful", 'Success!');
+      mainView.router.loadPage('index.html'); //load another page with auth form
+  }
+});
+
+}
+
+function changeEmail(){
+	var ref = new Firebase("https://doctordial.firebaseio.com");
+ref.changeEmail({
+  oldEmail : "bobtony@firebase.com",
+  newEmail : "bobtony@google.com",
+  password : "correcthorsebatterystaple"
+}, function(error) {
+  if (error === null) {
+    console.log("Email changed successfully");
+  } else {
+    console.log("Error changing email:", error);
+  }
+});
+}
+
+function changePassword(){
+	var ref = new Firebase("https://doctordial.firebaseio.com");
+ref.changePassword({
+  email       : "bobtony@firebase.com",
+  oldPassword : "correcthorsebatterystaple",
+  newPassword : "neatsupersecurenewpassword"
+}, function(error) {
+  if (error === null) {
+    console.log("Password changed successfully");
+  } else {
+    console.log("Error changing password:", error);
+  }
+});
+}
+
+function sendPasswordResetEmail(recoveryEmail){ 
+//You can edit the content of the password reset email from the Login & Auth tab of your App Dashboard.
+	var ref = new Firebase("https://doctordial.firebaseio.com");
+ref.resetPassword({
+  email : recoveryEmail
+}, function(error) {
+  if (error === null) {
+    console.log("Password reset email sent successfully");
+  } else {
+    console.log("Error sending password reset email:", error);
+  }
+});
+}
+
+function deleteUser(){
+	var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+ref.removeUser({
+  email    : "bobtony@firebase.com",
+  password : "correcthorsebatterystaple"
+}, function(error) {
+  if (error === null) {
+    console.log("User removed successfully");
+  } else {
+    console.log("Error removing user:", error);
+  }
+});
+}
+
+
 myApp.onPageInit('login-screen', function (page) {
+	
+checkLoggedIn();
+	
+	
   var pageContainer = $$(page.container);
   pageContainer.find('.list-button').on('click', function () {
-    var username = pageContainer.find('input[name="username"]').val();
-    var password = pageContainer.find('input[name="password"]').val();
+   // var email = pageContainer.find('input[name="email"]').val();
+    var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
+  //myApp.alert(formData);
+  
+  //send to database
+  //var formDataString = JSON.stringify(formData);
+  createUserAccount(formData); //do the registration and report errors if found
+  
     
     // Handle username and password
-    myApp.alert('Username: ' + username + ', 2Password: ' + password, function () {
+   /* myApp.alert('Email: ' + email + ', Password: ' + password, function () {
       mainView.goBack();
     });
+    */
+    
+    //loginFire(email, password); //login
   });
+  
+  
+  //recoveryEmail
+  pageContainer.find('.login-button').on('click', function () {
+  	var email = pageContainer.find('input[name="email"]').val();
+  	var password = pageContainer.find('input[name="password"]').val();
+  loginFire(email, password);
+  });
+  
+  
+  //checkLoggedIn();
+  
 });    
+
+
+// Create a callback which logs the current auth state
+function checkLoggedIn(authData) {
+  if (authData) {
+    console.log("User " + authData.uid + " is logged in with " + authData.provider);
+    mainView.router.back();
+  } else {
+    console.log("User is logged out");
+    myApp.alert("You are not logged in, please login", "Please Login");
+			mainView.router.loadPage("login-screen-page.html");
+  }
+}
+// Register the callback to be fired every time auth state changes
+var ref = new Firebase("https://doctordial.firebaseio.com");
+ref.onAuth(checkLoggedIn);
+
+
+
 
 
 $$(document).on('pageInit', function (e) {
 	
+	checkLoggedIn();
+    	
+       //ruun login function
 	//messages must be initialized here
   
 });

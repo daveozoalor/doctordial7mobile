@@ -1,14 +1,34 @@
 <div data-page="login-screen" class="page no-navbar no-toolbar no-swipeback " >
   <div class="page-content login-screen-content">
     <div class="login-screen-title">Doctor Dial</div>
-    <form>
-      <div class="list-block inset">
+      <div class="content-block">
+    <!-- Buttons row as tabs controller -->
+    <div class="buttons-row theme-green">
+      <!-- Link to 1st tab, active -->
+      <a href="#loginTab" class="tab-link active button button-raised button-fill">Login</a>
+      <!-- Link to 2nd tab -->
+      <a href="#signupTab" class="tab-link button button-raised button-fill">Signup</a>
+      <!-- Link to 3rd tab -->
+      <a href="#forgotPaaswordTab" class="tab-link button button-raised button-fill">Forgot?</a>
+    </div>
+  </div>
+  
+  
+  
+    <div class="tabs-animated-wrap">
+        
+        <!-- Tabs, tabs wrapper -->
+        <div class="tabs">
+  <div id="loginTab" class="tab">  
+  
+  <form id="loginForm" class="list-block">
+      <div class="list-block inset"">
         <ul>
           <li class="item-content">
             <div class="item-inner">
               <div class="item-title label">Email</div>
               <div class="item-input">
-                <input type="text" name="username" placeholder="Your email"/>
+                <input type="email" name="email" placeholder="Your email"/>
               </div>
             </div>
           </li>
@@ -24,12 +44,132 @@
       </div>
       <div class="list-block">
         <ul>
-          <li><a href="#" class="button list-button button-raised button-fill color-teal ripple-green">Sign In</a></li>
+          <li><a href="#" class="button login-button button-raised button-fill color-teal ripple-green">Sign In</a></li>
         </ul>
         <div class="list-block-label">
           <p>Click Sign In to close Login Screen</p>
         </div>
       </div>
-    </form>
+    </form> 
+
+</div>
+
+
+  <div id="signupTab" class="tab"> 
+       <form id="signupForm">
+      <div class="list-block inset">
+        <ul>
+          <li class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">Email</div>
+              <div class="item-input">
+                <input type="email" name="email" placeholder="Your email"/>
+              </div>
+            </div>
+          </li>
+          <li class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">Password</div>
+              <div class="item-input">
+                <input type="password" name="password" placeholder="Your password"/>
+              </div>
+            </div>
+          </li>
+          <li class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">First name</div>
+              <div class="item-input">
+                <input type="text" name="firstname" placeholder="Your Firstname"/>
+              </div>
+            </div>
+          </li>
+          <li class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">Middle name</div>
+              <div class="item-input">
+                <input type="text" name="middlename" placeholder="Your Middle name"/>
+              </div>
+            </div>
+          </li>
+          <li class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">Last name</div>
+              <div class="item-input">
+                <input type="text" name="middlename" placeholder="Your Middle name"/>
+              </div>
+            </div>
+          </li>
+         
+		          <li class="item-content">
+		        <div class="item-inner">
+		          <div class="item-title label">Birth date</div>
+		          <div class="item-input">
+		            <input type="date" placeholder="Birth day" value="2014-04-30">
+		          </div>
+		      </div>
+		    </li> 
+		    
+		    <li class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">Gender</div>
+              <div class="item-input">
+              <select name="gender">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              </select>
+              </div>
+            </div>
+		   </li>
+		    <li class="item-content">
+            <div class="item-inner">
+              <div class="item-input">
+             <a href="#" id="signupButton" class="button list-button button-raised button-fill color-teal ripple-green">Sign Up</a>
+        
+              </div>
+            </div>
+		   </li>
+        </ul>
+      </div>
+      <div class="list-block">
+        <ul>
+       </ul>
+        <div class="list-block-label">
+          <p>Click Sign In to close Login Screen</p>
+        </div>
+      </div>
+    </form>  
+  
+  </div>
+  <div id="forgotPaaswordTab" class="tab"> 
+     <form id="recoverForm" >
+      <div class="list-block inset"">
+        <ul>
+          <li class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">Email</div>
+              <div class="item-input">
+                <input type="email" name="email" placeholder="Your email"/>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="list-block">
+        <ul>
+          <li><a href="#" id="sendRecovery" class="button list-button button-raised button-fill color-teal ripple-green">Send Recovery Email</a></li>
+        </ul>
+        <div class="list-block-label">
+          <p>Click Sign In to close Login Screen</p>
+        </div>
+      </div>
+    </form> 
+  </div>
+  <div id="changePsswordTab" class="tab"> Change Password</div>
+  
+  </div>
+  </div>
+  
+  
+  
   </div>
 </div>   
