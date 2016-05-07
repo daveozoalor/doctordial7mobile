@@ -53,13 +53,18 @@ ref.authWithPassword({
   password : sentPassword
 }, function(error, authData) {
   if (error) {
+  	
   	myApp.alert("Error loging in, if you are sure you are registered, please try again or use the forgot password feature", "Incorrect Login");
     mainView.router.loadPage('login-screen-page.html'); //load another page with auth form
     return false; //required to prevent default router action
   } else {
+  	localStorage.user_id = authData.uid;
+  	//save data in local variablable
+  	// Store
+//localStorage.setItem(authData); //save in the local storage
      //myApp.alert("Login successful", authData);
-     myApp.alert("Login successful", 'Success!');
-      mainView.router.loadPage('index.html'); //load another page with auth form
+     myApp.alert("Login successful ", 'Success!');
+    //mainView.router.loadPage('index.html'); //load another page with auth form
   }
 });
 
@@ -166,7 +171,7 @@ checkLoggedIn();
 // Create a callback which logs the current auth state
 function checkLoggedIn(authData) {
   if (authData) {
-    console.log("User " + authData.uid + " is logged in with " + authData.provider);
+    //console.log("User " + authData.uid + " is logged in with " + authData.provider);
     mainView.router.back();
   } else {
     console.log("User is logged out");
@@ -184,7 +189,6 @@ ref.onAuth(checkLoggedIn);
 
 $$(document).on('pageInit', function (e) {
 	
-	checkLoggedIn();
     	
        //ruun login function
 	//messages must be initialized here
@@ -227,7 +231,7 @@ function createContentPage() {
 	return;
 }
 
- myApp.onPageInit('index', function(page) {
+ myApp.onPageInit('messages_view', function(page) {
 
 
 
@@ -240,7 +244,7 @@ var myMessages = myApp.messages('.messages', {
   autoLayout:true
 });
 }catch(err1){
-	alert(err1.message);
+	alert("As you can see: "+err1.message);
 }
 
  var myMessagebar = myApp.messagebar('.messagebar', {
@@ -250,7 +254,7 @@ var myMessages = myApp.messages('.messages', {
 // Do something here when page loaded and initialized
 	//var scrolled = 0;
 			  // CREATE A REFERENCE TO FIREBASE
-			  var messagesRef = new Firebase('https://doctordial.firebaseio.com/');
+			  var messagesRef = new Firebase('https://doctordial.firebaseio.com/messages');
 
 			  // REGISTER DOM ELEMENTS
 			  var messageField = $$('#messageInput');
@@ -290,29 +294,23 @@ var myMessages = myApp.messages('.messages', {
 				  // Empty messagebar
 				  myMessagebar.clear()
 				 
-				  // Random message type
-				  //var messageType = (['sent', 'received'])[Math.round(Math.random())];
-				  var messageType = 'sent';
 				  
 				 var name = nameField.val(); 
 				 //SAVE DATA TO FIREBASE AND EMPTY FIELD
 			     // messagesRef.push({name:name, text:messageText});
 				  // Avatar and name for received message
 				 // var avatar;
-				  if(messageType === 'received') {
-				    avatar = 'http://lorempixel.com/output/people-q-c-100-100-9.jpg';
-				    name = 'Kate';
-				  }
 				  
 			
 			  
 				
 				  // Add message
 				  messagesRef.push({
+				  	//userid
+				  	user_id: localStorage.user_id, 
 				    // Message text
 				    text: messageText,
 				    // Random message type
-				    type: messageType,
 				    // Avatar and name:
 				    //avatar: avatar,
 				    name: name,
@@ -333,9 +331,16 @@ var myMessages = myApp.messages('.messages', {
 			    var data = snapshot.val();
 			    var username = data.name || "anonymous";
 			    var message = data.text;
-			    var messageType = data.messageType;
+			    
+			    if(localStorage.user_id == data.user_id){ //if this is the sender
+					 var messageType = 'sent';
+			   }else{
+			   	     var messageType = 'received';
+			   }
 			    var day = data.day;
 			    var time = data.time;
+			    
+			    
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
 			   // var messageElement = $$('<div class="message message-'+messageType+'"><div class="message-text">');
@@ -369,33 +374,13 @@ var myMessages = myApp.messages('.messages', {
 				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
 				  });
 				}catch(err){
-					alert(err);
+					//alert("got the error"+err);
 				}
 				  
 				  
 				  
 				  
 			  });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }).trigger();
 
