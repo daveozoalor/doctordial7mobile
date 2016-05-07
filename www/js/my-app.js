@@ -170,10 +170,12 @@ checkLoggedIn();
 
 // Create a callback which logs the current auth state
 function checkLoggedIn(authData) {
-  if (authData) {
+  if (localStorage.user_id != null) {
     //console.log("User " + authData.uid + " is logged in with " + authData.provider);
-    mainView.router.back();
+    myApp.alert("You are now logged in..returning");
+    mainView.router.load("index.html");
   } else {
+  	myApp.alert(localStorage.user_id+" is your log in detaul");
     console.log("User is logged out");
     myApp.alert("You are not logged in, please login", "Please Login");
 			mainView.router.loadPage("login-screen-page.html");
