@@ -29,7 +29,7 @@ var mainView = myApp.addView('.view-main', {
 
 
 
-
+//create account
 function createUserAccount(formData){
 	var ref = new Firebase("https://doctordial.firebaseio.com");
 ref.createUser(formData,
@@ -40,12 +40,13 @@ ref.createUser(formData,
   } else {
     //alert("Successfully created user account with uid:", userData.uid);
     alert("Successfully created account. Please login");
-    mainView.router.loadPage('login-screen-page.html'); //load another page with auth form
+    localStorage.setItem(formData);
+    myApp.loginScreen(); // open Login Screen//load another page with auth form
   }
 });
 }
 
-
+//handle login
 function loginFire(sentEmail,sentPassword){ //get this login from database 
 	var ref = new Firebase("https://doctordial.firebaseio.com");
 ref.authWithPassword({
@@ -55,16 +56,14 @@ ref.authWithPassword({
   if (error) {
   	
   	myApp.alert("Error loging in, if you are sure you are registered, please try again or use the forgot password feature", "Incorrect Login");
-    mainView.router.loadPage('login-screen-page.html'); //load another page with auth form
+    myApp.loginScreen(); // open Login Screen //load another page with auth form
     return false; //required to prevent default router action
   } else {
   	localStorage.user_id = authData.uid;
-  	//save data in local variablable
-  	// Store
-//localStorage.setItem(authData); //save in the local storage
      //myApp.alert("Login successful", authData);
+  	//save data in local variablable
      myApp.alert("Login successful ", 'Success!');
-    //mainView.router.loadPage('index.html'); //load another page with auth form
+       myApp.closeModal('.login-screen'); //closelogin screen
   }
 });
 
@@ -107,11 +106,13 @@ ref.resetPassword({
   email : recoveryEmail
 }, function(error) {
   if (error === null) {
-    console.log("Password reset email sent successfully");
+    myApp.alert("Password reset email sent successfully");
   } else {
-    console.log("Error sending password reset email:", error);
+  	myApp.alert("Error sending password reset email:", error);
   }
 });
+
+
 }
 
 function deleteUser(){
@@ -128,57 +129,13 @@ ref.removeUser({
 });
 }
 
-
-myApp.onPageInit('login-screen', function (page) {
-	
-checkLoggedIn();
-	
-	
-  var pageContainer = $$(page.container);
-  pageContainer.find('.list-button').on('click', function () {
-   // var email = pageContainer.find('input[name="email"]').val();
-    var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
-  //myApp.alert(formData);
-  
-  //send to database
-  //var formDataString = JSON.stringify(formData);
-  createUserAccount(formData); //do the registration and report errors if found
-  
-    
-    // Handle username and password
-   /* myApp.alert('Email: ' + email + ', Password: ' + password, function () {
-      mainView.goBack();
-    });
-    */
-    
-    //loginFire(email, password); //login
-  });
-  
-  
-  //recoveryEmail
-  pageContainer.find('.login-button').on('click', function () {
-  	var email = pageContainer.find('input[name="email"]').val();
-  	var password = pageContainer.find('input[name="password"]').val();
-  loginFire(email, password);
-  });
-  
-  
-  //checkLoggedIn();
-  
-});    
-
-
 // Create a callback which logs the current auth state
 function checkLoggedIn(authData) {
   if (localStorage.user_id != null) {
-    //console.log("User " + authData.uid + " is logged in with " + authData.provider);
-    myApp.alert("You are now logged in..returning");
-    mainView.router.load("index.html");
+    
+       myApp.closeModal(); //closelogin screen
   } else {
-  	myApp.alert(localStorage.user_id+" is your log in detaul");
-    console.log("User is logged out");
-    myApp.alert("You are not logged in, please login", "Please Login");
-			mainView.router.loadPage("login-screen-page.html");
+			myApp.loginScreen(); // open Login Screen if user is not logged in
   }
 }
 // Register the callback to be fired every time auth state changes
@@ -187,15 +144,74 @@ ref.onAuth(checkLoggedIn);
 
 
 
+ 
+  //recover email
+  $$('.recovery-button').on('click', function () {
+  	var email = $$('input[name="recoveryEmail"]').val();
+  	sendPasswordResetEmail(email);
+  	});
+  	
+  	
+  $$('.open-3-modal').on('click', function () {
+  	
+  myApp.modal({
+    title:  'Type your health complaint below',
+    text: '<div class="list-block"><ul><li class="align-top"><div class="item-content"><div class="item-inner"><div class="item-input"> <textarea></textarea></div> </div> </div> </li> </ul> </div>',
+    buttons: [
+      {
+        text: 'submit',
+        onClick: function() {
+          myApp.alert('Complaint succeffuly submitted','Success!')
+        }
+      },
+      {
+        text: 'call',
+        onClick: function() {
+          myApp.alert('You clicked second button!')
+        }
+      },
+      {
+        text: 'cancel',
+        bold: true,
+        onClick: function() {
+        //  myApp.alert('You clicked third button!')
+        }
+      },
+    ]
+  })
+});
+  
+  
+
 
 
 $$(document).on('pageInit', function (e) {
-	
+	checkLoggedIn();
+	$$('.list-button').on('click', function () {
+   // var email = pageContainer.find('input[name="email"]').val();
+    var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
+  
+  createUserAccount(formData); //do the registration and report errors if found
+  
+ 
+  });
     	
-       //ruun login function
+       //run login function
 	//messages must be initialized here
+  $$('.login-button').on('click', function () {
+  	var email = pageContainer.find('input[name="email"]').val();
+  	var password = pageContainer.find('input[name="password"]').val();
+  loginFire(email, password);
+  });
+  
+  
+  
+  
+  
+ 
   
 });
+
 // Callbacks to run specific code for specific pages, for example for About page:
 myApp.onPageInit('about', function (page) {
     // run createContentPage func after link was clicked
