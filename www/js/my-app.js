@@ -118,7 +118,7 @@ ref.createUser(formData,
     
     myApp.alert("Successfully created account. Please login");
     localStorage.setItem(formData);
-    myApp.closeModal('.login-screen'); // open Login Screen//load another page with auth form
+    myApp.closeModal(); // open Login Screen//load another page with auth form
   }
 });
 
@@ -134,13 +134,13 @@ ref.authWithPassword({
   if (error) {
   	switch (error.code) {
       case "INVALID_EMAIL":
-        myApp.alert("The specified user account email is invalid.");
+        myApp.alert("The specified user account email is invalid.","Error");
         break;
       case "INVALID_PASSWORD":
-        myApp.alert("The specified user account password is incorrect.");
+        myApp.alert("The specified user account password is incorrect.","Error");
         break;
       case "INVALID_USER":
-        myApp.alert("The specified user account does not exist.");
+        myApp.alert("The specified user account does not exist.","Error");
         break;
       default:
         myApp.alert("Error logging user in:", error);
@@ -283,8 +283,8 @@ ref.onAuth(checkLoggedIn);
        //run login function
 	//messages must be initialized here
   $$('.login-button').on('click', function () {
-  	var email = $$('input[name="email"]').val();
-  	var password = $$('input[name="password"]').val();
+  	var email = $$('input[name="loginemail"]').val();
+  	var password = $$('input[name="loginpassword"]').val();
   loginFire(email, password);
   });
   
