@@ -27,7 +27,7 @@
     <meta name="msapplication-tap-highlight" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-eval' 'unsafe-inline'; style-src * 'unsafe-inline'; media-src *" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-eval' 'unsafe-inline'; style-src * 'unsafe-inline'; media-src * 'unsafe-inline'" />
     
     
     <script src="js/firebase.js"></script>
@@ -42,7 +42,7 @@
     -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
 
-    <title>7 Starter</title>
+    <title>Doctor Dial</title>
     
        <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -51,10 +51,11 @@
     <link rel="stylesheet" href="css/framework7.material.colors.min.css">
     <!-- Path to your custom app styles-->
     <link rel="stylesheet" href="css/my-app.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
     <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
 </head>
 
-<body class="theme-teal">
+<body class="theme-cyan">
 
 
   
@@ -69,11 +70,9 @@
             <!-- Top Navbar. In Material theme it should be inside of the page-->
             <div class="navbar">
               <div class="navbar-inner">
-                <div class="center">Doctor Dial</div>
-                <div class="right"><a href="#" class="link">Settings</a></div>
+                
+                <div class="center"> <i class="fa fa-phone" ></i> Doctor Dial</div>
               </div>
-              
-   
             </div>              
             
             <!-- Sub navbar
@@ -88,32 +87,36 @@
             <!-- Bottom Toolbar. In Material theme it should be inside of the page-->
            
  
-           
-
   
 			<div class="page-content">
-			 	<p><a href="#" class="open-login">Open page with Login Screen</a></p> 
-			 <br/>
-		 
-                    
-                    
-    <div class="list-block">
-        <ul>
-       </ul>
-        <div class="list-block-label">
-        <p><a href="messages_view.html" class="open-login-screen">View Message</a></p>
-        </div>
-      </div>
+			<div align="center" style="font-size: 80px; margin-top: 2px; margin-bottom: 2px; "><i class="fa fa-phone " aria-hidden="true">...</i> </div>    
+        
                   		<div class="card">
 						  
+						     <p class="buttons-row">
+						        <a href="#" class="button button-big button-fill button-raised  doctors_view"><i class="fa fa-user" aria-hidden="true"></i> Personal Doc</a>
+						        <a href="specializations_list.html" class="button button-big button-fill button-raised "><i class="fa fa-search" aria-hidden="true"></i> Find a doctor</a>
+						      </p>
 						       <p> 
-						       <a href="#" class="button button-big button-fill button-raised color-teal open-3-modal">Submit health complaint</a>
-						     </p> 
-						        <a href="#" class="button button-big button-fill button-raised color-teal">Personal Doctor</a>
-						       </p><p>
-						        <a href="#" class="button button-big button-fill button-raised color-teal">Find a doctor</a>
-						      </p><p>
-						        <a href="#" class="button button-big button-fill button-raised color-teal">Manage Account</a>
+						       <a href="#" class="button button-big button-fill button-raised open-3-modal">
+						       <i class="fa fa-heart-o" aria-hidden="true"></i> Submit health complaint</a>
+						     </p>
+						     <p> 
+						        <a href="appointments_list.html" class="button button-big button-fill button-raised ">
+						        <i class="fa fa-clock-o" aria-hidden="true"></i> Appointments (2)</a>
+						     </p>
+						     
+						       <p> 
+						        <a href="messages_list.html" class="button button-big button-fill button-raised ">
+						        <i class="fa fa-clock-o" aria-hidden="true"></i> Messages (5)</a>
+						      </p>
+						       
+						       <p>
+						        <a href="accounts_view.html" class="button button-big button-fill button-raised ">₦ Account</a>
+						      </p>
+						       <p>
+						        <a href="#" class="button button-big button-fill button-raised  logout">
+						        <i class="fa fa-power-off" aria-hidden="true"></i> Logout</a>
 						      </p>
 						</div> 
 			 		 </div>
@@ -159,7 +162,7 @@
   <div id="loginTab" class="tab">  
   
   <form id="loginForm" class="list-block">
-      <div class="list-block inset"">
+      <div class="list-block inset">
         <ul>
           <li class="item-content">
             <div class="item-inner">
@@ -181,7 +184,7 @@
       </div>
       <div class="list-block">
         <ul>
-          <li><a href="#" class="button login-button button-raised button-fill color-teal ripple-green">Sign In</a></li>
+          <li><a href="#" class="button login-button button-raised button-fill  ripple-green">Sign In</a></li>
         </ul>
         <div class="list-block-label">
           <p>Click Sign In to close Login Screen</p>
@@ -232,7 +235,7 @@
             <div class="item-inner">
               <div class="item-title label">Last name</div>
               <div class="item-input">
-                <input type="text" name="middlename" placeholder="Your Middle name"/>
+                <input type="text" name="lastname" placeholder="Your Last name"/>
               </div>
             </div>
           </li>
@@ -241,7 +244,7 @@
 		        <div class="item-inner">
 		          <div class="item-title label">Birth date</div>
 		          <div class="item-input">
-		            <input type="date" placeholder="Birth day" value="2014-04-30">
+		            <input type="date" name="dateofbirth" placeholder="Birth day" value="2014-04-30">
 		          </div>
 		      </div>
 		    </li> 
@@ -260,7 +263,7 @@
 		    <li class="item-content">
             <div class="item-inner">
               <div class="item-input">
-             <a href="#" id="signupButton" class="button list-button button-raised button-fill color-teal ripple-green">Sign Up</a>
+             <a href="#" id="signupButton" class="button list-button button-raised button-fill  ripple-green">Sign Up</a>
         
               </div>
             </div>
@@ -272,7 +275,7 @@
   </div>
   <div id="forgotPaaswordTab" class="tab"> 
      <form id="recoverForm" >
-      <div class="list-block inset"">
+      <div class="list-block inset">
         <ul>
           <li class="item-content">
             <div class="item-inner">
@@ -286,7 +289,7 @@
       </div>
       <div class="list-block">
         <ul>
-          <li><a href="#" id="sendRecovery" class="button recovery-button button-raised button-fill color-teal ripple-green">Send Recovery Email</a></li>
+          <li><a href="#" id="sendRecovery" class="button recovery-button button-raised button-fill  ripple-green">Send Recovery Email</a></li>
         </ul>
       </div>
     </form> 

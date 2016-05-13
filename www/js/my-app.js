@@ -1,6 +1,7 @@
 // Initialize your app
 var myApp = new Framework7(
 {
+	  template7Pages: true ,
 	pushState: 0,
 	swipeBackPage: true,
    // Hide and show indicator during ajax requests
@@ -13,8 +14,9 @@ var myApp = new Framework7(
     
     preroute: function (mainView, options) {
     	
-    }
-    
+    },
+  
+     
  });
 
 // Export selectors engine
@@ -23,27 +25,103 @@ var $$ = Dom7;
 // Add view
 var mainView = myApp.addView('.view-main', {
     // Because we use fixed-through navbar we can enable dynamic navbar
-    domCache: true,
+    //domCache: true,
 });
 
 
 
 
+//function to create anything
+function createAnything(formData, childVar){
+	var postsRef = new Firebase("https://doctordial.firebaseio.com/");
+    
+     ref = postsRef.child(childVar);
+     
+// we can also chain the two calls together
+    //postsRef.push(formData);
+    
+     // we can also chain the two calls together
+  ref.push().set(formData,
+   function(error) {
+  if (error) {
+    alert("Data could not be saved. :" + error);
+  } else {
+    //alert("Data saved successfully.");
+  }
+}
+  );
+}
+
+//function to create anything
+function updateAnything(formData, childVar){
+	var postsRef = new Firebase("https://doctordial.firebaseio.com/");
+     ref = postsRef.child(childVar);
+     ref.update(formData,   function(error) {
+  if (error) {
+    myApp.alert("Data could not be saved. :" + error);
+  } else {
+    myApp.alert("Update successful.","Updated");
+  }
+});
+}
+
+
+  
+
 //create account
 function createUserAccount(formData){
-	var ref = new Firebase("https://doctordial.firebaseio.com");
+	var ref = new Firebase("https://doctordial.firebaseio.com/users");
+	ref.once("value", function(data) {
+            // do some stuff once
+    });
+	
 ref.createUser(formData,
-
  function(error, userData) {
   if (error) {
     myApp.alert("Error creating account:"+error.message, error);
   } else {
     //alert("Successfully created user account with uid:", userData.uid);
-    alert("Successfully created account. Please login");
+    //log user in and create user profile at  /users
+       loginFire(formData.email, formData.password);
+    		
+    		//create user profile
+			// we would probably save a profile when we register new users on our site
+			// we could also read the profile to see if it's null
+			// here we will just simulate this with an isNewUser boolean
+			var isNewUser = true;
+			ref.onAuth(function(authData) {
+			  if (authData && isNewUser) {
+			    // save the user's profile into the database so we can list users,
+			    // use them in Security and Firebase Rules, and show profiles
+			    ref.child("users").child(authData.uid).set({
+			      provider: authData.provider,
+			      name: getName(authData) //the first part of the users email
+			    });
+			    
+			    //update the user's data to carry the rest of the data
+			    var hopperRef = ref.child(authData.uid);
+				hopperRef.update(formData);
+			  }
+			});
+			// find a suitable name based on the meta info given by each provider
+			function getName(authData) {
+			  switch(authData.provider) {
+			     case 'password':
+			       return authData.password.email.replace(/@.*/, '');
+			     case 'twitter':
+			       return authData.twitter.displayName;
+			     case 'facebook':
+			       return authData.facebook.displayName;
+			  }
+			}
+    
+    
+    myApp.alert("Successfully created account. Please login");
     localStorage.setItem(formData);
-    myApp.loginScreen(); // open Login Screen//load another page with auth form
+    myApp.closeModal('.login-screen'); // open Login Screen//load another page with auth form
   }
 });
+
 }
 
 //handle login
@@ -54,14 +132,24 @@ ref.authWithPassword({
   password : sentPassword
 }, function(error, authData) {
   if (error) {
-  	
-  	myApp.alert("Error loging in, if you are sure you are registered, please try again or use the forgot password feature", "Incorrect Login");
-    myApp.loginScreen(); // open Login Screen //load another page with auth form
+  	switch (error.code) {
+      case "INVALID_EMAIL":
+        myApp.alert("The specified user account email is invalid.");
+        break;
+      case "INVALID_PASSWORD":
+        myApp.alert("The specified user account password is incorrect.");
+        break;
+      case "INVALID_USER":
+        myApp.alert("The specified user account does not exist.");
+        break;
+      default:
+        myApp.alert("Error logging user in:", error);
+    }
     return false; //required to prevent default router action
   } else {
+  	//save data in local storage
   	localStorage.user_id = authData.uid;
-     //myApp.alert("Login successful", authData);
-  	//save data in local variablable
+  	
      myApp.alert("Login successful ", 'Success!');
        myApp.closeModal('.login-screen'); //closelogin screen
   }
@@ -116,7 +204,7 @@ ref.resetPassword({
 }
 
 function deleteUser(){
-	var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+	var ref = new Firebase("https://doctordial.firebaseio.com");
 ref.removeUser({
   email    : "bobtony@firebase.com",
   password : "correcthorsebatterystaple"
@@ -183,10 +271,6 @@ ref.onAuth(checkLoggedIn);
   
   
 
-
-
-$$(document).on('pageInit', function (e) {
-	checkLoggedIn();
 	$$('.list-button').on('click', function () {
    // var email = pageContainer.find('input[name="email"]').val();
     var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
@@ -199,26 +283,21 @@ $$(document).on('pageInit', function (e) {
        //run login function
 	//messages must be initialized here
   $$('.login-button').on('click', function () {
-  	var email = pageContainer.find('input[name="email"]').val();
-  	var password = pageContainer.find('input[name="password"]').val();
+  	var email = $$('input[name="email"]').val();
+  	var password = $$('input[name="password"]').val();
   loginFire(email, password);
   });
   
   
-  
-  
-  
- 
-  
-});
 
-// Callbacks to run specific code for specific pages, for example for About page:
-myApp.onPageInit('about', function (page) {
-    // run createContentPage func after link was clicked
-    $$('.create-page').on('click', function () {
-        createContentPage();
-    });
-});
+ $$('.logout').on('click', function () {
+ 	 var ref = new Firebase("https://doctordial.firebaseio.com");
+          	myApp.alert("You are loging out", "Logout");
+          	  ref.unauth(); //logout
+          	  localStorage.removeItem("user_id");
+          	 myApp.loginScreen(); // open Login Screen if user is not logged in 
+ });
+
 
 // Generate dynamic page
 var dynamicPageIndex = 0;
@@ -248,6 +327,206 @@ function createContentPage() {
     );
 	return;
 }
+
+	// Callbacks to run specific code for specific pages, for example for About page:
+
+
+myApp.onPageInit('specializations_list', function (page) {
+  
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+}); 
+
+//dummy function I used to create new category of doctors
+  $("#addAccount").on('click', function () {
+   // var email = pageContainer.find('input[name="email"]').val();
+    var formData = myApp.formToJSON('#addNew'); //convert submitted form to json.
+  
+  createAnything(formData, "specializations"); //do the registration and report errors if found
+ 
+  });
+  
+  
+  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/specializations");
+		// Attach an asynchronous callback to read the data at our posts reference
+		var specializations;
+		var messageList = $$('.specialization-list-block');
+		ref.limitToLast(50).on("child_added", function(snapshot) {
+		   var data = snapshot.val();
+		   //specializations = JSON.stringify(snapshot.val());
+					//doctors list
+					
+			    var name = data.name || "anonymous";
+			    var message = data.text;
+			    var specs_id = snapshot.key(); //get the id
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+             // myApp.alert(JSON.stringify(snapshot.val()));
+			    //ADD MESSAGE
+			    messageList.append('<li>'+
+		      '<a href="doctors_list.html?id='+specs_id+'&categoryname='+name+'" class="item-link item-content" data-context-name="languages">'+
+		          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
+		          '<div class="item-inner">'+
+		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+name+'</div>'+
+		          '</div>'+
+		      '</a>'+
+		    '</li>');
+					
+					
+		
+		
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+		
+		
+ 
+});
+         
+
+myApp.onPageInit('index', function (page) {
+	$$('.personal-doctor').on('click', function () {
+		
+		if(localStorage.personal_doctor_id != null){
+			myApp.router.loadPage("doctors_view.html?personal_doctor_id="+localStorage.personal_doctor_id);
+		}else{
+			
+			//redirect to doctor categories
+			  myApp.confirm('You have not added a personal doctor yet. Would you like to add one now?','Add doctor', 
+			      function () {
+			       myApp.router.loadPage("doctors_list.html");
+			      },
+			      function () {
+			       
+			       // updateAnything();
+			      }
+			    );
+		}
+		
+		});
+	});
+	
+	
+	
+	
+myApp.onPageInit('doctors_view', function (page) {
+	
+	var ref = new Firebase("https://doctordial.firebaseio.com/users"+localStorage.user_id);
+		ref.orderByChild("personal_doctor_id").equalTo(page.query.id).on("child_added", function(snapshot) {
+		  
+		  if(snapshot.key() != null){ //if user
+		  	
+		  	 $$('.personal-doctor').hide();
+		  }else{
+					  	//show button
+				$$('.personal-doctor').on('click', function () {
+					
+			    myApp.confirm('Are you sure you want to make this doctor your personal doctor?','Please Confirm', 
+			      function () {
+			       
+			       var personalDoc = {
+				   	personal_doctor_id: page.query.id
+				   }
+			        updateAnything(personalDoc, "users/"+localStorage.user_id+"/");
+			        
+			        localStorage.personal_doctor_id = page.query.id; // save it
+			        
+			       $$('.personal-doctor').hide(); //hide the button 
+			      },
+			      function () {
+			       
+			       // updateAnything();
+			      }
+			    );
+			});
+		  	
+		  }
+		  
+		  
+		});
+
+
+
+	
+	});
+	
+myApp.onPageInit('doctors_list', function (page) {
+   //var page = e.detail.page;
+  // alert(page.query.categoryname);
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+}); 
+
+//dummy function I used to create new category of doctors
+  $("#addAccountDoctor").on('click', function () {
+   // var email = pageContainer.find('input[name="email"]').val();
+   alert("John");
+    var formData = myApp.formToJSON('#addNewDoctor'); //convert submitted form to json.
+  
+  updateAnything(formData, "users/"+formData.user_id+"/doctors"); //do the registration and report errors if found
+ 
+  });
+  
+  
+  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/users");
+		// Attach an asynchronous callback to read the data at our posts reference
+		var specializations;
+		var messageList = $$('.doctors-list-block');
+		
+		
+		  //find list of doctors in this specialization . page.query.id is the query received from the incoming page GET request
+		 // myApp.alert("Dave");
+			ref.orderByChild("doctors").on("child_added", function(snapshot) {
+			  //myApp.alert("Dave"+snapshot.val().doctors.specialization_id);
+			
+		//ref.limitToLast(50).on("child_added", function(snapshot) {
+		        var data = snapshot.val();
+			    var email = data.email || "anonymous";
+			    var message = data.specialization_id;
+			    var specs_id = snapshot.key(); //get the id
+			    var about = snapshot.val().about || '';
+			    var title = snapshot.val().doctors.title || '';
+			    var firstname = snapshot.val().firstname || '';
+			    var middlename = snapshot.val().middlename || '';
+			    var lastname = snapshot.val().lastname || '';
+			    var fullname = title+' '+firstname+' '+middlename+' '+lastname;
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+			    if(data.doctors.specialization_id == page.query.id){
+					   messageList.append('<li>'+
+					      '<a href="doctors_view.html?id='+snapshot.key()+'&about='+about+'&gender='+data.gender+'&fullname='+fullname+'" class="item-link item-content" data-context-name="doctor-card">'+
+					          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
+					          '<div class="item-inner">'+
+					            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+snapshot.val().doctors.title+' '+firstname+' '+middlename+' '+lastname+'</div>'+
+					          '</div>'+
+					      '</a>'+
+					    '</li>');
+					
+				}
+			 
+					
+		
+		
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+			
+			
+		
+		
+ 
+});
+         
+
+   
+
+
 
  myApp.onPageInit('messages_view', function(page) {
 
