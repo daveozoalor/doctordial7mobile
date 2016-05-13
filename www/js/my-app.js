@@ -152,6 +152,7 @@ ref.authWithPassword({
   	
      myApp.alert("Login successful ", 'Success!');
        myApp.closeModal('.login-screen'); //closelogin screen
+       myApp.closeModal();
   }
 });
 
@@ -286,6 +287,7 @@ ref.onAuth(checkLoggedIn);
   	var email = $$('input[name="loginemail"]').val();
   	var password = $$('input[name="loginpassword"]').val();
   loginFire(email, password);
+  
   });
   
   
