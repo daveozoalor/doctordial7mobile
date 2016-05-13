@@ -614,7 +614,7 @@ var myMessages = myApp.messages('.messages', {
 				    // Random message type
 				    // Avatar and name:
 				    //avatar: avatar,
-				    name: name,
+				   // name: name,
 				    // Day
 				    day: !conversationStarted ? 'Today' : false,
 				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
@@ -669,7 +669,7 @@ var myMessages = myApp.messages('.messages', {
 				    type: messageType,
 				    // Avatar and name:
 				    //avatar: avatar,
-				    name: name,
+				    //name: name,
 				    // Day
 				    day: !conversationStarted ? 'Today' : false,
 				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
