@@ -605,6 +605,7 @@ var myMessages = myApp.messages('.messages', {
 				  messagesRef.push({
 				  	//userid
 				  	user_id: localStorage.user_id, 
+				  	receiver_user_id: page.query.id,
 				    // Message text
 				    text: messageText,
 				    // Random message type
@@ -622,7 +623,7 @@ var myMessages = myApp.messages('.messages', {
 				});                
 
 
-			  // Add a callback that is triggered for each chat message.
+			  // Add a callback that is triggered for each chat message. .child("receiver_user_id")equalTo(page.query.id)
 			  messagesRef.limitToLast(10).on('child_added', function (snapshot) {
 			    //GET DATA
 			    var data = snapshot.val();
