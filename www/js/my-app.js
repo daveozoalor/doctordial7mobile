@@ -464,10 +464,11 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 //dummy function I used to create new category of doctors
   $("#addAccountDoctor").on('click', function () {
    // var email = pageContainer.find('input[name="email"]').val();
-   alert("John");
     var formData = myApp.formToJSON('#addNewDoctor'); //convert submitted form to json.
-  
-  updateAnything(formData, "users/"+formData.user_id+"/doctors"); //do the registration and report errors if found
+  if(formData != null){
+  	  updateAnything(formData, "users/"+formData.user_id+"/doctors"); //do the registration and report errors if found
+  }
+
  
   });
   
