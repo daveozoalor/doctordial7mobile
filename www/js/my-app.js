@@ -428,7 +428,7 @@ $$('.personal-doctor').on('click', function () {
 	
 	
 myApp.onPageInit('doctors_view', function (page) {
-	
+	  scheduler.init("scheduler_here");
 	var ref = new Firebase("https://doctordial.firebaseio.com/users"+localStorage.user_id);
 		ref.orderByChild("personal_doctor_id").equalTo(page.query.id).on("child_added", function(snapshot) {
 		  
@@ -484,7 +484,6 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		  //find list of doctors in this specialization . page.query.id is the query received from the incoming page GET request
 		 // myApp.alert("Dave");
 			ref.orderByChild("receiver_id").equalTo(localStorage.user_id).on("child_added", function(snapshot) {
-			  //myApp.alert("Dave"+snapshot.val().doctors.specialization_id);
 			
 		//ref.limitToLast(50).on("child_added", function(snapshot) {
 		        var data = snapshot.val();
