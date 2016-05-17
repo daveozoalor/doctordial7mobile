@@ -3,7 +3,7 @@
          <!-- Top Navbar. In Material theme it should be inside of the page-->
             <div class="navbar">
               <div class="navbar-inner">
-                <div class="center"><i class="fa fa-comments-o" aria-hidden="true"></i> Messages</div>
+                <div class="center"><i class="fa fa-medkit" aria-hidden="true"></i> {{url_query.categoryname}}s</div>
               </div>
             </div> 
             
@@ -23,6 +23,7 @@
                  <div class="toolbar toolbar-bottom">
 				    <div class="toolbar-inner">
 				        <a href="#" class="link back"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+				        <a href="index.html" class="link"><i class="fa fa-home" aria-hidden="true"></i></a>
 				    </div>
 				</div>
       
@@ -31,19 +32,25 @@
                 Nothing found
         </div>
  
-        <div class="list-block virtual-list list-block-search searchbar-found doctor-list">
+        <div class="list-block searchbar-found doctors-list virtual-list">
            
+		       <ul class="doctors-list-block list-block-search">
+		       	
+		       </ul>
         </div>
          
-          
-          <form id="addNew" class="list-block">
+         
+
+ <!--
+          <form id="addNewDoctor" class="list-block">
 			  <ul>
 			    <li>
 			      <div class="item-content">
 			        <div class="item-inner">
-			          <div class="item-title label">name</div>
+			          <div class="item-title label">Doctor's Id</div>
 			          <div class="item-input">
-			            <input type="text" name="name" placeholder="Your name">
+			            <input type="hidden" name="specialization_id" value="{{url_query.id}}">
+			            <input type="text" name="user_id" placeholder="Doctors User Id">
 			          </div>
 			        </div>
 			      </div>
@@ -51,19 +58,19 @@
 			    <li>
 			      <div class="item-content">
 			        <div class="item-inner">
-			          <div class="item-title label">Decription</div>
+			          <div class="item-title label">Title</div>
 			          <div class="item-input">
-			            <input type="text" name="description" placeholder="Description">
+			            <input type="text" name="title" placeholder="Dr." value="Dr.">
 			          </div>
 			        </div>
 			      </div>
 			    </li>
 			  </ul>
-         </form>
+         </form> 
  
 			<div class="content-block">
-			  <a href="#" id="addAccount" class="button button-fill">Get Form Data</a>
-			</div>
+			  <a href="#" id="addAccountDoctor" class="button button-fill">Add New</a>
+			</div>-->
 			
 			
 			 </div>

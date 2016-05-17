@@ -200,8 +200,6 @@ ref.resetPassword({
   	myApp.alert("Error sending password reset email:", error);
   }
 });
-
-
 }
 
 function deleteUser(){
@@ -293,11 +291,30 @@ ref.onAuth(checkLoggedIn);
   
 
  $$('.logout').on('click', function () {
- 	 var ref = new Firebase("https://doctordial.firebaseio.com");
+ 	
+          	 
+          	   myApp.modal({
+    title:  'Are you sure you wish to logout?',
+    text: '<div class="list-block"></div>',
+    buttons: [
+      {
+        text: 'yes',
+        onClick: function() {
+           var ref = new Firebase("https://doctordial.firebaseio.com");
           	myApp.alert("You are loging out", "Logout");
           	  ref.unauth(); //logout
           	  localStorage.removeItem("user_id");
           	 myApp.loginScreen(); // open Login Screen if user is not logged in 
+          	 
+        }
+      },
+      {
+        text: 'cancel',
+        bold: true,
+        
+      },
+    ]
+  })
  });
 
 
@@ -388,18 +405,15 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
 });
          
-
-myApp.onPageInit('index', function (page) {
-	$$('.personal-doctor').on('click', function () {
-		
+$$('.personal-doctor').on('click', function () {
 		if(localStorage.personal_doctor_id != null){
-			myApp.router.loadPage("doctors_view.html?personal_doctor_id="+localStorage.personal_doctor_id);
+			mainView.router.loadPage("doctors_view.html?personal_doctor_id="+localStorage.personal_doctor_id);
 		}else{
 			
 			//redirect to doctor categories
 			  myApp.confirm('You have not added a personal doctor yet. Would you like to add one now?','Add doctor', 
 			      function () {
-			       myApp.router.loadPage("doctors_list.html");
+			       mainView.router.loadPage("specializations_list.html");
 			      },
 			      function () {
 			       
@@ -409,8 +423,7 @@ myApp.onPageInit('index', function (page) {
 		}
 		
 		});
-	});
-	
+
 	
 	
 	
@@ -450,10 +463,63 @@ myApp.onPageInit('doctors_view', function (page) {
 		  
 		});
 
-
-
 	
 	});
+	
+myApp.onPageInit('messages_list', function (page) {
+   //var page = e.detail.page;
+  // alert(page.query.categoryname);
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+}); 
+
+  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/messages");
+		// Attach an asynchronous callback to read the data at our posts reference
+		var specializations;
+		var messageList = $$('.doctors-list-block');
+		
+		
+		  //find list of doctors in this specialization . page.query.id is the query received from the incoming page GET request
+		 // myApp.alert("Dave");
+			ref.orderByChild("receiver_id").equalTo(localStorage.user_id).on("child_added", function(snapshot) {
+			  //myApp.alert("Dave"+snapshot.val().doctors.specialization_id);
+			
+		//ref.limitToLast(50).on("child_added", function(snapshot) {
+		        var data = snapshot.val();
+			    var text = data.text || "anonymous";
+			    var message = data.name;
+			    var time = data.time; //get the id
+			    var time = data.receiver_id; //get the id
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+			    if(data.doctors.specialization_id == page.query.id){
+					   messageList.append('<li>'+
+					      '<a href="doctors_view.html?id='+data+'" class="item-link item-content" data-context-name="doctor-card">'+
+					          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
+					          '<div class="item-inner">'+
+					            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.text+'</div>'+
+					          '</div>'+
+					      '</a>'+
+					    '</li>');
+					
+				}
+			 
+					
+		
+		
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+			
+			
+		
+		
+ 
+});
+         
 	
 myApp.onPageInit('doctors_list', function (page) {
    //var page = e.detail.page;
