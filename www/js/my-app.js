@@ -238,36 +238,6 @@ ref.onAuth(checkLoggedIn);
   	sendPasswordResetEmail(email);
   	});
   	
-  	
-  $$('.open-3-modal').on('click', function () {
-  	
-  myApp.modal({
-    title:  'Type your health complaint below',
-    text: '<div class="list-block"><ul><li class="align-top"><div class="item-content"><div class="item-inner"><div class="item-input"> <textarea></textarea></div> </div> </div> </li> </ul> </div>',
-    buttons: [
-      {
-        text: 'submit',
-        onClick: function() {
-          myApp.alert('Complaint succeffuly submitted','Success!')
-        }
-      },
-      {
-        text: 'call',
-        onClick: function() {
-          myApp.alert('You clicked second button!')
-        }
-      },
-      {
-        text: 'cancel',
-        bold: true,
-        onClick: function() {
-        //  myApp.alert('You clicked third button!')
-        }
-      },
-    ]
-  })
-});
-  
   
 
 	$$('.list-button').on('click', function () {
@@ -304,6 +274,7 @@ ref.onAuth(checkLoggedIn);
           	myApp.alert("You are loging out", "Logout");
           	  ref.unauth(); //logout
           	  localStorage.removeItem("user_id");
+          	  localStorage.removeItem("personal_doctor_id");
           	 myApp.loginScreen(); // open Login Screen if user is not logged in 
           	 
         }
@@ -404,11 +375,17 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		
  
 });
-         
-$$('.personal-doctor').on('click', function () {
-		if(localStorage.personal_doctor_id != null){
-			mainView.router.loadPage("doctors_view.html?personal_doctor_id="+localStorage.personal_doctor_id);
-		}else{
+
+			//if doctor is not 
+	$$('.personal-doctor').on('click', function () {
+	//if persnal doctor is being viewed
+	
+	//myApp.alert("Join go: "+localStorage.personal_doctor_id);
+	
+      if(localStorage.personal_doctor_id != null){ //if personal doctor is another doctor
+     // myApp.alert("Local Storage: "+localStorage.personal_doctor_id);
+			mainView.router.loadPage("doctors_view.html?id="+localStorage.personal_doctor_id);
+		} else{
 			
 			//redirect to doctor categories
 			  myApp.confirm('You have not added a personal doctor yet. Would you like to add one now?','Add doctor', 
@@ -423,44 +400,101 @@ $$('.personal-doctor').on('click', function () {
 		}
 		
 		});
-
 	
 	
 	
 myApp.onPageInit('doctors_view', function (page) {
-	  scheduler.init("scheduler_here");
-	var ref = new Firebase("https://doctordial.firebaseio.com/users"+localStorage.user_id);
-		ref.orderByChild("personal_doctor_id").equalTo(page.query.id).on("child_added", function(snapshot) {
-		  
-		  if(snapshot.key() != null){ //if user
-		  	
-		  	 $$('.personal-doctor').hide();
-		  }else{
-					  	//show button
-				$$('.personal-doctor').on('click', function () {
-					
-			    myApp.confirm('Are you sure you want to make this doctor your personal doctor?','Please Confirm', 
+		
+	 //dont show the add button if this is the viewer's personal doc
+		if(localStorage.personal_doctor_id != null && localStorage.personal_doctor_id == page.query.id){
+		 //hide button
+		 //myApp.alert("Page Query: "+page.query.id+" . Local Storage: "+localStorage.personal_doctor_id + " . User id: " + localStorage.user_id);
+		 $$('.add-personal-doctor').hide();
+		}
+		
+         
+//add doctor button on index page. 
+$$('.add-personal-doctor').on('click', function () {
+			//redirect to doctor categories
+			  myApp.confirm('Would you like to set this doctor as your personal doctor? This will replace your current personal doctor','Add Peronsal Doctor', 
 			      function () {
-			       
-			       var personalDoc = {
-				   	personal_doctor_id: page.query.id
-				   }
-			        updateAnything(personalDoc, "users/"+localStorage.user_id+"/");
-			        
-			        localStorage.personal_doctor_id = page.query.id; // save it
-			        
-			       $$('.personal-doctor').hide(); //hide the button 
+			      //yes
+			      var formData = {personal_doctor_id: page.query.id};
+			      
+			      updateAnything(formData, "users/"+localStorage.user_id); //update this user's record and add personal doctor
+			      
+			      localStorage.personal_doctor_id = page.query.id;
+			       $$('.add-personal-doctor').hide();
+			      //myApp.alert("Doctor added successfully");
 			      },
 			      function () {
 			       
 			       // updateAnything();
 			      }
 			    );
-			});
+			    
+		});		
+         
+//add doctor button on index page. 
+$$('.change-personal-doctor').on('click', function () {
+			//redirect to doctor categories
+			  myApp.confirm('Would you like choose another personal doctor? This will delete your current personal doctor setings','Add Peronsal Doctor', 
+			      function () {
+			      //yes
+			      localStorage.removeItem("personal_doctor_id");
+			       $$('.add-personal-doctor').show();
+			       mainView.router.loadPage("specializations.html");
+			      //myApp.alert("Doctor added successfully");
+			      },
+			      function () {
+			       
+			       // updateAnything();
+			      }
+			    );
+			    
+		});
+	
+	
+	
+	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
+	
+	
+		ref.orderByChild("personal_doctor_id").startAt(page.query.id).endAt(page.query.id).once("child_added", function(snapshot) {
+			
+			myApp.alert("Userid: "+localStorage.user_id +" <br/> Doctor ID: "+ page.query.id);
+			
+		  if(snapshot.key() != null){
 		  	
-		  }
-		  
-		  
+		  	
+		  	 
+		  	 $$('.add-personal-doctor').hide();
+		  	 
+				$( ".add-personal-doctor" ).attr({
+				  class: "color-gray"
+				});
+		  }else{
+					  	//show button
+				$$('.add-personal-doctor').on('click', function () {
+				    myApp.confirm('Are you sure you want to make this doctor your personal doctor?','Please Confirm', 
+				      function () {
+				       
+				       var personalDoc = {
+					   	personal_doctor_id: page.query.id
+					   }
+				        updateAnything(personalDoc, "users/"+localStorage.user_id+"/");
+				        
+				        localStorage.personal_doctor_id = page.query.id; // save it
+				        
+				       $$('.add-personal-doctor').hide(); //hide the button 
+				       
+				      },
+				      function () {
+				       
+				       // updateAnything();
+					      }
+					    );
+					});
+			      }
 		});
 
 	
@@ -519,7 +553,6 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
 });
          
-	
 myApp.onPageInit('doctors_list', function (page) {
    //var page = e.detail.page;
   // alert(page.query.categoryname);
@@ -592,7 +625,80 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 });
          
 
-   
+	
+  $$('.create-complaint-modal').on('click', function () {
+  	
+  myApp.modal({
+    title:  'Type your health complaint below',
+    text: '<div class="list-block" ><ul><li class="align-top"><form id="addComplaintForm"> <div class="item-content"><div class="item-inner"><div class="item-input"> <input type="text" name="title" /> <br/> <textarea name="text"></textarea></div> </div> </div> </form> </li> </ul> </div>',
+    buttons: [
+      {
+        text: 'submit',
+        onClick: function() {
+			   // var email = pageContainer.find('input[name="email"]').val();
+			    var formData = myApp.formToJSON('#addComplaintForm'); //convert submitted form to json.
+			    createAnything(formData, "complaints"); //do the registration and report errors if found
+			 
+        }
+      },
+      {
+        text: 'cancel',
+        bold: true,
+        onClick: function() {
+        //  myApp.alert('You clicked third button!')
+        }
+      },
+    ]
+  })
+});
+  
+  
+  
+myApp.onPageInit('complaints_list', function (page) {
+  
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+}); 
+
+  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/complaints");
+		// Attach an asynchronous callback to read the data at our posts reference
+		var specializations;
+		var messageList = $$('.specialization-list-block');
+		ref.limitToLast(50).on("child_added", function(snapshot) {
+		   var data = snapshot.val();
+		   //specializations = JSON.stringify(snapshot.val());
+					//doctors list
+					
+			    var title = data.title || "anonymous";
+			    var message = data.text;
+			    var specs_id = snapshot.key(); //get the id
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+             // myApp.alert(JSON.stringify(snapshot.val()));
+			    //ADD MESSAGE
+			    messageList.append('<li>'+
+		      '<a href="doctors_list.html?id='+specs_id+'&categoryname='+title+'" class="item-link item-content" data-context-name="languages">'+
+		          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
+		          '<div class="item-inner">'+
+		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+title+'</div>'+
+		          '</div>'+
+		      '</a>'+
+		    '</li>');
+					
+					
+		
+		
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+		
+		
+ 
+});
+  
 
 
 
@@ -709,22 +815,8 @@ var myMessages = myApp.messages('.messages', {
 			    
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
-			   // var messageElement = $$('<div class="message message-'+messageType+'"><div class="message-text">');
-			   // var nameElement = $$("<strong class='example-chat-username'></strong>");
-			    
-			    var newMessageContent =     '<div class="message message-sent">'+
-									        '<div class="message-text">'+message+'</div>'+
-									        '</div>';
-			    //$$(newMessageContent ).insertAfter( ".message" );
-			    
-			   // nameElement.text(username+" ");
-			   // messageElement.text(message).prepend(nameElement);
-          
-
-			    //SCROLL TO BOTTOM OF MESSAGE LIST
-			   // messageList[0].scrollTop = messageList[0].scrollHeight;
-			      // Add message
-			     
+			 
+			
 				try{
 					myMessages.addMessage({
 				  	
@@ -743,10 +835,36 @@ var myMessages = myApp.messages('.messages', {
 					//alert("got the error"+err);
 				}
 				  
-				  
-				  
-				  
 			  });
 
 }).trigger();
 
+
+
+
+
+//sample code to prevent back button from existing the app
+document.addEventListener('backbutton', function (e) {
+            e.preventDefault();
+            /* Check for open panels */
+            if ($$('.panel.active').length > 0) {
+                f7.closePanel();
+                return;
+            }
+            /* Check for go back in history */
+            var view = f7.getCurrentView();
+            if (!view) return;
+            if (view.history.length > 1) {
+                view.router.back();
+                return;
+            }
+            /* Quit app */
+            navigator.notification.confirm(
+                'Exit Application ?',              // message
+                function (n) {
+                    if (n == 1) navigator.app.exitApp(); 
+                },
+                'Exit',        // title
+                ['OK', 'Cancel']      // button labels
+            );
+        }, false);
