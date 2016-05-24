@@ -3,7 +3,7 @@
          <!-- Top Navbar. In Material theme it should be inside of the page-->
             <div class="navbar">
               <div class="navbar-inner">
-                <div class="center"><i class="fa fa-medkit" aria-hidden="true"></i>  Doctor Categories</div>
+                <div class="center"><i class="fa fa-time" aria-hidden="true"></i> Appointments</div>
               </div>
             </div> 
             
@@ -41,23 +41,70 @@
 			    <li>
 			      <div class="item-content">
 			        <div class="item-inner">
-			          <div class="item-title label">name</div>
+			          <div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Weekday</div>
 			          <div class="item-input">
-			            <input type="text" name="name" placeholder="Your name">
+			            <input type="text" name="name" >
+			             <div class="item-input">
+						    <select name="day">
+							  <option value="Monday">Monday</option>
+							  <option value="Tuesday">Tuesday</option>
+							  <option value="Wednesday">Wednesday</option>
+							  <option value="Thursday">Thursday</option>
+							  <option value="Friday">Friday</option>
+							  <option value="Saturday">Saturday</option>
+							  <option value="Sunday">Sunday</option>
+							</select>
+						  </div>
 			          </div>
 			        </div>
 			      </div>
 			    </li>
+			    
+			    
 			    <li>
 			      <div class="item-content">
 			        <div class="item-inner">
 			          <div class="item-title label">Decription</div>
 			          <div class="item-input">
-			            <input type="text" name="description" placeholder="Description">
+			            <input type="time" name="description" placeholder="Description">
 			          </div>
 			        </div>
 			      </div>
 			    </li>
+			    
+			     
+			    <li>
+			      <div class="item-content">
+			        <div class="item-inner">
+			          <div class="item-title label">Decription</div>
+			          <div class="item-input">
+			            <div class="content-block-title">Inline Picker / Date-time</div>
+					      <div class="content-block">
+					        <div style="padding:0; margin-right:-15px; width:auto" class="content-block-inner">
+					          <div style="margin:0" class="list-block">
+					            <ul style="border-top:none">
+					              <li>
+					                <div class="item-content">
+					                  <div class="item-inner"> 
+					                    <div class="item-input">
+					                      <input type="text" placeholder="Date Time" readonly="readonly" id="ks-picker-date"/>
+					                    </div>
+					                  </div>
+					                </div>
+					              </li>
+					            </ul>
+					          </div>
+					          <div id="ks-picker-date-container"></div>
+					        </div>
+					      </div>
+			          </div>
+			        </div>
+			      </div>
+			    </li>
+			    
+			    
+			    
+			    
 			  </ul>
          </form>
  

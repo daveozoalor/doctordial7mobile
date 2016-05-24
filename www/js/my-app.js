@@ -28,8 +28,14 @@ var mainView = myApp.addView('.view-main', {
     //domCache: true,
 });
 
-
-
+//for date and time
+var currentdate = new Date(); 
+var todaysdate = "Now: " + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear();
+var currenttime =    currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
 
 //function to create anything
 function createAnything(formData, childVar){
@@ -341,7 +347,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   //get the list from database
 	   var ref = new Firebase("https://doctordial.firebaseio.com/specializations");
 		// Attach an asynchronous callback to read the data at our posts reference
-		var specializations;
+		//var specializations;
 		var messageList = $$('.specialization-list-block');
 		ref.limitToLast(50).on("child_added", function(snapshot) {
 		   var data = snapshot.val();
@@ -443,7 +449,7 @@ $$('.change-personal-doctor').on('click', function () {
 			      //yes
 			      localStorage.removeItem("personal_doctor_id");
 			       $$('.add-personal-doctor').show();
-			       mainView.router.loadPage("specializations.html");
+			       mainView.router.loadPage("specializations_list.html");
 			      //myApp.alert("Doctor added successfully");
 			      },
 			      function () {
@@ -626,11 +632,19 @@ var mySearchbar = myApp.searchbar('.searchbar', {
          
 
 	
+  
+myApp.onPageInit('complaints_list', function (page) {
+  //create new coomplaint
   $$('.create-complaint-modal').on('click', function () {
   	
   myApp.modal({
     title:  'Type your health complaint below',
-    text: '<div class="list-block" ><ul><li class="align-top"><form id="addComplaintForm"> <div class="item-content"><div class="item-inner"><div class="item-input"> <input type="text" name="title" /> <br/> <textarea name="text"></textarea></div> </div> </div> </form> </li> </ul> </div>',
+    text: '<div class="list-block" ><ul><li class="align-top"><form id="addComplaintForm"> <div class="item-content"><div class="item-inner"><div class="item-input">'+
+    '<input type="text" name="title" placeholder="Title" style="border: 1px solid #9fa39a; border-radius: 3px; "/> <br/><textarea name="text" placeholder="Symptoms" style="border: 1px solid #9fa39a; border-radius: 3px;"></textarea>'+
+    '<input type="hidden" value="'+currenttime+'" name="time" hidden />'+
+    '<input type="hidden" value="'+todaysdate+'" name="date" hidden />'+
+    '<input type="hidden" value="'+localStorage.user_id+'" name="user_id" hidden />'+
+    '</div> </div> </div> </form> </li> </ul> </div>',
     buttons: [
       {
         text: 'submit',
@@ -653,9 +667,6 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 });
   
   
-  
-myApp.onPageInit('complaints_list', function (page) {
-  
 var mySearchbar = myApp.searchbar('.searchbar', {
     searchList: '.list-block-search',
     searchIn: '.item-title'
@@ -664,9 +675,8 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   //get the list from database
 	   var ref = new Firebase("https://doctordial.firebaseio.com/complaints");
 		// Attach an asynchronous callback to read the data at our posts reference
-		var specializations;
 		var messageList = $$('.specialization-list-block');
-		ref.limitToLast(50).on("child_added", function(snapshot) {
+		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToFirst(50).on("child_added", function(snapshot) {
 		   var data = snapshot.val();
 		   //specializations = JSON.stringify(snapshot.val());
 					//doctors list
@@ -676,13 +686,18 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			    var specs_id = snapshot.key(); //get the id
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
-             // myApp.alert(JSON.stringify(snapshot.val()));
 			    //ADD MESSAGE
+			    
+			    //shorten Text
+			    function truncateString(str, length) {
+				     return str.length > length ? str.substring(0, length - 3) + '...' : str
+				  }
+              
 			    messageList.append('<li>'+
-		      '<a href="doctors_list.html?id='+specs_id+'&categoryname='+title+'" class="item-link item-content" data-context-name="languages">'+
-		          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
+		      '<a href="complaints_view.html?id='+specs_id+'&title='+truncateString(title, 25)+'" class="item-link item-content" data-context-name="languages">'+
+		          '<!--<div class="item-media"><i class="fa fa-user" aria-hidden="true"></i></div>-->' +
 		          '<div class="item-inner">'+
-		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+title+'</div>'+
+		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+truncateString(title, 140)+'</div>'+
 		          '</div>'+
 		      '</a>'+
 		    '</li>');
@@ -700,6 +715,169 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 });
   
 
+
+
+ myApp.onPageInit('complaints_view', function(page) {
+
+
+
+
+// Conversation flag
+var conversationStarted = false;
+
+try{
+var myMessages = myApp.messages('.messages', {
+  autoLayout:true
+});
+}catch(err1){
+	alert("As you can see: "+err1.message);
+}
+
+ var myMessagebar = myApp.messagebar('.messagebar', {
+    maxHeight: 150
+});  
+
+// Do something here when page loaded and initialized
+	//var scrolled = 0;
+			  // CREATE A REFERENCE TO FIREBASE
+			  var messagesRef = new Firebase('https://doctordial.firebaseio.com/complaints');
+               
+               
+               //find this message, 
+              var thismessage = messagesRef.child(page.query.id);
+              thismessage.once("value", function(snapshot) {
+				// attach it as the first message
+				   //GET DATA
+				 
+			    var data = snapshot.val();
+			    var username = data.name || "anonymous";
+			    var message = "<b>"+data.title+"</b> <br/> "+data.text;
+			    
+			    if(localStorage.user_id == data.user_id){ //if this is the sender
+					 var messageType = 'sent';
+					   }else{
+					   	     var messageType = 'received';
+					   }
+			    var day = data.day;
+			    var time = data.time;
+			    
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+				try{
+					myMessages.addMessage({
+				    // Message text
+				    text: message,
+				    // Random message type
+				    type: messageType,
+				    // Avatar and name:
+				    //avatar: avatar,
+				    //name: name,
+				    // Day
+				    day: !conversationStarted ? 'Today' : false,
+				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				  });
+				}catch(err){
+					//alert("got the error"+err);
+				}
+				  
+				});
+				
+				
+			  // REGISTER DOM ELEMENTS
+			  var messageField = $$('#messageInput');
+			  var nameField = $$('#nameInput');
+			  var messageList = $$('.messages');
+			  var sendMessageButton = $$('#sendMessageButton');
+	  
+				// Init Messagebar
+				var myMessagebar = myApp.messagebar('.messagebar');
+				 
+				// Handle message
+				$$('.messagebar .link').on('click', function () {
+					
+				  // Message text
+				  var messageText = myMessagebar.value().trim();
+				  // Exit if empy message
+				  if (messageText.length === 0) return;
+				 
+				  // Empty messagebar
+				  myMessagebar.clear()
+				 
+				  
+				 var name = nameField.val(); 
+				 //SAVE DATA TO FIREBASE AND EMPTY FIELD
+			     // messagesRef.push({name:name, text:messageText});
+				  // Avatar and name for received message
+				 // var avatar;
+				  
+			
+			  
+				var complaintReply = messagesRef.child(page.query.id+"/complaint_replies");
+				  // Add message
+				  complaintReply.push({
+				  	//userid
+				  	user_id: localStorage.user_id, 
+				  	receiver_user_id: page.query.id,
+				    // Message text
+				    text: messageText,
+				    complaint_id: page.query.id,
+				    // Random message type
+				    // Avatar and name:
+				    //avatar: avatar,
+				   // name: name,
+				    // Day
+				    day: !conversationStarted ? 'Today' : false,
+				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				  })
+				  
+				
+				  // Update conversation flag
+				  conversationStarted = true;
+				});                
+
+
+			  // Add a callback that is triggered for each chat message. .child("receiver_user_id")equalTo(page.query.id)
+			  //messagesRef.orderByChild("personal_doctor_id").equalTo(page.query.id).limitToLast(20).on('child_added', function (snapshot) {
+			  var replyMessage = messagesRef.child(page.query.id+"/complaint_replies");
+			  replyMessage.on('child_added', function (snapshot) {
+			    //GET DATA
+			    var data = snapshot.val();
+			    var username = data.title || "anonymous";
+			    var message = data.text;
+			    
+			    if(localStorage.user_id == data.user_id){ //if this is the sender
+					 var messageType = 'sent';
+					   }else{
+					   	     var messageType = 'received';
+					   }
+			    var day = data.day;
+			    var time = data.time;
+			    
+			    
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+			 
+			
+				try{
+					myMessages.addMessage({
+				  	
+				    // Message text
+				    text: message,
+				    // Random message type
+				    type: messageType,
+				    // Avatar and name:
+				    //avatar: avatar,
+				    //name: name,
+				    // Day
+				    day: !conversationStarted ? 'Today' : false,
+				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				  });
+				}catch(err){
+					//alert("got the error"+err);
+				}
+				  
+			  });
+
+}).trigger();
 
 
  myApp.onPageInit('messages_view', function(page) {
@@ -841,8 +1019,6 @@ var myMessages = myApp.messages('.messages', {
 
 
 
-
-
 //sample code to prevent back button from existing the app
 document.addEventListener('backbutton', function (e) {
             e.preventDefault();
@@ -868,3 +1044,9 @@ document.addEventListener('backbutton', function (e) {
                 ['OK', 'Cancel']      // button labels
             );
         }, false);
+
+
+
+
+                
+                
