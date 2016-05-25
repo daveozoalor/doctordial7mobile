@@ -99,7 +99,7 @@ ref.createUser(formData,
 			  if (authData && isNewUser) {
 			    // save the user's profile into the database so we can list users,
 			    // use them in Security and Firebase Rules, and show profiles
-			    ref.child("users").child(authData.uid).set({
+			    ref.child(authData.uid).set({
 			      provider: authData.provider,
 			      name: getName(authData) //the first part of the users email
 			    });
@@ -338,6 +338,15 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   $("#addAccount").on('click', function () {
    // var email = pageContainer.find('input[name="email"]').val();
     var formData = myApp.formToJSON('#addNew'); //convert submitted form to json.
+  formData.user_id = localStorage.user_id;
+  createAnything(formData, "specializations"); //do the registration and report errors if found
+ 
+  });
+  
+//dummy function I used to create new category of doctors
+  $("#addAccount").on('click', function () {
+   // var email = pageContainer.find('input[name="email"]').val();
+    var formData = myApp.formToJSON('#addNew'); //convert submitted form to json.
   
   createAnything(formData, "specializations"); //do the registration and report errors if found
  
@@ -366,6 +375,61 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
 		          '<div class="item-inner">'+
 		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+name+'</div>'+
+		          '</div>'+
+		      '</a>'+
+		    '</li>');
+					
+					
+		
+		
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+		
+		
+ 
+});
+
+myApp.onPageInit('appointments_list', function (page) {
+  
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+}); 
+
+//dummy function I used to create new category of doctors
+  $("#addAppointmentSchedule").on('click', function () {
+   // var email = pageContainer.find('input[name="email"]').val();
+    var formData = myApp.formToJSON('#addNewAppointmentSchedule'); //convert submitted form to json.
+  formData.user_id = localStorage.user_id;
+  createAnything(formData, "appointments"); //do the registration and report errors if found
+ 
+  });
+  
+
+  
+  
+  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/appointments");
+		// Attach an asynchronous callback to read the data at our posts reference
+		//var specializations;
+		var messageList = $$('.appointment-list-block');
+		ref.limitToLast(50).on("child_added", function(snapshot) {
+		   var data = snapshot.val();
+		   //specializations = JSON.stringify(snapshot.val());
+					//doctors list
+					
+			    var specs_id = snapshot.key(); //get the id
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+             // myApp.alert(JSON.stringify(snapshot.val()));
+			    //ADD MESSAGE
+			    messageList.append('<li>'+
+		      '<a href="doctors_list.html?id='+specs_id+'" class="item-link item-content" data-context-name="languages">'+
+		          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
+		          '<div class="item-inner">'+
+		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'</div>'+
 		          '</div>'+
 		      '</a>'+
 		    '</li>');

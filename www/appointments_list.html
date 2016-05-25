@@ -1,4 +1,4 @@
-  <div class="page" data-page="specializations_list">
+  <div class="page" data-page="appointments_list">
         
          <!-- Top Navbar. In Material theme it should be inside of the page-->
             <div class="navbar">
@@ -31,12 +31,14 @@
                 Nothing found
         </div>
  
-        <div class="list-block virtual-list list-block-search searchbar-found doctor-list">
-           
+        <div class="list-block virtual-list list-block-search searchbar-found appointment-list">
+           <ul class="appointment-list-block list-block-search">
+		       	
+		       </ul>
         </div>
          
-          
-          <form id="addNew" class="list-block">
+          <h4>What times of the week are you usually free?</h4>
+          <form id="addNewAppointmentSchedule" class="list-block">
 			  <ul>
 			    <li>
 			      <div class="item-content">
@@ -64,39 +66,19 @@
 			    <li>
 			      <div class="item-content">
 			        <div class="item-inner">
-			          <div class="item-title label">Decription</div>
+			         <div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Start Time</div>
 			          <div class="item-input">
-			            <input type="time" name="description" placeholder="Description">
+			            <input type="time" name="start-time" placeholder="Start Time">
 			          </div>
 			        </div>
 			      </div>
 			    </li>
-			    
-			     
 			    <li>
 			      <div class="item-content">
 			        <div class="item-inner">
-			          <div class="item-title label">Decription</div>
+			         <div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> End Time</div>
 			          <div class="item-input">
-			            <div class="content-block-title">Inline Picker / Date-time</div>
-					      <div class="content-block">
-					        <div style="padding:0; margin-right:-15px; width:auto" class="content-block-inner">
-					          <div style="margin:0" class="list-block">
-					            <ul style="border-top:none">
-					              <li>
-					                <div class="item-content">
-					                  <div class="item-inner"> 
-					                    <div class="item-input">
-					                      <input type="text" placeholder="Date Time" readonly="readonly" id="ks-picker-date"/>
-					                    </div>
-					                  </div>
-					                </div>
-					              </li>
-					            </ul>
-					          </div>
-					          <div id="ks-picker-date-container"></div>
-					        </div>
-					      </div>
+			            <input type="time" name="end-time" placeholder="End Time">
 			          </div>
 			        </div>
 			      </div>
@@ -109,7 +91,7 @@
          </form>
  
 			<div class="content-block">
-			  <a href="#" id="addAccount" class="button button-fill">Get Form Data</a>
+			  <a href="#" id="addAppointmentSchedule" class="button button-fill">Add</a>
 			</div>
 			
 			
