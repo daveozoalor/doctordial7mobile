@@ -415,7 +415,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		// Attach an asynchronous callback to read the data at our posts reference
 		//var specializations;
 		var messageList = $$('.appointment-list-block');
-		ref.limitToLast(50).on("child_added", function(snapshot) {
+		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToLast(50).on("child_added", function(snapshot) {
 		   var data = snapshot.val();
 		   //specializations = JSON.stringify(snapshot.val());
 					//doctors list
@@ -429,14 +429,39 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		      '<a href="doctors_list.html?id='+specs_id+'" class="item-link item-content" data-context-name="languages">'+
 		          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
 		          '<div class="item-inner">'+
-		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'</div>'+
+		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+
+		            data.day+ 's '+
+		            data.starttime+ ' - '+
+		            data.endtime+
+		            '</div>'+
 		          '</div>'+
 		      '</a>'+
 		    '</li>');
 					
 					
-		
-		
+					//our aim is to divide the time difference into snaps of 15 minutes each,
+					//and use it to build a radio group the user can choose from
+					
+					//find difference between two times, the Aug 08 2012 is just a decoy so that the Date() will worrk
+				var diff = new Date("Aug 08 2012 9:30") - new Date("Aug 08 2012 5:30"); 
+                diff_time = diff/(60*1000);
+
+               // myApp.alert(diff_time);	
+		      
+		      function getTimeAsSeconds(time){  //convert time to seconds and simply add the two seconds
+				    var timeArray = time.split(':');
+				    return Number(timeArray [0]) * 3600 + Number(timeArray [1]) * 60 + Number(timeArray[2]);
+				}
+				//convert seconds back to time
+		      function formatSeconds(seconds)
+				{
+				    var date = new Date(1970,0,1);
+				    date.setSeconds(seconds);
+				    return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+				}
+				
+				
+				
 			
 		}, function (errorObject) {
 		  console.log("The read failed: " + errorObject.code);
