@@ -28,8 +28,14 @@ var mainView = myApp.addView('.view-main', {
     //domCache: true,
 });
 
-
-
+//for date and time
+var currentdate = new Date(); 
+var todaysdate = "Now: " + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear();
+var currenttime =    currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
 
 //function to create anything
 function createAnything(formData, childVar){
@@ -93,7 +99,7 @@ ref.createUser(formData,
 			  if (authData && isNewUser) {
 			    // save the user's profile into the database so we can list users,
 			    // use them in Security and Firebase Rules, and show profiles
-			    ref.child("users").child(authData.uid).set({
+			    ref.child(authData.uid).set({
 			      provider: authData.provider,
 			      name: getName(authData) //the first part of the users email
 			    });
@@ -124,198 +130,166 @@ ref.createUser(formData,
 
 }
 
-//handle login
-function loginFire(sentEmail,sentPassword){ //get this login from database 
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.authWithPassword({
-  email    : sentEmail,
-  password : sentPassword
-}, function(error, authData) {
-  if (error) {
-  	switch (error.code) {
-      case "INVALID_EMAIL":
-        myApp.alert("The specified user account email is invalid.","Error");
-        break;
-      case "INVALID_PASSWORD":
-        myApp.alert("The specified user account password is incorrect.","Error");
-        break;
-      case "INVALID_USER":
-        myApp.alert("The specified user account does not exist.","Error");
-        break;
-      default:
-        myApp.alert("Error logging user in:", error);
-    }
-    return false; //required to prevent default router action
-  } else {
-  	//save data in local storage
-  	localStorage.user_id = authData.uid;
-  	
-     myApp.alert("Login successful ", 'Success!');
-       myApp.closeModal('.login-screen'); //closelogin screen
-       myApp.closeModal();
-  }
-});
+		//handle login
+		function loginFire(sentEmail,sentPassword){ //get this login from database 
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.authWithPassword({
+		  email    : sentEmail,
+		  password : sentPassword
+		}, function(error, authData) {
+		  if (error) {
+		  	switch (error.code) {
+		      case "INVALID_EMAIL":
+		        myApp.alert("The specified user account email is invalid.","Error");
+		        break;
+		      case "INVALID_PASSWORD":
+		        myApp.alert("The specified user account password is incorrect.","Error");
+		        break;
+		      case "INVALID_USER":
+		        myApp.alert("The specified user account does not exist.","Error");
+		        break;
+		      default:
+		        myApp.alert("Error logging user in:", error);
+		    }
+		    return false; //required to prevent default router action
+		  } else {
+		  	//save data in local storage
+		  	localStorage.user_id = authData.uid;
+		  	
+		     myApp.alert("Login successful ", 'Success!');
+		       myApp.closeModal('.login-screen'); //closelogin screen
+		       myApp.closeModal();
+		  }
+		});
 
-}
+		}
 
-function changeEmail(){
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.changeEmail({
-  oldEmail : "bobtony@firebase.com",
-  newEmail : "bobtony@google.com",
-  password : "correcthorsebatterystaple"
-}, function(error) {
-  if (error === null) {
-    console.log("Email changed successfully");
-  } else {
-    console.log("Error changing email:", error);
-  }
-});
-}
+		function changeEmail(){
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.changeEmail({
+		  oldEmail : "bobtony@firebase.com",
+		  newEmail : "bobtony@google.com",
+		  password : "correcthorsebatterystaple"
+		}, function(error) {
+		  if (error === null) {
+		    console.log("Email changed successfully");
+		  } else {
+		    console.log("Error changing email:", error);
+		  }
+		});
+		}
 
-function changePassword(){
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.changePassword({
-  email       : "bobtony@firebase.com",
-  oldPassword : "correcthorsebatterystaple",
-  newPassword : "neatsupersecurenewpassword"
-}, function(error) {
-  if (error === null) {
-    console.log("Password changed successfully");
-  } else {
-    console.log("Error changing password:", error);
-  }
-});
-}
+		function changePassword(){
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.changePassword({
+		  email       : "bobtony@firebase.com",
+		  oldPassword : "correcthorsebatterystaple",
+		  newPassword : "neatsupersecurenewpassword"
+		}, function(error) {
+		  if (error === null) {
+		    console.log("Password changed successfully");
+		  } else {
+		    console.log("Error changing password:", error);
+		  }
+		});
+		}
 
-function sendPasswordResetEmail(recoveryEmail){ 
-//You can edit the content of the password reset email from the Login & Auth tab of your App Dashboard.
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.resetPassword({
-  email : recoveryEmail
-}, function(error) {
-  if (error === null) {
-    myApp.alert("Password reset email sent successfully");
-  } else {
-  	myApp.alert("Error sending password reset email:", error);
-  }
-});
-}
+		function sendPasswordResetEmail(recoveryEmail){ 
+		//You can edit the content of the password reset email from the Login & Auth tab of your App Dashboard.
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.resetPassword({
+		  email : recoveryEmail
+		}, function(error) {
+		  if (error === null) {
+		    myApp.alert("Password reset email sent successfully");
+		  } else {
+		  	myApp.alert("Error sending password reset email:", error);
+		  }
+		});
+		}
 
-function deleteUser(){
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.removeUser({
-  email    : "bobtony@firebase.com",
-  password : "correcthorsebatterystaple"
-}, function(error) {
-  if (error === null) {
-    console.log("User removed successfully");
-  } else {
-    console.log("Error removing user:", error);
-  }
-});
-}
+		function deleteUser(){
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.removeUser({
+		  email    : "bobtony@firebase.com",
+		  password : "correcthorsebatterystaple"
+		}, function(error) {
+		  if (error === null) {
+		    console.log("User removed successfully");
+		  } else {
+		    console.log("Error removing user:", error);
+		  }
+		});
+		}
 
-// Create a callback which logs the current auth state
-function checkLoggedIn(authData) {
-  if (localStorage.user_id != null) {
-    
-       myApp.closeModal(); //closelogin screen
-  } else {
-			myApp.loginScreen(); // open Login Screen if user is not logged in
-  }
-}
-// Register the callback to be fired every time auth state changes
-var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.onAuth(checkLoggedIn);
+		// Create a callback which logs the current auth state
+		function checkLoggedIn(authData) {
+		  if (localStorage.user_id != null) {
+		    
+		       myApp.closeModal(); //closelogin screen
+		  } else {
+					myApp.loginScreen(); // open Login Screen if user is not logged in
+		  }
+		}
+		// Register the callback to be fired every time auth state changes
+		var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.onAuth(checkLoggedIn);
 
 
 
- 
-  //recover email
-  $$('.recovery-button').on('click', function () {
-  	var email = $$('input[name="recoveryEmail"]').val();
-  	sendPasswordResetEmail(email);
-  	});
-  	
-  	
-  $$('.open-3-modal').on('click', function () {
-  	
-  myApp.modal({
-    title:  'Type your health complaint below',
-    text: '<div class="list-block"><ul><li class="align-top"><div class="item-content"><div class="item-inner"><div class="item-input"> <textarea></textarea></div> </div> </div> </li> </ul> </div>',
-    buttons: [
-      {
-        text: 'submit',
-        onClick: function() {
-          myApp.alert('Complaint succeffuly submitted','Success!')
-        }
-      },
-      {
-        text: 'call',
-        onClick: function() {
-          myApp.alert('You clicked second button!')
-        }
-      },
-      {
-        text: 'cancel',
-        bold: true,
-        onClick: function() {
-        //  myApp.alert('You clicked third button!')
-        }
-      },
-    ]
-  })
-});
-  
-  
+		 
+		  //recover email
+		  $$('.recovery-button').on('click', function () {
+		  	var email = $$('input[name="recoveryEmail"]').val();
+		  	sendPasswordResetEmail(email);
+		  	});
+		  	
+		  
 
-	$$('.list-button').on('click', function () {
-   // var email = pageContainer.find('input[name="email"]').val();
-    var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
-  
-  createUserAccount(formData); //do the registration and report errors if found
-  
- 
-  });
-    	
-       //run login function
-	//messages must be initialized here
-  $$('.login-button').on('click', function () {
-  	var email = $$('input[name="loginemail"]').val();
-  	var password = $$('input[name="loginpassword"]').val();
-  loginFire(email, password);
-  
-  });
-  
-  
+			$$('.list-button').on('click', function () {
+			   // var email = pageContainer.find('input[name="email"]').val();
+			    var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
+			  
+			  createUserAccount(formData); //do the registration and report errors if found
+			  
+			 
+			});
+		    	
+		       //run login function
+			//messages must be initialized here
+		  $$('.login-button').on('click', function () {
+		  	var email = $$('input[name="loginemail"]').val();
+		  	var password = $$('input[name="loginpassword"]').val();
+		  loginFire(email, password);
+		  
+		  });
+		  
+		  
 
- $$('.logout').on('click', function () {
- 	
-          	 
-          	   myApp.modal({
-    title:  'Are you sure you wish to logout?',
-    text: '<div class="list-block"></div>',
-    buttons: [
-      {
-        text: 'yes',
-        onClick: function() {
-           var ref = new Firebase("https://doctordial.firebaseio.com");
-          	myApp.alert("You are loging out", "Logout");
-          	  ref.unauth(); //logout
-          	  localStorage.removeItem("user_id");
-          	 myApp.loginScreen(); // open Login Screen if user is not logged in 
-          	 
-        }
-      },
-      {
-        text: 'cancel',
-        bold: true,
-        
-      },
-    ]
-  })
- });
+		 $$('.logout').on('click', function () {
+		          	   myApp.modal({
+		    title:  'Are you sure you wish to logout?',
+		    text: '<div class="list-block"></div>',
+		    buttons: [
+		      {
+		        text: 'yes',
+		        onClick: function() {
+		           var ref = new Firebase("https://doctordial.firebaseio.com");
+		          	myApp.alert("You are loging out", "Logout");
+		          	  ref.unauth(); //logout
+		          	  localStorage.removeItem("user_id");
+		          	  localStorage.removeItem("personal_doctor_id");
+		          	 myApp.loginScreen(); // open Login Screen if user is not logged in 
+		        }
+		      },
+		      {
+		        text: 'cancel',
+		        bold: true,
+		        
+		      },
+		    ]
+		  })
+		 });
 
 
 // Generate dynamic page
@@ -361,6 +335,15 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   $("#addAccount").on('click', function () {
    // var email = pageContainer.find('input[name="email"]').val();
     var formData = myApp.formToJSON('#addNew'); //convert submitted form to json.
+  formData.user_id = localStorage.user_id;
+  createAnything(formData, "specializations"); //do the registration and report errors if found
+ 
+  });
+  
+//dummy function I used to create new category of doctors
+  $("#addAccount").on('click', function () {
+   // var email = pageContainer.find('input[name="email"]').val();
+    var formData = myApp.formToJSON('#addNew'); //convert submitted form to json.
   
   createAnything(formData, "specializations"); //do the registration and report errors if found
  
@@ -370,7 +353,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   //get the list from database
 	   var ref = new Firebase("https://doctordial.firebaseio.com/specializations");
 		// Attach an asynchronous callback to read the data at our posts reference
-		var specializations;
+		//var specializations;
 		var messageList = $$('.specialization-list-block');
 		ref.limitToLast(50).on("child_added", function(snapshot) {
 		   var data = snapshot.val();
@@ -404,11 +387,141 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		
  
 });
-         
-$$('.personal-doctor').on('click', function () {
-		if(localStorage.personal_doctor_id != null){
-			mainView.router.loadPage("doctors_view.html?personal_doctor_id="+localStorage.personal_doctor_id);
-		}else{
+
+myApp.onPageInit('appointments_list', function (page) {
+  
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+}); 
+
+//dummy function I used to create new category of doctors
+  $("#addAppointmentSchedule").on('click', function () {
+   // var email = pageContainer.find('input[name="email"]').val();
+    var formData = myApp.formToJSON('#addNewAppointmentSchedule'); //convert submitted form to json.
+  formData.user_id = localStorage.user_id;
+  createAnything(formData, "appointments"); //do the registration and report errors if found
+ 
+  });
+  
+
+  
+  
+  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/appointments");
+		// Attach an asynchronous callback to read the data at our posts reference
+		//var specializations;
+		var messageList = $$('.appointment-list-block');
+		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToLast(50).on("child_added", function(snapshot) {
+		   var data = snapshot.val();
+		   //specializations = JSON.stringify(snapshot.val());
+					//doctors list
+					
+			    var specs_id = snapshot.key(); //get the id
+
+		
+			   messageList.append('<li>'+
+			      '<a href="doctors_list.html?id='+specs_id+'" class="item-link item-content" data-context-name="languages">'+
+			          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
+			          '<div class="item-inner">'+
+			            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+
+			            data.day+ 's '+
+			            data.starttime+ ' - '+
+			            data.endtime+
+			            '</div>'+
+			          '</div>'+
+			      '</a>'+
+			    '</li>');
+					
+					
+					//our aim is to divide the time difference into snaps of 15 minutes each,
+				var diff = new Date("Aug 08 2012 9:30") - new Date("Aug 08 2012 5:30"); 
+                diff_time = diff/(60*1000);
+
+               // myApp.alert(diff_time);	
+		      
+		      function getTimeAsSeconds(time){  //convert time to seconds and simply add the two seconds
+				    var timeArray = time.split(':');
+				    return Number(timeArray [0]) * 3600 + Number(timeArray [1]) * 60 + Number(timeArray[2]);
+				}
+				//convert seconds back to time
+		      function formatSeconds(seconds)
+				{
+				    var date = new Date(1970,0,1);
+				    date.setSeconds(seconds);
+				    return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+				}
+				
+				
+				
+				//check if user is a doctors
+				
+				$$('.addNewAppointment').html('
+          <h4>What times of the week are you usually free?</h4>'+
+          '<form id="addNewAppointmentSchedule" class="list-block">'+
+			 ' <ul>'+
+			    '<li>'+
+			      '<div class="item-content">'+
+			       ' <div class="item-inner">'+
+			         ' <div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Choose Weekday</div>'+
+			         ' <div class="item-input">'+
+			          '  <input type="text" name="name" >'+
+			            ' <div class="item-input">'+
+						  '  <select name="day">'+
+							'  <option value="Monday">Monday</option>'+
+							'  <option value="Tuesday">Tuesday</option>'+
+							'  <option value="Wednesday">Wednesday</option>'+
+							'  <option value="Thursday">Thursday</option>'+
+							'  <option value="Friday">Friday</option>'+
+							'  <option value="Saturday">Saturday</option>'+
+							'  <option value="Sunday">Sunday</option>'+
+							'</select>'+
+						 ' </div>'+
+			         ' </div>'+
+			        '</div>'+
+			      '</div>'+
+			   ' </li>'+
+			   ' <li>'+
+			    ' <div class="item-content">'+
+			      '  <div class="item-inner">'+
+			         '<div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Start Time</div>'+
+			         ' <div class="item-input">'+
+			            '<input type="time" name="starttime" placeholder="Start Time">'+
+			          '</div>'+
+			       ' </div>'+
+			     ' </div>'+
+			    '</li>'+
+			    '<li>'+
+			     ' <div class="item-content">'+
+			        '<div class="item-inner">'+
+			         '<div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> End Time</div>'+
+			          '<div class="item-input">'+
+			            '<input type="time" name="endtime" placeholder="End Time">'+
+			          '</div>'+
+			        '</div>'+
+			      '</div>'+
+			    '</li>'+
+			  '</ul>'+
+         '</form>');
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+		
+		
+ 
+});
+
+			//if doctor is not 
+	$$('.personal-doctor').on('click', function () {
+	//if persnal doctor is being viewed
+	
+	//myApp.alert("Join go: "+localStorage.personal_doctor_id);
+	
+      if(localStorage.personal_doctor_id != null){ //if personal doctor is another doctor
+     // myApp.alert("Local Storage: "+localStorage.personal_doctor_id);
+			mainView.router.loadPage("doctors_view.html?id="+localStorage.personal_doctor_id);
+		} else{
 			
 			//redirect to doctor categories
 			  myApp.confirm('You have not added a personal doctor yet. Would you like to add one now?','Add doctor', 
@@ -423,44 +536,101 @@ $$('.personal-doctor').on('click', function () {
 		}
 		
 		});
-
 	
 	
 	
 myApp.onPageInit('doctors_view', function (page) {
-	  scheduler.init("scheduler_here");
-	var ref = new Firebase("https://doctordial.firebaseio.com/users"+localStorage.user_id);
-		ref.orderByChild("personal_doctor_id").equalTo(page.query.id).on("child_added", function(snapshot) {
-		  
-		  if(snapshot.key() != null){ //if user
-		  	
-		  	 $$('.personal-doctor').hide();
-		  }else{
-					  	//show button
-				$$('.personal-doctor').on('click', function () {
-					
-			    myApp.confirm('Are you sure you want to make this doctor your personal doctor?','Please Confirm', 
+		
+	 //dont show the add button if this is the viewer's personal doc
+		if(localStorage.personal_doctor_id != null && localStorage.personal_doctor_id == page.query.id){
+		 //hide button
+		 //myApp.alert("Page Query: "+page.query.id+" . Local Storage: "+localStorage.personal_doctor_id + " . User id: " + localStorage.user_id);
+		 $$('.add-personal-doctor').hide();
+		}
+		
+         
+//add doctor button on index page. 
+$$('.add-personal-doctor').on('click', function () {
+			//redirect to doctor categories
+			  myApp.confirm('Would you like to set this doctor as your personal doctor? This will replace your current personal doctor','Add Peronsal Doctor', 
 			      function () {
-			       
-			       var personalDoc = {
-				   	personal_doctor_id: page.query.id
-				   }
-			        updateAnything(personalDoc, "users/"+localStorage.user_id+"/");
-			        
-			        localStorage.personal_doctor_id = page.query.id; // save it
-			        
-			       $$('.personal-doctor').hide(); //hide the button 
+			      //yes
+			      var formData = {personal_doctor_id: page.query.id};
+			      
+			      updateAnything(formData, "users/"+localStorage.user_id); //update this user's record and add personal doctor
+			      
+			      localStorage.personal_doctor_id = page.query.id;
+			       $$('.add-personal-doctor').hide();
+			      //myApp.alert("Doctor added successfully");
 			      },
 			      function () {
 			       
 			       // updateAnything();
 			      }
 			    );
-			});
+			    
+		});		
+         
+//add doctor button on index page. 
+$$('.change-personal-doctor').on('click', function () {
+			//redirect to doctor categories
+			  myApp.confirm('Would you like choose another personal doctor? This will delete your current personal doctor setings','Add Peronsal Doctor', 
+			      function () {
+			      //yes
+			      localStorage.removeItem("personal_doctor_id");
+			       $$('.add-personal-doctor').show();
+			       mainView.router.loadPage("specializations_list.html");
+			      //myApp.alert("Doctor added successfully");
+			      },
+			      function () {
+			       
+			       // updateAnything();
+			      }
+			    );
+			    
+		});
+	
+	
+	
+	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
+	
+	
+		ref.orderByChild("personal_doctor_id").startAt(page.query.id).endAt(page.query.id).once("child_added", function(snapshot) {
+			
+			myApp.alert("Userid: "+localStorage.user_id +" <br/> Doctor ID: "+ page.query.id);
+			
+		  if(snapshot.key() != null){
 		  	
-		  }
-		  
-		  
+		  	
+		  	 
+		  	 $$('.add-personal-doctor').hide();
+		  	 
+				$( ".add-personal-doctor" ).attr({
+				  class: "color-gray"
+				});
+		  }else{
+					  	//show button
+				$$('.add-personal-doctor').on('click', function () {
+				    myApp.confirm('Are you sure you want to make this doctor your personal doctor?','Please Confirm', 
+				      function () {
+				       
+				       var personalDoc = {
+					   	personal_doctor_id: page.query.id
+					   }
+				        updateAnything(personalDoc, "users/"+localStorage.user_id+"/");
+				        
+				        localStorage.personal_doctor_id = page.query.id; // save it
+				        
+				       $$('.add-personal-doctor').hide(); //hide the button 
+				       
+				      },
+				      function () {
+				       
+				       // updateAnything();
+					      }
+					    );
+					});
+			      }
 		});
 
 	
@@ -519,7 +689,6 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
 });
          
-	
 myApp.onPageInit('doctors_list', function (page) {
    //var page = e.detail.page;
   // alert(page.query.categoryname);
@@ -592,8 +761,253 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 });
          
 
-   
+	
+  
+myApp.onPageInit('complaints_list', function (page) {
+  //create new coomplaint
+  $$('.create-complaint-modal').on('click', function () {
+  	
+  myApp.modal({
+    title:  'Type your health complaint below',
+    text: '<div class="list-block" ><ul><li class="align-top"><form id="addComplaintForm"> <div class="item-content"><div class="item-inner"><div class="item-input">'+
+    '<input type="text" name="title" placeholder="Title" style="border: 1px solid #9fa39a; border-radius: 3px; "/> <br/><textarea name="text" placeholder="Symptoms" style="border: 1px solid #9fa39a; border-radius: 3px;"></textarea>'+
+    '<input type="hidden" value="'+currenttime+'" name="time" hidden />'+
+    '<input type="hidden" value="'+todaysdate+'" name="date" hidden />'+
+    '<input type="hidden" value="'+localStorage.user_id+'" name="user_id" hidden />'+
+    '</div> </div> </div> </form> </li> </ul> </div>',
+    buttons: [
+      {
+        text: 'submit',
+        onClick: function() {
+			   // var email = pageContainer.find('input[name="email"]').val();
+			    var formData = myApp.formToJSON('#addComplaintForm'); //convert submitted form to json.
+			    createAnything(formData, "complaints"); //do the registration and report errors if found
+			 
+        }
+      },
+      {
+        text: 'cancel',
+        bold: true,
+        onClick: function() {
+        //  myApp.alert('You clicked third button!')
+        }
+      },
+    ]
+  })
+});
+  
+  
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+}); 
 
+  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/complaints");
+		// Attach an asynchronous callback to read the data at our posts reference
+		var messageList = $$('.specialization-list-block');
+		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToFirst(50).on("child_added", function(snapshot) {
+		   var data = snapshot.val();
+		   //specializations = JSON.stringify(snapshot.val());
+					//doctors list
+					
+			    var title = data.title || "anonymous";
+			    var message = data.text;
+			    var specs_id = snapshot.key(); //get the id
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+			    //ADD MESSAGE
+			    
+			    //shorten Text
+			    function truncateString(str, length) {
+				     return str.length > length ? str.substring(0, length - 3) + '...' : str
+				  }
+              
+			    messageList.append('<li>'+
+		      '<a href="complaints_view.html?id='+specs_id+'&title='+truncateString(title, 25)+'" class="item-link item-content" data-context-name="languages">'+
+		          '<!--<div class="item-media"><i class="fa fa-user" aria-hidden="true"></i></div>-->' +
+		          '<div class="item-inner">'+
+		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+truncateString(title, 140)+'</div>'+
+		          '</div>'+
+		      '</a>'+
+		    '</li>');
+					
+					
+		
+		
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+		
+		
+ 
+});
+  
+
+
+
+ myApp.onPageInit('complaints_view', function(page) {
+
+
+
+
+// Conversation flag
+var conversationStarted = false;
+
+try{
+var myMessages = myApp.messages('.messages', {
+  autoLayout:true
+});
+}catch(err1){
+	alert("As you can see: "+err1.message);
+}
+
+ var myMessagebar = myApp.messagebar('.messagebar', {
+    maxHeight: 150
+});  
+
+// Do something here when page loaded and initialized
+	//var scrolled = 0;
+			  // CREATE A REFERENCE TO FIREBASE
+			  var messagesRef = new Firebase('https://doctordial.firebaseio.com/complaints');
+               
+               
+               //find this message, 
+              var thismessage = messagesRef.child(page.query.id);
+              thismessage.once("value", function(snapshot) {
+				// attach it as the first message
+				   //GET DATA
+				 
+			    var data = snapshot.val();
+			    var username = data.name || "anonymous";
+			    var message = "<b>"+data.title+"</b> <br/> "+data.text;
+			    
+			    if(localStorage.user_id == data.user_id){ //if this is the sender
+					 var messageType = 'sent';
+					   }else{
+					   	     var messageType = 'received';
+					   }
+			    var day = data.day;
+			    var time = data.time;
+			    
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+				try{
+					myMessages.addMessage({
+				    // Message text
+				    text: message,
+				    // Random message type
+				    type: messageType,
+				    // Avatar and name:
+				    //avatar: avatar,
+				    //name: name,
+				    // Day
+				    day: !conversationStarted ? 'Today' : false,
+				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				  });
+				}catch(err){
+					//alert("got the error"+err);
+				}
+				  
+				});
+				
+				
+			  // REGISTER DOM ELEMENTS
+			  var messageField = $$('#messageInput');
+			  var nameField = $$('#nameInput');
+			  var messageList = $$('.messages');
+			  var sendMessageButton = $$('#sendMessageButton');
+	  
+				// Init Messagebar
+				var myMessagebar = myApp.messagebar('.messagebar');
+				 
+				// Handle message
+				$$('.messagebar .link').on('click', function () {
+					
+				  // Message text
+				  var messageText = myMessagebar.value().trim();
+				  // Exit if empy message
+				  if (messageText.length === 0) return;
+				 
+				  // Empty messagebar
+				  myMessagebar.clear()
+				 
+				  
+				 var name = nameField.val(); 
+				 //SAVE DATA TO FIREBASE AND EMPTY FIELD
+			     // messagesRef.push({name:name, text:messageText});
+				  // Avatar and name for received message
+				 // var avatar;
+				  
+			
+			  
+				var complaintReply = messagesRef.child(page.query.id+"/complaint_replies");
+				  // Add message
+				  complaintReply.push({
+				  	//userid
+				  	user_id: localStorage.user_id, 
+				  	receiver_user_id: page.query.id,
+				    // Message text
+				    text: messageText,
+				    complaint_id: page.query.id,
+				    // Random message type
+				    // Avatar and name:
+				    //avatar: avatar,
+				   // name: name,
+				    // Day
+				    day: !conversationStarted ? 'Today' : false,
+				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				  })
+				  
+				
+				  // Update conversation flag
+				  conversationStarted = true;
+				});                
+
+
+			  // Add a callback that is triggered for each chat message. .child("receiver_user_id")equalTo(page.query.id)
+			  //messagesRef.orderByChild("personal_doctor_id").equalTo(page.query.id).limitToLast(20).on('child_added', function (snapshot) {
+			  var replyMessage = messagesRef.child(page.query.id+"/complaint_replies");
+			  replyMessage.on('child_added', function (snapshot) {
+			    //GET DATA
+			    var data = snapshot.val();
+			    var username = data.title || "anonymous";
+			    var message = data.text;
+			    
+			    if(localStorage.user_id == data.user_id){ //if this is the sender
+					 var messageType = 'sent';
+					   }else{
+					   	     var messageType = 'received';
+					   }
+			    var day = data.day;
+			    var time = data.time;
+			    
+			    
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+			 
+			
+				try{
+					myMessages.addMessage({
+				  	
+				    // Message text
+				    text: message,
+				    // Random message type
+				    type: messageType,
+				    // Avatar and name:
+				    //avatar: avatar,
+				    //name: name,
+				    // Day
+				    day: !conversationStarted ? 'Today' : false,
+				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				  });
+				}catch(err){
+					//alert("got the error"+err);
+				}
+				  
+			  });
+
+}).trigger();
 
 
  myApp.onPageInit('messages_view', function(page) {
@@ -733,3 +1147,36 @@ var myMessages = myApp.messages('.messages', {
 
 }).trigger();
 
+
+
+//sample code to prevent back button from existing the app
+document.addEventListener('backbutton', function (e) {
+            e.preventDefault();
+            /* Check for open panels */
+            if ($$('.panel.active').length > 0) {
+                f7.closePanel();
+                return;
+            }
+            /* Check for go back in history */
+            var view = f7.getCurrentView();
+            if (!view) return;
+            if (view.history.length > 1) {
+                view.router.back();
+                return;
+            }
+            /* Quit app */
+            navigator.notification.confirm(
+                'Exit Application ?',              // message
+                function (n) {
+                    if (n == 1) navigator.app.exitApp(); 
+                },
+                'Exit',        // title
+                ['OK', 'Cancel']      // button labels
+            );
+        }, false);
+
+
+
+
+                
+                

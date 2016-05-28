@@ -130,169 +130,166 @@ ref.createUser(formData,
 
 }
 
-//handle login
-function loginFire(sentEmail,sentPassword){ //get this login from database 
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.authWithPassword({
-  email    : sentEmail,
-  password : sentPassword
-}, function(error, authData) {
-  if (error) {
-  	switch (error.code) {
-      case "INVALID_EMAIL":
-        myApp.alert("The specified user account email is invalid.","Error");
-        break;
-      case "INVALID_PASSWORD":
-        myApp.alert("The specified user account password is incorrect.","Error");
-        break;
-      case "INVALID_USER":
-        myApp.alert("The specified user account does not exist.","Error");
-        break;
-      default:
-        myApp.alert("Error logging user in:", error);
-    }
-    return false; //required to prevent default router action
-  } else {
-  	//save data in local storage
-  	localStorage.user_id = authData.uid;
-  	
-     myApp.alert("Login successful ", 'Success!');
-       myApp.closeModal('.login-screen'); //closelogin screen
-       myApp.closeModal();
-  }
-});
+		//handle login
+		function loginFire(sentEmail,sentPassword){ //get this login from database 
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.authWithPassword({
+		  email    : sentEmail,
+		  password : sentPassword
+		}, function(error, authData) {
+		  if (error) {
+		  	switch (error.code) {
+		      case "INVALID_EMAIL":
+		        myApp.alert("The specified user account email is invalid.","Error");
+		        break;
+		      case "INVALID_PASSWORD":
+		        myApp.alert("The specified user account password is incorrect.","Error");
+		        break;
+		      case "INVALID_USER":
+		        myApp.alert("The specified user account does not exist.","Error");
+		        break;
+		      default:
+		        myApp.alert("Error logging user in:", error);
+		    }
+		    return false; //required to prevent default router action
+		  } else {
+		  	//save data in local storage
+		  	localStorage.user_id = authData.uid;
+		  	
+		     myApp.alert("Login successful ", 'Success!');
+		       myApp.closeModal('.login-screen'); //closelogin screen
+		       myApp.closeModal();
+		  }
+		});
 
-}
+		}
 
-function changeEmail(){
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.changeEmail({
-  oldEmail : "bobtony@firebase.com",
-  newEmail : "bobtony@google.com",
-  password : "correcthorsebatterystaple"
-}, function(error) {
-  if (error === null) {
-    console.log("Email changed successfully");
-  } else {
-    console.log("Error changing email:", error);
-  }
-});
-}
+		function changeEmail(){
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.changeEmail({
+		  oldEmail : "bobtony@firebase.com",
+		  newEmail : "bobtony@google.com",
+		  password : "correcthorsebatterystaple"
+		}, function(error) {
+		  if (error === null) {
+		    console.log("Email changed successfully");
+		  } else {
+		    console.log("Error changing email:", error);
+		  }
+		});
+		}
 
-function changePassword(){
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.changePassword({
-  email       : "bobtony@firebase.com",
-  oldPassword : "correcthorsebatterystaple",
-  newPassword : "neatsupersecurenewpassword"
-}, function(error) {
-  if (error === null) {
-    console.log("Password changed successfully");
-  } else {
-    console.log("Error changing password:", error);
-  }
-});
-}
+		function changePassword(){
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.changePassword({
+		  email       : "bobtony@firebase.com",
+		  oldPassword : "correcthorsebatterystaple",
+		  newPassword : "neatsupersecurenewpassword"
+		}, function(error) {
+		  if (error === null) {
+		    console.log("Password changed successfully");
+		  } else {
+		    console.log("Error changing password:", error);
+		  }
+		});
+		}
 
-function sendPasswordResetEmail(recoveryEmail){ 
-//You can edit the content of the password reset email from the Login & Auth tab of your App Dashboard.
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.resetPassword({
-  email : recoveryEmail
-}, function(error) {
-  if (error === null) {
-    myApp.alert("Password reset email sent successfully");
-  } else {
-  	myApp.alert("Error sending password reset email:", error);
-  }
-});
-}
+		function sendPasswordResetEmail(recoveryEmail){ 
+		//You can edit the content of the password reset email from the Login & Auth tab of your App Dashboard.
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.resetPassword({
+		  email : recoveryEmail
+		}, function(error) {
+		  if (error === null) {
+		    myApp.alert("Password reset email sent successfully");
+		  } else {
+		  	myApp.alert("Error sending password reset email:", error);
+		  }
+		});
+		}
 
-function deleteUser(){
-	var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.removeUser({
-  email    : "bobtony@firebase.com",
-  password : "correcthorsebatterystaple"
-}, function(error) {
-  if (error === null) {
-    console.log("User removed successfully");
-  } else {
-    console.log("Error removing user:", error);
-  }
-});
-}
+		function deleteUser(){
+			var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.removeUser({
+		  email    : "bobtony@firebase.com",
+		  password : "correcthorsebatterystaple"
+		}, function(error) {
+		  if (error === null) {
+		    console.log("User removed successfully");
+		  } else {
+		    console.log("Error removing user:", error);
+		  }
+		});
+		}
 
-// Create a callback which logs the current auth state
-function checkLoggedIn(authData) {
-  if (localStorage.user_id != null) {
-    
-       myApp.closeModal(); //closelogin screen
-  } else {
-			myApp.loginScreen(); // open Login Screen if user is not logged in
-  }
-}
-// Register the callback to be fired every time auth state changes
-var ref = new Firebase("https://doctordial.firebaseio.com");
-ref.onAuth(checkLoggedIn);
+		// Create a callback which logs the current auth state
+		function checkLoggedIn(authData) {
+		  if (localStorage.user_id != null) {
+		    
+		       myApp.closeModal(); //closelogin screen
+		  } else {
+					myApp.loginScreen(); // open Login Screen if user is not logged in
+		  }
+		}
+		// Register the callback to be fired every time auth state changes
+		var ref = new Firebase("https://doctordial.firebaseio.com");
+		ref.onAuth(checkLoggedIn);
 
 
 
- 
-  //recover email
-  $$('.recovery-button').on('click', function () {
-  	var email = $$('input[name="recoveryEmail"]').val();
-  	sendPasswordResetEmail(email);
-  	});
-  	
-  
+		 
+		  //recover email
+		  $$('.recovery-button').on('click', function () {
+		  	var email = $$('input[name="recoveryEmail"]').val();
+		  	sendPasswordResetEmail(email);
+		  	});
+		  	
+		  
 
-	$$('.list-button').on('click', function () {
-   // var email = pageContainer.find('input[name="email"]').val();
-    var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
-  
-  createUserAccount(formData); //do the registration and report errors if found
-  
- 
-  });
-    	
-       //run login function
-	//messages must be initialized here
-  $$('.login-button').on('click', function () {
-  	var email = $$('input[name="loginemail"]').val();
-  	var password = $$('input[name="loginpassword"]').val();
-  loginFire(email, password);
-  
-  });
-  
-  
+			$$('.list-button').on('click', function () {
+			   // var email = pageContainer.find('input[name="email"]').val();
+			    var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
+			  
+			  createUserAccount(formData); //do the registration and report errors if found
+			  
+			 
+			});
+		    	
+		       //run login function
+			//messages must be initialized here
+		  $$('.login-button').on('click', function () {
+		  	var email = $$('input[name="loginemail"]').val();
+		  	var password = $$('input[name="loginpassword"]').val();
+		  loginFire(email, password);
+		  
+		  });
+		  
+		  
 
- $$('.logout').on('click', function () {
- 	
-          	 
-          	   myApp.modal({
-    title:  'Are you sure you wish to logout?',
-    text: '<div class="list-block"></div>',
-    buttons: [
-      {
-        text: 'yes',
-        onClick: function() {
-           var ref = new Firebase("https://doctordial.firebaseio.com");
-          	myApp.alert("You are loging out", "Logout");
-          	  ref.unauth(); //logout
-          	  localStorage.removeItem("user_id");
-          	  localStorage.removeItem("personal_doctor_id");
-          	 myApp.loginScreen(); // open Login Screen if user is not logged in 
-          	 
-        }
-      },
-      {
-        text: 'cancel',
-        bold: true,
-        
-      },
-    ]
-  })
- });
+		 $$('.logout').on('click', function () {
+		          	   myApp.modal({
+		    title:  'Are you sure you wish to logout?',
+		    text: '<div class="list-block"></div>',
+		    buttons: [
+		      {
+		        text: 'yes',
+		        onClick: function() {
+		           var ref = new Firebase("https://doctordial.firebaseio.com");
+		          	myApp.alert("You are loging out", "Logout");
+		          	  ref.unauth(); //logout
+		          	  localStorage.removeItem("user_id");
+		          	  localStorage.removeItem("personal_doctor_id");
+		          	 myApp.loginScreen(); // open Login Screen if user is not logged in 
+		        }
+		      },
+		      {
+		        text: 'cancel',
+		        bold: true,
+		        
+		      },
+		    ]
+		  })
+		 });
 
 
 // Generate dynamic page
@@ -422,27 +419,22 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 					
 			    var specs_id = snapshot.key(); //get the id
 
-			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
-             // myApp.alert(JSON.stringify(snapshot.val()));
-			    //ADD MESSAGE
-			    messageList.append('<li>'+
-		      '<a href="doctors_list.html?id='+specs_id+'" class="item-link item-content" data-context-name="languages">'+
-		          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
-		          '<div class="item-inner">'+
-		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+
-		            data.day+ 's '+
-		            data.starttime+ ' - '+
-		            data.endtime+
-		            '</div>'+
-		          '</div>'+
-		      '</a>'+
-		    '</li>');
+		
+			   messageList.append('<li>'+
+			      '<a href="doctors_list.html?id='+specs_id+'" class="item-link item-content" data-context-name="languages">'+
+			          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
+			          '<div class="item-inner">'+
+			            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+
+			            data.day+ 's '+
+			            data.starttime+ ' - '+
+			            data.endtime+
+			            '</div>'+
+			          '</div>'+
+			      '</a>'+
+			    '</li>');
 					
 					
 					//our aim is to divide the time difference into snaps of 15 minutes each,
-					//and use it to build a radio group the user can choose from
-					
-					//find difference between two times, the Aug 08 2012 is just a decoy so that the Date() will worrk
 				var diff = new Date("Aug 08 2012 9:30") - new Date("Aug 08 2012 5:30"); 
                 diff_time = diff/(60*1000);
 
@@ -462,6 +454,55 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 				
 				
 				
+				//check if user is a doctors
+				
+				$$('.addNewAppointment').html('
+          <h4>What times of the week are you usually free?</h4>'+
+          '<form id="addNewAppointmentSchedule" class="list-block">'+
+			 ' <ul>'+
+			    '<li>'+
+			      '<div class="item-content">'+
+			       ' <div class="item-inner">'+
+			         ' <div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Choose Weekday</div>'+
+			         ' <div class="item-input">'+
+			          '  <input type="text" name="name" >'+
+			            ' <div class="item-input">'+
+						  '  <select name="day">'+
+							'  <option value="Monday">Monday</option>'+
+							'  <option value="Tuesday">Tuesday</option>'+
+							'  <option value="Wednesday">Wednesday</option>'+
+							'  <option value="Thursday">Thursday</option>'+
+							'  <option value="Friday">Friday</option>'+
+							'  <option value="Saturday">Saturday</option>'+
+							'  <option value="Sunday">Sunday</option>'+
+							'</select>'+
+						 ' </div>'+
+			         ' </div>'+
+			        '</div>'+
+			      '</div>'+
+			   ' </li>'+
+			   ' <li>'+
+			    ' <div class="item-content">'+
+			      '  <div class="item-inner">'+
+			         '<div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Start Time</div>'+
+			         ' <div class="item-input">'+
+			            '<input type="time" name="starttime" placeholder="Start Time">'+
+			          '</div>'+
+			       ' </div>'+
+			     ' </div>'+
+			    '</li>'+
+			    '<li>'+
+			     ' <div class="item-content">'+
+			        '<div class="item-inner">'+
+			         '<div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> End Time</div>'+
+			          '<div class="item-input">'+
+			            '<input type="time" name="endtime" placeholder="End Time">'+
+			          '</div>'+
+			        '</div>'+
+			      '</div>'+
+			    '</li>'+
+			  '</ul>'+
+         '</form>');
 			
 		}, function (errorObject) {
 		  console.log("The read failed: " + errorObject.code);
