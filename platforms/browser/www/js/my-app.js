@@ -420,18 +420,18 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			    var specs_id = snapshot.key(); //get the id
 
 		
-			   messageList.append('<li>'+
-			      '<a href="doctors_list.html?id='+specs_id+'" class="item-link item-content" data-context-name="languages">'+
-			          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
-			          '<div class="item-inner">'+
-			            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+
-			            data.day+ 's '+
-			            data.starttime+ ' - '+
-			            data.endtime+
-			            '</div>'+
-			          '</div>'+
-			      '</a>'+
-			    '</li>');
+					
+		
+			   messageList.append('<a href="appointments_schedule.html?id='+specs_id+'" class="item-link item-content">'+
+				        '<div class="item-inner">'+
+				         '<div class="item-title-row">'+
+				            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'</div>'+
+				            '<div class="item-after">'+data.starttime+' - '+data.endtime+'</div>'+
+				          '</div>'+
+				          '<div class="item-subtitle">New messages from John Doe</div>'+
+				          '<div class="item-text">Lorem ipsum dolor sit amet...</div>'+
+				        '</div>'+
+				      '</a>');
 					
 					
 					//our aim is to divide the time difference into snaps of 15 minutes each,
@@ -453,11 +453,13 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 				}
 				
 				
+				var refUser = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
 				
-				//check if user is a doctors
-				
-				$$('.addNewAppointment').html('
-          <h4>What times of the week are you usually free?</h4>'+
+				refUser.on("value", function(snapshot) {
+					  myApp.alert(snapshot.val().email);
+					  
+					  if(snapshot.val().doctor != null){ //check if this user is a doctor
+				$$('.addNewAppointment').html('<h4>What times of the week are you usually free?</h4>'+
           '<form id="addNewAppointmentSchedule" class="list-block">'+
 			 ' <ul>'+
 			    '<li>'+
@@ -503,6 +505,13 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			    '</li>'+
 			  '</ul>'+
          '</form>');
+					  }
+					  
+					}, function (errorObject) {
+					  console.log("The read failed: " + errorObject.code);
+					});
+				//check if user is a doctors
+				
 			
 		}, function (errorObject) {
 		  console.log("The read failed: " + errorObject.code);

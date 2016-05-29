@@ -395,7 +395,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
     searchIn: '.item-title'
 }); 
 
-//dummy function I used to create new category of doctors
+		//dummy function I used to create new category of doctors
   $("#addAppointmentSchedule").on('click', function () {
    // var email = pageContainer.find('input[name="email"]').val();
     var formData = myApp.formToJSON('#addNewAppointmentSchedule'); //convert submitted form to json.
@@ -404,15 +404,12 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
   });
   
-
-  
-  
-  //get the list from database
+	  //get the list from database
 	   var ref = new Firebase("https://doctordial.firebaseio.com/appointments");
 		// Attach an asynchronous callback to read the data at our posts reference
 		//var specializations;
 		var messageList = $$('.appointment-list-block');
-		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToLast(50).on("child_added", function(snapshot) {
+		ref.orderByChild("user_id").startAt(page.query.id).endAt(page.query.id).limitToLast(50).on("child_added", function(snapshot) {
 		   var data = snapshot.val();
 		   //specializations = JSON.stringify(snapshot.val());
 					//doctors list
@@ -420,18 +417,17 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			    var specs_id = snapshot.key(); //get the id
 
 		
-			   messageList.append('<li>'+
-			      '<a href="doctors_list.html?id='+specs_id+'" class="item-link item-content" data-context-name="languages">'+
-			          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
-			          '<div class="item-inner">'+
-			            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+
-			            data.day+ 's '+
-			            data.starttime+ ' - '+
-			            data.endtime+
-			            '</div>'+
-			          '</div>'+
-			      '</a>'+
-			    '</li>');
+					
+		
+			   messageList.append('<a href="appointments_schedule.html?id='+specs_id+'" class="item-link item-content">'+
+				        '<div class="item-inner">'+
+				         '<div class="item-title-row">'+
+				            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'</div>'+
+				            '<div class="item-after">'+data.starttime+' - '+data.endtime+'</div>'+
+				          '</div>'+
+				          '<div class="item-text">₦1,000</div>'+
+				        '</div>'+
+				      '</a>');
 					
 					
 					//our aim is to divide the time difference into snaps of 15 minutes each,
@@ -453,11 +449,13 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 				}
 				
 				
+				var refUser = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
 				
-				//check if user is a doctors
-				
-				$$('.addNewAppointment').html('
-          <h4>What times of the week are you usually free?</h4>'+
+				refUser.on("value", function(snapshot) {
+					  myApp.alert(snapshot.val().email);
+					  
+					  if(snapshot.val().doctor != null){ //check if this user is a doctor
+				$$('.addNewAppointment').html('<h4>What times of the week are you usually free?</h4>'+
           '<form id="addNewAppointmentSchedule" class="list-block">'+
 			 ' <ul>'+
 			    '<li>'+
@@ -503,12 +501,18 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			    '</li>'+
 			  '</ul>'+
          '</form>');
+					  }
+					  
+					}, function (errorObject) {
+					  console.log("The read failed: " + errorObject.code);
+					});
+				//check if user is a doctors
+				
 			
 		}, function (errorObject) {
 		  console.log("The read failed: " + errorObject.code);
 		});
-		
-		
+  
  
 });
 
@@ -591,7 +595,8 @@ $$('.change-personal-doctor').on('click', function () {
 		});
 	
 	
-	
+
+
 	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
 	
 	
@@ -633,7 +638,7 @@ $$('.change-personal-doctor').on('click', function () {
 			      }
 		});
 
-	
+
 	});
 	
 myApp.onPageInit('messages_list', function (page) {
