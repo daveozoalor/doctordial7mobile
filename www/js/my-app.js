@@ -406,7 +406,17 @@ function createContentPage() {
 
 
 
-
+	function deleteItem(linkBink){
+								 var refD = new Firebase("https://doctordial.firebaseio.com/"+linkBink);
+								var onComplete = function(error) {
+									  if (error) {
+									    console.log('Synchronization failed');
+									  } else {
+									    console.log('Synchronization succeeded');
+									  }
+									};
+							refD.remove();
+							}
 
 
 
@@ -441,29 +451,33 @@ function approveSchedule(appointmentId, acceptedValue, schedule_user_id, schedul
 	      else if(localStorage.user_id == schedule_user_id){ //give the user the option to cancle or delete this appointment
 	      
 		  	    myApp.modal({
-				    title:  'Delete this appointment?',
-				    text: 'You won\'t be able to recover it after deleting it',
+				    title:  'Manage Appointment',
+				    text: 'Use the options below to manage this appointment',
 				    buttons: [
+				      
 				      {
+				        text: 'View',
+				        onClick: function() {
+				          //if this is doctor, then view patient's profile
+				          //If patient then view doctor's profile
+				          mainView.router.loadPage("");
+				        }
+				      },{
 				        text: 'Delete',
 				        onClick: function() {
-				          var onComplete = function(error) {
-				          	 var refD = new Firebase("https://doctordial.firebaseio.com/appointments_schedule_list/"+appointmentId);
-								// Attach an asynchronous callback to read the data at our posts reference
-							  if (error){
-							    myApp.alert('Synchronization failed');
-							  } else{
-							    myApp.alert('Delete succeeded');
-							  }
-							};
-							refD.remove(onComplete);
+				        	
+				        	var linkBink = "appointments_schedule_list/"+appointmentId;
+				        
+				          	deleteItem(linkBink);
 							
+							
+							myApp.alert("This appointment has been successfully deleted", "Deleted");
 				        }
 				      },
 				      {
 				        text: 'Cancel',
 				        onClick: function() {
-				          myApp.alert('You clicked second button!')
+				          //nothing happens when you cancel
 				        }
 				      }
 				    ]
