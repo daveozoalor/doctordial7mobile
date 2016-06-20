@@ -1,24 +1,5 @@
 <!DOCTYPE html>
-<!--
-    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
 
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
 
 <head>
@@ -39,6 +20,8 @@
     
     <script src="js/firebase.js"></script>
   <script src='js/jquery.js'></script>
+  
+  </div><script type="text/javascript" src="js/wickedpicker.js"></script>
     <!-- Good default declaration:
     * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
     * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
@@ -61,12 +44,24 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     
+
     <script type="text/javascript" src="cordova.js"></script>
 </head>
-
+<!-- <style>
+	.views {
+    background-size: 100%;
+    background: url("img/doctor.jpg") no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+</style> -->
 <body class="theme-red">
 
-
+<div id="gem">
+	
+</div>
   
   <div class="views">
       <!-- Your main view, should have "view-main" class -->
@@ -80,7 +75,8 @@
             <div class="navbar">
               <div class="navbar-inner">
                 
-                <div class="center"></div>
+                <div class="center user-name"></div>
+                <div class="right"><a href="messages_list.html" class="link"><i class="fa fa-envelope" aria-hidden="true"></i>&nbsp;</a><a href="users_view.html" class="link"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;</a></div>
               </div>
             </div>              
           
@@ -99,14 +95,36 @@
   
 			<div class="page-content">
 	
-			<div align="center" style="font-size: 80px; margin-top: 2px; margin-bottom: 2px; ">
+			<div align="center" style="font-size: 80px; margin-top: 50px; margin-bottom: 2px; height: 60%; ">
 	          <img src="img/doctordial-logo.jpg" class="blink"/> 		
 			 </div>    
+			
+			
+			
+			
+		
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
         
                   		<div class="card">
-						  
 						     <p class="buttons-row">
-						        <a href="#" class="button button-big button-fill button-raised  personal-doctor"><i class="fa fa-user" aria-hidden="true"></i> Personal Doc</a>
+						        <a href="#" class="button button-big button-fill button-raised" onclick="viewPersonalDoc()">
+						        <i class="fa fa-user" aria-hidden="true"></i> <span class="personal-doctor-name">Personal Doc</span></a>
 						        <a href="specializations_list.html" class="button button-big button-fill button-raised "><i class="fa fa-search" aria-hidden="true"></i> Find a doctor</a>
 						      </p>
 						      <p class="buttons-row">
@@ -115,19 +133,9 @@
 						       <i class="fa fa-heart-o" aria-hidden="true"></i> Complaints</a>
 						     
 						        <a href="appointments_schedule_list.html" class="button button-big button-fill button-raised ">
-						        <i class="fa fa-clock-o" aria-hidden="true"></i> Appointments (2)</a>
+						        <i class="fa fa-clock-o" aria-hidden="true"></i> My Appointments</a>
 						     </p>
 						     
-						   <p class="buttons-row"> 
-						        <a href="messages_list.html" class="button button-big button-fill button-raised ">
-						        <i class="fa fa-clock-o" aria-hidden="true"></i> Messages (5)</a>
-						      
-						        <a href="accounts_view.html" class="button button-big button-fill button-raised ">₦ Account</a>
-						      </p>
-						       <p>
-						        <a href="#" class="button button-big button-fill button-raised  logout">
-						        <i class="fa fa-power-off" aria-hidden="true"></i> Logout</a>
-						      </p>
 						</div> 
 			 		 </div>
         
@@ -197,8 +205,16 @@
       </div>
       <div class="list-block">
         <ul>
-          <li><a href="#" class="button login-button button-raised button-fill  ripple-green"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Sign In</a></li>
+        
+          <div class="demo-progressbar-load-hide">
+        <p style="height:2px"></p>
+       <li><a href="#" class="button login-button button-raised button-fill  ripple-green"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Sign In</a></li>
+      </div>
         </ul>
+        
+        
+        	
+			
       </div>
     </form> 
 
@@ -316,7 +332,6 @@
   </div>
       </div>
     </div>
-  </div>
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="js/framework7.min.js"></script>
     <!-- Path to your app js-->
@@ -325,6 +340,8 @@
     <script type="text/javascript">
         app.initialize();
     </script>
+    
+        
 </body>
 
 

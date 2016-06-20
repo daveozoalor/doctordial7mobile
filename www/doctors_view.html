@@ -3,14 +3,14 @@
          <!-- Top Navbar. In Material theme it should be inside of the page-->
             <div class="navbar">
               <div class="navbar-inner">
-                <div class="center"><i class="fa fa-medkit" aria-hidden="true"></i> {{url_query.fullname}}</div>
+                <div class="center"><i class="fa fa-user-md" aria-hidden="true"></i> {{url_query.fullname}}</div>
               </div>
             </div> 
     
       <div class="toolbar toolbar-bottom">
 		    <div class="toolbar-inner">
 		        <a href="#" class="link back"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
-		        <a href="#" class="link change-personal-doctor"><i class="fa fa-pencil-square-o" aria-hidden="true"> </i> &nbsp; change doctor</a>
+		        <a href="#" class="link change-personal-doctor"><i class="fa fa-pencil-square-o" aria-hidden="true"> </i> &nbsp; Change doctor</a>
 		    </div>
 		</div>
       
@@ -28,40 +28,39 @@
 			  <div class="card-footer ">
 			 
 			  </div>
-			</div>
+		 </div>
+			
+			
+			
             <p class="buttons-row">
 			    <a href="messages_view.html?id={{url_query.id}}" class="link button button-fill color-red">
-			    <i class="fa fa-comment-o" aria-hidden="true"></i></a>
-			        <a href="#" class="link button button-fill color-red"><i class="fa fa-phone" aria-hidden="true"></i></a>
+			    <i class="fa fa-comment-o" aria-hidden="true"></i> Chat</a>
+			        <a href="#" class="link button button-fill color-red"><i class="fa fa-phone" aria-hidden="true"></i> Call</a>
 			        </p>
+			        <br/>
 			        <p class="buttons-row">
-			        <a href="appointments_list.html?id={{url_query.id}}" class="link button button-fill color-red"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
-			        <a href="#" class="link button button-fill add-personal-doctor color-red"><i class="fa fa-user-plus" aria-hidden="true"></i></a>
+			        
+			        <a href="#" class="link button button-fill add-personal-doctor color-red"><i class="fa fa-user-plus" aria-hidden="true"></i> Make Personal Doctor</a>
 			  	   </p>
 
 
 
+            <div class="content-block searchbar-not-found">
+                Nothing found
+          </div>
+ <h3>Available hours </h3> <small>Click to schedule an appointment</small>
         <div class="list-block virtual-list list-block-search searchbar-found appointment-list">
            <ul class="appointment-list-block list-block-search">
            
-		       	   
 				      
-		       </ul>
+		   </ul>
         </div>
-<!--
-<div class="card">
+        
+        <div class="content-block-title">Book an appointment</div>
+        <div class="addNewAppointment">
+        	
+        </div>
+        
 
-  <div class="card-content">
-    <div class="card-content-inner">
-      About doctor<br>
-      Medical doctor, graduated at the age of 2
-     </div>
-  </div>
-  
-</div>  -->
-          
-          
-			 </div>
-          
-			
+       </div>
         </div>

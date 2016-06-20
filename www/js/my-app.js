@@ -41,21 +41,21 @@ var currenttime =    currentdate.getHours() + ":"
 function createAnything(formData, childVar){
 	var postsRef = new Firebase("https://doctordial.firebaseio.com/");
     
-     ref = postsRef.child(childVar);
-     
-// we can also chain the two calls together
-    //postsRef.push(formData);
-    
-     // we can also chain the two calls together
-  ref.push().set(formData,
-   function(error) {
-  if (error) {
-    alert("Data could not be saved. :" + error);
-  } else {
-    //alert("Data saved successfully.");
-  }
-}
-  );
+      ref = postsRef.child(childVar);
+	     
+	    // we can also chain the two calls together
+	    //postsRef.push(formData);
+	    
+		     // we can also chain the two calls together
+		  ref.push().set(formData,
+		   function(error) {
+		  if (error) {
+		    alert("Data could not be saved. :" + error,"Error");
+		  } else {
+		    //alert("Data saved successfully.");
+		  }
+		}
+	  );
 }
 
 //function to create anything
@@ -64,7 +64,7 @@ function updateAnything(formData, childVar){
      ref = postsRef.child(childVar);
      ref.update(formData,   function(error) {
   if (error) {
-    myApp.alert("Data could not be saved. :" + error);
+    myApp.alert("Data could not be saved. :" + error,"Error");
   } else {
     myApp.alert("Update successful.","Updated");
   }
@@ -122,7 +122,7 @@ ref.createUser(formData,
 			}
     
     
-    myApp.alert("Successfully created account. Please login");
+    myApp.alert("Successfully created account. Please login","Registration Successful");
     localStorage.setItem(formData);
     myApp.closeModal(); // open Login Screen//load another page with auth form
   }
@@ -133,6 +133,7 @@ ref.createUser(formData,
 		//handle login
 		function loginFire(sentEmail,sentPassword){ //get this login from database 
 			var ref = new Firebase("https://doctordial.firebaseio.com");
+			
 		ref.authWithPassword({
 		  email    : sentEmail,
 		  password : sentPassword
@@ -156,13 +157,84 @@ ref.createUser(formData,
 		  	//save data in local storage
 		  	localStorage.user_id = authData.uid;
 		  	
+		  	ref.child("users/"+authData.uid).once("value", function(snapshot){
+		  		
+		  		if(snapshot.val().firstname){
+				localStorage.firstname = snapshot.val().firstname || ' ' ;	
+				}else{
+					localStorage.firstname = '';
+				}
+		  		if(snapshot.val().middlename){
+		  	localStorage.middlename = snapshot.val().middlename || ' ' ;
+		  	}else{
+				localStorage.middlename = '';
+			}
+		  	if(snapshot.val().lastname){
+		  	localStorage.lastname = snapshot.val().lastname  || ' ';
+		  	}else{
+				localStorage.lastname = '';
+			}
+		  	localStorage.fullname = snapshot.val().firstname + ' '+ snapshot.val().middlename + ' '+ snapshot.val().lastname ;
+		  	
+		  	//get personal doctor's details
+		  	
+		  	if(snapshot.val().personal_doctor_id != null){
+				var personalDoctorRef = new Firebase("https://doctordial.firebaseio.com/users/"+snapshot.val().personal_doctor_id);
+				personalDoctorRef.once("value", function(snapshot){
+				localStorage.personal_doctor_name = snapshot.val().firstname ;
+				
+			});
+			}
+		  	
+		  	});
+		  	
+		  	
+		  	
+		  	
+		  	
+		  	
+		  	
+		  	personalDocNameInsert(); //
 		     myApp.alert("Login successful ", 'Success!');
 		       myApp.closeModal('.login-screen'); //closelogin screen
 		       myApp.closeModal();
+		       mainView.router.loadPage("index.html");
 		  }
 		});
 
 		}
+
+$$('.demo-progressbar-load-hide .button').on('click', function () {
+    var container = $$('.demo-progressbar-load-hide p:first-child');
+    if (container.children('.progressbar').length) return; //don't run all this if there is a current progressbar loading
+ 
+    myApp.showProgressbar(container, 0);
+ 
+    // Simluate Loading Something
+    var progress = 0;
+    function simulateLoading() {
+        setTimeout(function () {
+            var progressBefore = progress;
+            progress += Math.random() * 20;
+            myApp.setProgressbar(container, progress);
+            if (progressBefore < 100) {
+                simulateLoading(); //keep "loading"
+            }
+            else myApp.hideProgressbar(container); //hide
+        }, Math.random() * 200 + 200);
+    }
+    simulateLoading();
+});
+
+
+
+
+
+
+
+
+
+
 
 		function changeEmail(){
 			var ref = new Firebase("https://doctordial.firebaseio.com");
@@ -235,9 +307,6 @@ ref.createUser(formData,
 		var ref = new Firebase("https://doctordial.firebaseio.com");
 		ref.onAuth(checkLoggedIn);
 
-
-
-		 
 		  //recover email
 		  $$('.recovery-button').on('click', function () {
 		  	var email = $$('input[name="recoveryEmail"]').val();
@@ -246,7 +315,7 @@ ref.createUser(formData,
 		  	
 		  
 
-			$$('.list-button').on('click', function () {
+			$$('.list-button').on('click', function () { //signup
 			   // var email = pageContainer.find('input[name="email"]').val();
 			    var formData = myApp.formToJSON('#signupForm'); //convert submitted form to json.
 			  
@@ -262,11 +331,22 @@ ref.createUser(formData,
 		  	var password = $$('input[name="loginpassword"]').val();
 		  loginFire(email, password);
 		  
-		  });
+		  });  
 		  
+		  
+		  //schedule appointment
+		  function createScheduleAppointment(){
+		  	var formData = myApp.formToJSON('#scheduleAppointmentFormSubmit'); //convert submitted form to json.
+			    
+		  	createAnything(formData, "appointments_schedule_list"); //do the registration and report errors if found
+ 
+		    myApp.alert("Appointment Scheduled", "Success");
+		    mainView.router.loadPage("appointments_schedule_list.html");
+		  }
+		 
 		  
 
-		 $$('.logout').on('click', function () {
+	 function logoutPop(){
 		          	   myApp.modal({
 		    title:  'Are you sure you wish to logout?',
 		    text: '<div class="list-block"></div>',
@@ -288,9 +368,9 @@ ref.createUser(formData,
 		        
 		      },
 		    ]
-		  })
-		 });
-
+		  });
+	 }
+		
 
 // Generate dynamic page
 var dynamicPageIndex = 0;
@@ -324,6 +404,83 @@ function createContentPage() {
 	// Callbacks to run specific code for specific pages, for example for About page:
 
 
+
+
+
+
+
+
+
+function approveSchedule(appointmentId, acceptedValue, schedule_user_id, schedule_doctor_id){
+	         //if its not accepted yet
+	         //if the viewer is not the one that scheduled it
+	   		if(localStorage.user_id != schedule_user_id && acceptedValue != "yes"){ 
+	   	   myApp.confirm('Do you approve this appointment request?', 'Manage Approval', 
+		      function () {
+		        formData = {
+					accepted: "yes"
+				}
+		        updateAnything(formData,"appountments_schedule_list/"+appointmentId);
+		        mainView.router.loadPage("users_view.html?id="+schedule_user_id);
+		      },
+		      function () {
+		        //choose cancel button, nothing happens
+		        //optionally,
+		        //redirect to this users profile
+		        mainView.router.loadPage("users_view.html?id="+schedule_user_id);
+		      }
+		    );
+		    
+		    
+		    //if the owner of this is view it. 
+	      if(localStorage.user_id == schedule_user_id){
+	      	mainView.router.loadPage("users_view.html?id="+schedule_doctor_id+"&fullname=JohnLennon");
+	      	}
+	      }
+	      
+	      else if(localStorage.user_id == schedule_user_id){ //give the user the option to cancle or delete this appointment
+	      
+		  	    myApp.modal({
+				    title:  'Delete this appointment?',
+				    text: 'You won\'t be able to recover it after deleting it',
+				    buttons: [
+				      {
+				        text: 'Delete',
+				        onClick: function() {
+				          var onComplete = function(error) {
+				          	 var refD = new Firebase("https://doctordial.firebaseio.com/appointments_schedule_list/"+appointmentId);
+								// Attach an asynchronous callback to read the data at our posts reference
+							  if (error){
+							    myApp.alert('Synchronization failed');
+							  } else{
+							    myApp.alert('Delete succeeded');
+							  }
+							};
+							refD.remove(onComplete);
+							
+				        }
+				      },
+				      {
+				        text: 'Cancel',
+				        onClick: function() {
+				          myApp.alert('You clicked second button!')
+				        }
+				      }
+				    ]
+				  });
+		    
+		    
+		  }
+	      
+	   }
+
+
+
+
+
+
+
+
 myApp.onPageInit('specializations_list', function (page) {
   
 var mySearchbar = myApp.searchbar('.searchbar', {
@@ -331,7 +488,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
     searchIn: '.item-title'
 }); 
 
-//dummy function I used to create new category of doctors
+//dummy function I used to create new stuff
   $("#addAccount").on('click', function () {
    // var email = pageContainer.find('input[name="email"]').val();
     var formData = myApp.formToJSON('#addNew'); //convert submitted form to json.
@@ -339,15 +496,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   createAnything(formData, "specializations"); //do the registration and report errors if found
  
   });
-  
-//dummy function I used to create new category of doctors
-  $("#addAccount").on('click', function () {
-   // var email = pageContainer.find('input[name="email"]').val();
-    var formData = myApp.formToJSON('#addNew'); //convert submitted form to json.
-  
-  createAnything(formData, "specializations"); //do the registration and report errors if found
- 
-  });
+
   
   
   //get the list from database
@@ -388,44 +537,77 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
 });
 
-myApp.onPageInit('appointments_list', function (page) {
+
+
+
+
+
+
+
+
+
+function shortMonthName(monthNumber){
+	var month = [];
+	month[0] = "Jan";
+	month[1] = "Feb";
+	month[2] = "Mar";
+	month[3] = "Apr";
+	month[4] = "May";
+	month[5] = "Jun";
+	month[6] = "Jul";
+	month[7] = "Aug";
+	month[8] = "Sep";
+	month[9] = "Oct";
+	month[10] = "Nov";
+	month[11] = "Dec";
+	n = month[monthNumber];
+	return n;
+}
+
+
+
+	   
+myApp.onPageInit('appointments_schedule_list', function (page) {
   
 var mySearchbar = myApp.searchbar('.searchbar', {
     searchList: '.list-block-search',
     searchIn: '.item-title'
 }); 
 
-		//dummy function I used to create new category of doctors
-  $("#addAppointmentSchedule").on('click', function () {
-   // var email = pageContainer.find('input[name="email"]').val();
-    var formData = myApp.formToJSON('#addNewAppointmentSchedule'); //convert submitted form to json.
-  formData.user_id = localStorage.user_id;
-  createAnything(formData, "appointments"); //do the registration and report errors if found
- 
-  });
-  
+
 	  //get the list from database
-	   var ref = new Firebase("https://doctordial.firebaseio.com/appointments");
+	   var ref = new Firebase("https://doctordial.firebaseio.com/appointments_schedule_list");
 		// Attach an asynchronous callback to read the data at our posts reference
 		//var specializations;
-		var messageList = $$('.appointment-list-block');
-		ref.orderByChild("user_id").startAt(page.query.id).endAt(page.query.id).limitToLast(50).on("child_added", function(snapshot) {
-		   var data = snapshot.val();
-		   //specializations = JSON.stringify(snapshot.val());
-					//doctors list
-					
-			    var specs_id = snapshot.key(); //get the id
+		
+		var messageList = $$('.appointment-list-block'); 
+		
+		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToLast(50).on("child_added", function(snapshot) {
+		    data = snapshot.val(); 
+		     specs_id = snapshot.key(); //get the id
+		     
+					//get todays date
+					function getTodayDate() {
+					   var tdate = new Date();
+					   var dd = tdate.getDate(); //yields day
+					   var MM = tdate.getMonth(); //yields month
+					   var yyyy = tdate.getFullYear(); //yields year
+					   var xxx = (shortMonthName(MM)) +" "+ dd + " " + yyyy;
 
-		
-					
-		
-			   messageList.append('<a href="appointments_schedule.html?id='+specs_id+'" class="item-link item-content">'+
+					   return xxx; //Jun 13 2012
+					}
+					if(getTodayDate() == data.day){//it
+						
+					}
+			  
+
+			   messageList.append('<a href="#" class="item-link item-content" onclick="approveSchedule(specs_id, data.accepted,data.user_id,data.doctor_id);">'+
 				        '<div class="item-inner">'+
 				         '<div class="item-title-row">'+
 				            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'</div>'+
-				            '<div class="item-after">'+data.starttime+' - '+data.endtime+'</div>'+
+				            '<div class="item-after"> by '+data.start_time+'</div>'+
 				          '</div>'+
-				          '<div class="item-text">₦1,000</div>'+
+				          '<div class="item-text">approval: '+data.accepted+'</div>'+
 				        '</div>'+
 				      '</a>');
 					
@@ -433,13 +615,15 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 					//our aim is to divide the time difference into snaps of 15 minutes each,
 				var diff = new Date("Aug 08 2012 9:30") - new Date("Aug 08 2012 5:30"); 
                 diff_time = diff/(60*1000);
-
-               // myApp.alert(diff_time);	
-		      
-		      function getTimeAsSeconds(time){  //convert time to seconds and simply add the two seconds
+                
+           
+              
+		       //convert time to seconds and simply add the two seconds
+		      function getTimeAsSeconds(time){ 
 				    var timeArray = time.split(':');
 				    return Number(timeArray [0]) * 3600 + Number(timeArray [1]) * 60 + Number(timeArray[2]);
 				}
+				
 				//convert seconds back to time
 		      function formatSeconds(seconds)
 				{
@@ -449,64 +633,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 				}
 				
 				
-				var refUser = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
 				
-				refUser.on("value", function(snapshot) {
-					  myApp.alert(snapshot.val().email);
-					  
-					  if(snapshot.val().doctor != null){ //check if this user is a doctor
-				$$('.addNewAppointment').html('<h4>What times of the week are you usually free?</h4>'+
-          '<form id="addNewAppointmentSchedule" class="list-block">'+
-			 ' <ul>'+
-			    '<li>'+
-			      '<div class="item-content">'+
-			       ' <div class="item-inner">'+
-			         ' <div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Choose Weekday</div>'+
-			         ' <div class="item-input">'+
-			          '  <input type="text" name="name" >'+
-			            ' <div class="item-input">'+
-						  '  <select name="day">'+
-							'  <option value="Monday">Monday</option>'+
-							'  <option value="Tuesday">Tuesday</option>'+
-							'  <option value="Wednesday">Wednesday</option>'+
-							'  <option value="Thursday">Thursday</option>'+
-							'  <option value="Friday">Friday</option>'+
-							'  <option value="Saturday">Saturday</option>'+
-							'  <option value="Sunday">Sunday</option>'+
-							'</select>'+
-						 ' </div>'+
-			         ' </div>'+
-			        '</div>'+
-			      '</div>'+
-			   ' </li>'+
-			   ' <li>'+
-			    ' <div class="item-content">'+
-			      '  <div class="item-inner">'+
-			         '<div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Start Time</div>'+
-			         ' <div class="item-input">'+
-			            '<input type="time" name="starttime" placeholder="Start Time">'+
-			          '</div>'+
-			       ' </div>'+
-			     ' </div>'+
-			    '</li>'+
-			    '<li>'+
-			     ' <div class="item-content">'+
-			        '<div class="item-inner">'+
-			         '<div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> End Time</div>'+
-			          '<div class="item-input">'+
-			            '<input type="time" name="endtime" placeholder="End Time">'+
-			          '</div>'+
-			        '</div>'+
-			      '</div>'+
-			    '</li>'+
-			  '</ul>'+
-         '</form>');
-					  }
-					  
-					}, function (errorObject) {
-					  console.log("The read failed: " + errorObject.code);
-					});
-				//check if user is a doctors
 				
 			
 		}, function (errorObject) {
@@ -516,16 +643,12 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
 });
 
-			//if doctor is not 
-	$$('.personal-doctor').on('click', function () {
-	//if persnal doctor is being viewed
-	
-	//myApp.alert("Join go: "+localStorage.personal_doctor_id);
-	
+function viewPersonalDoc(){
+		
       if(localStorage.personal_doctor_id != null){ //if personal doctor is another doctor
      // myApp.alert("Local Storage: "+localStorage.personal_doctor_id);
 			mainView.router.loadPage("doctors_view.html?id="+localStorage.personal_doctor_id);
-		} else{
+		} else if(localStorage.personal_doctor_id === null){
 			
 			//redirect to doctor categories
 			  myApp.confirm('You have not added a personal doctor yet. Would you like to add one now?','Add doctor', 
@@ -538,17 +661,154 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			      }
 			    );
 		}
+}
+function personalDocNameInsert(){ //insert personal doctor's name into the button on index'
+ $$('.user-name').html(localStorage.fullname);
+ if(localStorage.personal_doctor_name != null){
+ 	var docName = String(localStorage.personal_doctor_name);
+ 	 $$('.personal-doctor-name').html('Dr. '+docName.replace('undefined',''));
+ }
+	
+}
+
+ 
+ 
+myApp.onPageInit('index', function (page) {
+  //name of user on top
+personalDocNameInsert();
+  //name of personal doctor
+ 
+});
+
+myApp.onPageInit('appointments_list', function (page) {
+  //I dont like
+ 
+});
+
 		
+			
+function pullCalendar(calendarId,dayNumber){
+				var calendarEvents = myApp.calendar({
+				    input: '#calendar-events'+calendarId,
+				    dateFormat: 'M dd yyyy',
+				    //Disabled all dates in November 2015
+				    disabled: function (date) {
+				        if (date.getDay() !== dayNumber) {
+				            return true;
+				        }
+				        else {
+				            return false;
+				        }
+				    },
+				});
+			}
+   
+   
+   	//dummy function I used to create new category of doctors
+			   function addAppointmentSchedule() {
+			   // var email = pageContainer.find('input[name="email"]').val();
+			    var formData = myApp.formToJSON('#addNewAppointmentSchedule'); //convert submitted form to json.
+			    
+			    //convert days to numbers
+			    if(formData.day === "Sunday"){
+					formData.dayNumber = 0;
+				}
+			    else if(formData.day === "Monday"){
+					formData.dayNumber = 1;
+				}
+			    else if(formData.day === "Tuesday"){
+					formData.dayNumber = 2;
+				}
+			    else if(formData.day === "Wednesday"){
+					formData.dayNumber = 3;
+				}
+			    else if(formData.day === "Thursday"){
+					formData.dayNumber = 4;
+				}
+			    else if(formData.day === "Friday"){
+					formData.dayNumber = 5;
+				}
+			    else if(formData.day === "Saturday"){
+					formData.dayNumber = 6;
+				}
+			  formData.user_id = localStorage.user_id;
+			  createAnything(formData, "appointments"); //do the registration and report errors if found
+			 
+			  }
+			  
+myApp.onPageInit('users_view', function (page) {
+				
+	if(page.query.id == null){
+		page.query.id = localStorage.user_id;
+	}
+	
+	if(page.query.id != localStorage.user_id){
+		$$('.contactButtons').html('<p class="buttons-row">'+
+			           '<a href="messages_view.html?id={{url_query.id}}" class="link button button-fill color-red">'+
+			               '<i class="fa fa-comment-o" aria-hidden="true"></i> Chat</a>'+
+			           '<a href="#" class="link button button-fill color-red"><i class="fa fa-phone" aria-hidden="true"></i> Call</a>'+
+			        '</p>');
+	}
+	
+	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+page.query.id);
+	
+	
+		ref.once("value", function(snapshot) {
+			
+			data = snapshot.val();
+			//myApp.alert("Userid: "+page.query.id+" User id from server: "+snapshot.val().email);
+			
+			$$('#profile-name').html(' '+data.firstname);
+			
+			if(data.firstname != null){
+			$$('.profile-details').append('<li class="item-content">'+
+					          '<div class="item-inner">'+
+					            '<div class="item-title"><b>First Name:</b> '+data.firstname+'</div>'+
+					          '</div>'+
+					        '</li>'
+					        );
+					        
+					        }
+			 if(data.middlename != null){
+			$$('.profile-details').append('<li class="item-content">'+
+					          '<div class="item-inner">'+
+					            '<div class="item-title"><b>Middle Name: </b>'+data.middlename+'</div>'+
+					          '</div>'+
+					        '</li>'
+					        );
+			}
+			if(data.lastname != null){
+				$$('.profile-details').append('<li class="item-content">'+
+					          '<div class="item-inner">'+
+					            '<div class="item-title"><b>Last Name:</b> '+data.lastname+'</div>'+
+					          '</div>'+
+					        '</li>'
+					        );
+			
+			}
+			if(data.lastname != null){
+				$$('.profile-details').append('<li class="item-content">'+
+					          '<div class="item-inner">'+
+					            '<div class="item-title"><b>Gender:</b> '+data.gender+'</div>'+
+					          '</div>'+
+					        '</li>'
+					        );
+			
+			}
+			
 		});
-	
-	
-	
-myApp.onPageInit('doctors_view', function (page) {
 		
+		
+
+	});
+
+
+
+myApp.onPageInit('doctors_view', function (page) {
+	
 	 //dont show the add button if this is the viewer's personal doc
 		if(localStorage.personal_doctor_id != null && localStorage.personal_doctor_id == page.query.id){
 		 //hide button
-		 //myApp.alert("Page Query: "+page.query.id+" . Local Storage: "+localStorage.personal_doctor_id + " . User id: " + localStorage.user_id);
 		 $$('.add-personal-doctor').hide();
 		}
 		
@@ -559,17 +819,16 @@ $$('.add-personal-doctor').on('click', function () {
 			  myApp.confirm('Would you like to set this doctor as your personal doctor? This will replace your current personal doctor','Add Peronsal Doctor', 
 			      function () {
 			      //yes
+			      
 			      var formData = {personal_doctor_id: page.query.id};
 			      
 			      updateAnything(formData, "users/"+localStorage.user_id); //update this user's record and add personal doctor
 			      
 			      localStorage.personal_doctor_id = page.query.id;
 			       $$('.add-personal-doctor').hide();
-			      //myApp.alert("Doctor added successfully");
 			      },
 			      function () {
 			       
-			       // updateAnything();
 			      }
 			    );
 			    
@@ -595,8 +854,6 @@ $$('.change-personal-doctor').on('click', function () {
 		});
 	
 	
-
-
 	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
 	
 	
@@ -639,7 +896,238 @@ $$('.change-personal-doctor').on('click', function () {
 		});
 
 
+
+				
+
+				
+				
+	  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/appointments");
+		// Attach an asynchronous callback to read the data at our posts reference
+		//var specializations;
+		var messageList = $$('.appointment-list-block');
+		
+					var totalCalendarCount = 0;
+		ref.orderByChild("user_id").startAt(page.query.id).endAt(page.query.id).limitToLast(50).on("child_added", function(snapshot) {
+			
+			
+			totalCalendarCount += 1;
+		   var data = snapshot.val();
+		   //specializations = JSON.stringify(snapshot.val());
+				//doctors list
+			    var specs_id = snapshot.key(); //get the id
+
+			   messageList.append('<form id="scheduleAppointmentFormSubmit"><div class="list-block accordion-list" style="border: 1px solid #7a8b74;">'+
+				  '<ul>'+
+				    '<li class="accordion-item"><a href="#" class="item-content item-link">'+
+				        '<div class="item-inner">'+
+				          '<div class="item-title">'+
+				          '<i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+' '+timeTo12HrFormat(data.starttime)+' - '+timeTo12HrFormat(data.endtime)+'</div>'+
+				        '</div></a>'+
+				      '<div class="accordion-item-content">'+
+				        '<div class="content-block">'+
+				          '<p>'+
+				          '<div class="list-block">'+
+							  '<ul>'+
+							    '<li>'+
+							      '<div class="item-content">'+
+							        '<div class="item-inner">'+
+							          '<div class="item-input" style="color: black !important;">'+
+							            '<input type="text" style="border: 1px solid #797580; color: black !important; padding-left: 10px;" name="day" placeholder="Doubletap here to select date" readonly id="calendar-events'+totalCalendarCount+'" onclick="pullCalendar('+totalCalendarCount+','+data.dayNumber+')">'+
+							           '<input type="text" style="color: black !important;" name="start_time"  value="Time: '+timeTo12HrFormat(data.starttime)+'" placeholder="Time" readonly id="calendar-events'+data.starttime+'" disabled>'+
+							           '<input type="hidden" name="user_id" value="'+localStorage.user_id+'">'+
+							           '<input type="hidden" name="doctor_id" value="'+page.query.id+'">'+
+							           '<input type="hidden" name="accepted" value="pending" placeholder="The doctor needs to accept this" >'+
+							           '<a href="#" class="button button-fill" onclick="createScheduleAppointment()" id="scheduleAppointmentSubmitButton">Click To Book Appointment</a>'+
+							          '</div>'+
+							        '</div>'+
+							      '</div>'+
+							    '</li>'+
+							  '</ul>'+
+							'</div>'+ 
+				          '</p>'+
+				        '</div>'+
+				      '</div>'+
+				    '</li>'+
+				  '</ul>'+
+				'</div></form>');
+					
+					
+			
+				
+				
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+  
+  //$('.timepicker').wickedpicker();
+  
+  
+				var refUser = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
+				
+				refUser.on("value", function(snapshot) {
+					
+				
+					myApp.alert(snapshot.val().doctors.specialization_id);
+					  if(snapshot.val().doctors != null){ //check if this user is a doctor
+					  	myApp.alert("This is a doctor");
+				$$('.addNewAppointment').html('<h4>What times of the week are you usually free?</h4>'+
+          '<form id="addNewAppointmentSchedule" class="list-block">'+
+			 ' <ul>'+
+			    '<li>'+
+			      '<div class="item-content">'+
+			       ' <div class="item-inner">'+
+			         ' <div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> Choose Weekday</div>'+
+			         ' <div class="item-input">'+
+			          '  <input type="text" name="name" >'+
+			            ' <div class="item-input">'+
+						  '  <select name="day">'+
+							'  <option value="Monday">Monday</option>'+
+							'  <option value="Tuesday">Tuesday</option>'+
+							'  <option value="Wednesday">Wednesday</option>'+
+							'  <option value="Thursday">Thursday</option>'+
+							'  <option value="Friday">Friday</option>'+
+							'  <option value="Saturday">Saturday</option>'+
+							'  <option value="Sunday">Sunday</option>'+
+							'</select>'+
+						 ' </div>'+
+			         ' </div>'+
+			        '</div>'+
+			      '</div>'+
+			   ' </li>'+
+			   ' <li>'+
+			    ' <div class="item-content">'+
+			      '  <div class="item-inner">'+
+			         '<div class="item-title label"><i class="fa fa-wpforms " aria-hidden="true"></i> Start Time</div>'+
+			         ' <div class="item-input">'+
+			            '<input type="text" name="starttime" placeholder="Start Time" class="timepicker">'+
+			          '</div>'+
+			       ' </div>'+
+			     ' </div>'+
+			    '</li>'+
+			    '<li>'+
+			     ' <div class="item-content">'+
+			        '<div class="item-inner">'+
+			         '<div class="item-title label"><i class="fa fa-wpforms" aria-hidden="true"></i> End Time</div>'+
+			          '<div class="item-input">'+
+			            '<input type="text" name="endtime" placeholder="End Time"class="timepicker">'+
+			          '</div>'+
+			        '</div>'+
+			      '</div>'+
+			    '</li>'+
+			  '</ul>'+
+         '</form>'+
+         '<div class="content-block">'+
+			  '<a href="#" onclick="addAppointmentSchedule()" class="button button-fill">Add</a>'+
+			'</div>');
+					  
+			}
+					  
+					}, function (errorObject) {
+					  console.log("The read failed: " + errorObject.code);
+					});
+				//check if user is a doctors
+
+
+$('.timepicker').wickedpicker();
 	});
+	
+    var today = new Date();
+	var weekLater = new Date().setDate(today.getDate() + 7);
+	 
+	var calendarDisabled = myApp.calendar({
+	    input: '#calendar-disabled',
+	    scrollToInput: true,
+	    inputReadOnly: true,
+	    dateFormat: 'M dd yyyy',
+	      disabled: function (date) {
+        if (date.getDay() != 3) {
+            return true;
+        }
+        else {
+            return false;
+        }
+      } 
+	});
+
+		//our aim is to divide the time difference into snaps of 15 minutes each,
+					function differenceInHours(){
+						var diff = new Date("Aug 08 2012 9:30") - new Date("Aug 08 2012 4:30"); 
+                		diff_time = diff/(60*60*1000);
+                		
+                		return(diff_time);
+					}
+				
+                
+              
+               //convert time to seconds
+		      
+		      function getTimeAsSeconds(time){  //convert time to seconds and simply add the two seconds
+				    var timeArray = time.split(':');
+				    return Number(timeArray [0]) * 3600 + Number(timeArray [1]) * 60 + Number(timeArray[2]);
+				}
+				//convert seconds back to time
+		      function formatSeconds(seconds){
+				    var date = new Date(1970,0,1);
+				    date.setSeconds(seconds);
+				    return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+				}
+				
+				
+	
+	
+function setSchedule(doctor_id, appointment_starttime, appointment_endtime){ //
+	
+    myApp.confirm('Are you sure?', 
+      function () {
+        myApp.alert('You clicked Ok button');
+      },
+      function () {
+        myApp.alert('You clicked Cancel button');
+      }
+    );
+}
+
+function timeTo12HrFormat(time)
+{   // Take a time in 24 hour format and format it in 12 hour format
+    var time_part_array = time.split(":");
+    var ampm = 'AM';
+
+    if (time_part_array[0] >= 12) {
+        ampm = 'PM';
+    }
+
+    if (time_part_array[0] > 12) {
+        time_part_array[0] = time_part_array[0] - 12;
+    }
+
+var time2 = time_part_array[2] || '';
+    formatted_time = time_part_array[0] + ':' + time_part_array[1] + ':' + time2 + ' ' + ampm;
+
+    return formatted_time;
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 myApp.onPageInit('messages_list', function (page) {
    //var page = e.detail.page;
@@ -737,6 +1225,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			    var middlename = snapshot.val().middlename || '';
 			    var lastname = snapshot.val().lastname || '';
 			    var fullname = title+' '+firstname+' '+middlename+' '+lastname;
+			    
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
 			    if(data.doctors.specialization_id == page.query.id){
@@ -744,7 +1233,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 					      '<a href="doctors_view.html?id='+snapshot.key()+'&about='+about+'&gender='+data.gender+'&fullname='+fullname+'" class="item-link item-content" data-context-name="doctor-card">'+
 					          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
 					          '<div class="item-inner">'+
-					            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+snapshot.val().doctors.title+' '+firstname+' '+middlename+' '+lastname+'</div>'+
+					            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+title+' '+firstname+' '+middlename+' '+lastname+'</div>'+
 					          '</div>'+
 					      '</a>'+
 					    '</li>');
@@ -1153,23 +1642,23 @@ var myMessages = myApp.messages('.messages', {
 }).trigger();
 
 
-
+/*
 //sample code to prevent back button from existing the app
 document.addEventListener('backbutton', function (e) {
             e.preventDefault();
-            /* Check for open panels */
+            //Check for open panels 
             if ($$('.panel.active').length > 0) {
                 f7.closePanel();
                 return;
             }
-            /* Check for go back in history */
+            // Check for go back in history 
             var view = f7.getCurrentView();
             if (!view) return;
             if (view.history.length > 1) {
                 view.router.back();
                 return;
             }
-            /* Quit app */
+            // Quit app
             navigator.notification.confirm(
                 'Exit Application ?',              // message
                 function (n) {
@@ -1178,10 +1667,6 @@ document.addEventListener('backbutton', function (e) {
                 'Exit',        // title
                 ['OK', 'Cancel']      // button labels
             );
-        }, false);
-
-
-
-
-                
-                
+        }, false); 
+*/
+               
