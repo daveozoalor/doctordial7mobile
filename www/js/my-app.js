@@ -422,6 +422,7 @@ function createContentPage() {
 
 
 function approveSchedule(appointmentId, acceptedValue, schedule_user_id, schedule_doctor_id){
+	
 	         //if its not accepted yet
 	         //if the viewer is not the one that scheduled it
 	   		if(localStorage.user_id != schedule_user_id && acceptedValue != "yes"){ 
@@ -438,17 +439,14 @@ function approveSchedule(appointmentId, acceptedValue, schedule_user_id, schedul
 		        //optionally,
 		        //redirect to this users profile
 		        mainView.router.loadPage("users_view.html?id="+schedule_user_id);
-		      }
-		    );
+		      });
 		    
 		    
 		    //if the owner of this is view it. 
 	      if(localStorage.user_id == schedule_user_id){
 	      	mainView.router.loadPage("users_view.html?id="+schedule_doctor_id+"&fullname=JohnLennon");
 	      	}
-	      }
-	      
-	      else if(localStorage.user_id == schedule_user_id){ //give the user the option to cancle or delete this appointment
+	      }else if(localStorage.user_id == schedule_user_id){ //give the user the option to cancle or delete this appointment
 	      
 		  	    myApp.modal({
 				    title:  'Manage Appointment',
@@ -658,11 +656,10 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 });
 
 function viewPersonalDoc(){
-		
       if(localStorage.personal_doctor_id != null){ //if personal doctor is another doctor
      // myApp.alert("Local Storage: "+localStorage.personal_doctor_id);
 			mainView.router.loadPage("doctors_view.html?id="+localStorage.personal_doctor_id);
-		} else if(localStorage.personal_doctor_id === null){
+		} else if(localStorage.personal_doctor_id == null){
 			
 			//redirect to doctor categories
 			  myApp.confirm('You have not added a personal doctor yet. Would you like to add one now?','Add doctor', 
@@ -676,6 +673,8 @@ function viewPersonalDoc(){
 			    );
 		}
 }
+
+
 function personalDocNameInsert(){ //insert personal doctor's name into the button on index'
  $$('.user-name').html(localStorage.fullname);
  if(localStorage.personal_doctor_name != null){

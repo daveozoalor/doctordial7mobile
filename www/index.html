@@ -32,7 +32,7 @@
   
   <script src='js/jquery.js'></script>
   
-  </div><script type="text/javascript" src="js/wickedpicker.js"></script>
+ <script type="text/javascript" src="js/wickedpicker.js"></script>
     <!-- Good default declaration:
     * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
     * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
@@ -45,7 +45,7 @@
 
     <title>Doctor Dial</title>
     
-       <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!-- Path to Framework7 Library CSS-->
     <link rel="stylesheet" href="css/framework7.material.min.css">
@@ -70,9 +70,6 @@
 </style> -->
 <body class="theme-red" >
 
-<div id="gem">
-	
-</div>
   
   <div class="views">
       <!-- Your main view, should have "view-main" class -->
@@ -87,7 +84,9 @@
               <div class="navbar-inner">
                 
                 <div class="center user-name"></div>
-                <div class="right"><a href="messages_list.html" class="link"><i class="fa fa-envelope" aria-hidden="true"></i>&nbsp;</a><a href="users_view.html" class="link"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;</a></div>
+                <div class="right">
+                    <a href="messages_list.html" class="link"><i class="fa fa-envelope" aria-hidden="true"></i>&nbsp;</a><a href="users_view.html" class="link"><i class="fa fa-user" 
+                    aria-hidden="true"></i>&nbsp;</a></div>
               </div>
             </div>              
           
@@ -343,6 +342,7 @@
   </div>
       </div>
     </div>
+</div>
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="js/framework7.min.js"></script>
     <!-- Path to your app js-->
