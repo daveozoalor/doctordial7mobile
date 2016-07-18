@@ -1,7 +1,6 @@
 // Initialize your app
 var myApp = new Framework7(
 {
-	  template7Pages: true ,
 	pushState: 0,
 	swipeBackPage: true,
    // Hide and show indicator during ajax requests
@@ -27,6 +26,11 @@ var mainView = myApp.addView('.view-main', {
     // Because we use fixed-through navbar we can enable dynamic navbar
     //domCache: true,
 });
+
+
+
+
+
 
 //for date and time
 var currentdate = new Date(); 
@@ -70,7 +74,6 @@ function updateAnything(formData, childVar){
   }
 });
 }
-
 
   
 
@@ -156,6 +159,7 @@ ref.createUser(formData,
 		  } else {
 		  	//save data in local storage
 		  	localStorage.user_id = authData.uid;
+		  	localStorage.email = sentEmail;
 		  	
 		  	ref.child("users/"+authData.uid).once("value", function(snapshot){
 		  		
@@ -203,6 +207,14 @@ ref.createUser(formData,
 		});
 
 		}
+		
+		
+		//if the user email is not set, ask user to login again
+		if(!localStorage.email || localStorage.email == null){
+			logoutPop();
+		}
+		
+		
 
 $$('.demo-progressbar-load-hide .button').on('click', function () {
     var container = $$('.demo-progressbar-load-hide p:first-child');
@@ -508,34 +520,43 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   createAnything(formData, "specializations"); //do the registration and report errors if found
  
   });
-
   
+  
+var messageList = $$('.specialization-list-block');
+		
   
   //get the list from database
 	   var ref = new Firebase("https://doctordial.firebaseio.com/specializations");
 		// Attach an asynchronous callback to read the data at our posts reference
 		//var specializations;
-		var messageList = $$('.specialization-list-block');
+		
+		
+		
 		ref.limitToLast(50).on("child_added", function(snapshot) {
 		   var data = snapshot.val();
 		   //specializations = JSON.stringify(snapshot.val());
 					//doctors list
 					
 			    var name = data.name || "anonymous";
-			    var message = data.text;
+			    var message = data.description;
 			    var specs_id = snapshot.key(); //get the id
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
              // myApp.alert(JSON.stringify(snapshot.val()));
 			    //ADD MESSAGE
-			    messageList.append('<li>'+
-		      '<a href="doctors_list.html?id='+specs_id+'&categoryname='+name+'" class="item-link item-content" data-context-name="languages">'+
-		          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
-		          '<div class="item-inner">'+
-		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+name+'</div>'+
-		          '</div>'+
-		      '</a>'+
-		    '</li>');
+			   
+					
+			    messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
+				      '<a href="doctors_list.html?id='+specs_id+'&categoryname='+name+'" class="item-link item-content">'+
+				        '<div class="item-media"> <i class="fa fa-commenting-o" aria-hidden="true" style="font-size: 30px;"></i> </div>'+
+				        '<div class="item-inner">'+
+				          '<div class="item-title-row">'+
+				            '<div class="item-title" style="font-weight: bold !important;" >'+name+'</div>'+
+				          '</div>'+
+				          '<div class="item-text">'+message+'</div>'+
+				        '</div>'+
+				      '</a>'+
+				    '</li>');
 					
 					
 		
@@ -613,11 +634,11 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 					}
 			  
 
-			   messageList.append('<a href="#" class="item-link item-content" onclick="approveSchedule(specs_id, data.accepted,data.user_id,data.doctor_id);">'+
+			   messageList.append('<a href="#" style="background-color: white; color: black; border: 1px solid #7e7e7e;" class="item-link item-content" onclick="approveSchedule(specs_id, data.accepted,data.user_id,data.doctor_id);">'+
 				        '<div class="item-inner">'+
 				         '<div class="item-title-row">'+
-				            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'</div>'+
-				            '<div class="item-after"> by '+data.start_time+'</div>'+
+				            '<div class="item-title" style="color: black;"><i class="fa fa-clock-o" aria-hidden="true"></i> '+data.day+'</div>'+
+				            '<div class="item-after"  > '+data.start_time+'</div>'+
 				          '</div>'+
 				          '<div class="item-text">approval: '+data.accepted+'</div>'+
 				        '</div>'+
@@ -654,6 +675,8 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   
  
 });
+
+
 
 function viewPersonalDoc(){
       if(localStorage.personal_doctor_id != null){ //if personal doctor is another doctor
@@ -704,6 +727,7 @@ function pullCalendar(calendarId,dayNumber){
 				var calendarEvents = myApp.calendar({
 				    input: '#calendar-events'+calendarId,
 				    dateFormat: 'M dd yyyy',
+				    closeOnSelect: true,
 				    //Disabled all dates in November 2015
 				    disabled: function (date) {
 				        if (date.getDay() !== dayNumber) {
@@ -751,6 +775,17 @@ function pullCalendar(calendarId,dayNumber){
 			  
 myApp.onPageInit('users_view', function (page) {
 				
+				$$('.open-about').on('click', function () {
+				  myApp.popup('.popup-about');
+				});
+				 
+				$$('.open-services').on('click', function () {
+				  myApp.popup('.popup-services');
+				});   
+								
+				
+				
+				
 	if(page.query.id == null){
 		page.query.id = localStorage.user_id;
 	}
@@ -767,13 +802,13 @@ myApp.onPageInit('users_view', function (page) {
 	
 	
 		ref.once("value", function(snapshot) {
-			
 			data = snapshot.val();
 			//myApp.alert("Userid: "+page.query.id+" User id from server: "+snapshot.val().email);
 			
 			$$('#profile-name').html(' '+data.firstname);
 			
-			if(data.firstname != null){
+			//if(data.firstname){
+				
 			$$('.profile-details').append('<li class="item-content">'+
 					          '<div class="item-inner">'+
 					            '<div class="item-title"><b>First Name:</b> '+data.firstname+'</div>'+
@@ -781,7 +816,7 @@ myApp.onPageInit('users_view', function (page) {
 					        '</li>'
 					        );
 					        
-					        }
+					     //   }
 			 if(data.middlename != null){
 			$$('.profile-details').append('<li class="item-content">'+
 					          '<div class="item-inner">'+
@@ -933,9 +968,9 @@ $$('.change-personal-doctor').on('click', function () {
 			   messageList.append('<form id="scheduleAppointmentFormSubmit"><div class="list-block accordion-list" style="border: 1px solid #7a8b74;">'+
 				  '<ul>'+
 				    '<li class="accordion-item"><a href="#" class="item-content item-link">'+
-				        '<div class="item-inner">'+
+				        '<div class="item-inner" style="background-color: 1px solid #eceeed !important">'+
 				          '<div class="item-title">'+
-				          '<i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+' '+timeTo12HrFormat(data.starttime)+' - '+timeTo12HrFormat(data.endtime)+'</div>'+
+				          '<i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'s '+timeTo12HrFormat(data.starttime)+' - '+timeTo12HrFormat(data.endtime)+'</div>'+
 				        '</div></a>'+
 				      '<div class="accordion-item-content">'+
 				        '<div class="content-block">'+
@@ -947,11 +982,14 @@ $$('.change-personal-doctor').on('click', function () {
 							        '<div class="item-inner">'+
 							          '<div class="item-input" style="color: black !important;">'+
 							            '<input type="text" style="border: 1px solid #797580; color: black !important; padding-left: 10px;" name="day" placeholder="Doubletap here to select date" readonly id="calendar-events'+totalCalendarCount+'" onclick="pullCalendar('+totalCalendarCount+','+data.dayNumber+')">'+
-							           '<input type="text" style="color: black !important;" name="start_time"  value="Time: '+timeTo12HrFormat(data.starttime)+'" placeholder="Time" readonly id="calendar-events'+data.starttime+'" disabled>'+
+							           '<input type="text" style="border: 1px solid #797580; color: black !important;" name="start_time"  value="'+timeTo12HrFormat(data.starttime)+'" placeholder="Time" readonly id="calendar-events'+data.starttime+'" disabled>'+
 							           '<input type="hidden" name="user_id" value="'+localStorage.user_id+'">'+
 							           '<input type="hidden" name="doctor_id" value="'+page.query.id+'">'+
 							           '<input type="hidden" name="accepted" value="pending" placeholder="The doctor needs to accept this" >'+
-							           '<a href="#" class="button button-fill" onclick="createScheduleAppointment()" id="scheduleAppointmentSubmitButton">Click To Book Appointment</a>'+
+							           '<div class="row">'+
+										  '<div class="col-50">'+
+										    '<a href="#" class="button button-big button-red button-fill" onclick="createScheduleAppointment()" id="scheduleAppointmentSubmitButton">Submit</a>'+
+										  '</div></div>'+
 							          '</div>'+
 							        '</div>'+
 							      '</div>'+
@@ -974,7 +1012,6 @@ $$('.change-personal-doctor').on('click', function () {
 		  console.log("The read failed: " + errorObject.code);
 		});
   
-  //$('.timepicker').wickedpicker();
   
   
 				var refUser = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
@@ -1043,7 +1080,6 @@ $$('.change-personal-doctor').on('click', function () {
 				//check if user is a doctors
 
 
-$('.timepicker').wickedpicker();
 	});
 	
     var today = new Date();
@@ -1141,7 +1177,6 @@ var time2 = time_part_array[2] || '';
 	
 	
 	
-	
 myApp.onPageInit('messages_list', function (page) {
    //var page = e.detail.page;
   // alert(page.query.categoryname);
@@ -1195,6 +1230,14 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
 });
          
+myApp.onPageInit('messages_call_view', function (page) {
+	});
+	
+
+	
+	
+	
+	
 myApp.onPageInit('doctors_list', function (page) {
    //var page = e.detail.page;
   // alert(page.query.categoryname);
@@ -1214,7 +1257,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
   });
   
-  
+ 
   //get the list from database
 	   var ref = new Firebase("https://doctordial.firebaseio.com/users");
 		// Attach an asynchronous callback to read the data at our posts reference
@@ -1233,6 +1276,9 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			    var message = data.specialization_id;
 			    var specs_id = snapshot.key(); //get the id
 			    var about = snapshot.val().about || '';
+			    var gender = snapshot.val().gender || '';
+			    var city = snapshot.val().city || '';
+			    var state = snapshot.val().state || '';
 			    var title = snapshot.val().doctors.title || '';
 			    var firstname = snapshot.val().firstname || '';
 			    var middlename = snapshot.val().middlename || '';
@@ -1242,14 +1288,20 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
 			    if(data.doctors.specialization_id == page.query.id){
-					   messageList.append('<li>'+
-					      '<a href="doctors_view.html?id='+snapshot.key()+'&about='+about+'&gender='+data.gender+'&fullname='+fullname+'" class="item-link item-content" data-context-name="doctor-card">'+
-					          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
-					          '<div class="item-inner">'+
-					            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+title+' '+firstname+' '+middlename+' '+lastname+'</div>'+
-					          '</div>'+
-					      '</a>'+
-					    '</li>');
+					  
+					    
+					    
+					    messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
+				      '<a href="doctors_view.html?id='+snapshot.key()+'&about='+about+'&gender='+data.gender+'&fullname='+fullname+'" class="item-link item-content" data-context-name="doctor-card" class="item-link item-content">'+
+				        '<div class="item-media" width="20%"> <img src="img/doctor1.jpg" /> </div>'+
+				        '<div class="item-inner">'+
+				          '<div class="item-title-row">'+
+				            '<div class="item-title" style="font-weight: bold !important;" > '+title+' '+fullname+'</div>'+
+				          '</div>'+
+				          '<div class="item-text">'+gender+'  '+city+'  '+state+'</div>'+
+				        '</div>'+
+				      '</a>'+
+				    '</li>');
 					
 				}
 			 
@@ -1313,7 +1365,26 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 	   var ref = new Firebase("https://doctordial.firebaseio.com/complaints");
 		// Attach an asynchronous callback to read the data at our posts reference
 		var messageList = $$('.specialization-list-block');
+		
+		
+		
+		var announcementDiv = $$('.announcementDiv');
+		
+		 announcementDiv.html('<li style="background-color: white; color: black;">'+
+		 '<a href="#" class="link create-complaint-modal color-gray">'+
+		          '<div class="item-inner">'+
+		            '<div class="item-title">&nbsp; &nbsp; <i class="fa fa-meh-o" aria-hidden="true"></i> <i>None yet </i></div>'+
+		          '</div>'+
+		          '</div>'+
+		    '</li>');
+					
+		
+		
+		
+		
 		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToFirst(50).on("child_added", function(snapshot) {
+			
+			announcementDiv.hide();
 		   var data = snapshot.val();
 		   //specializations = JSON.stringify(snapshot.val());
 					//doctors list
@@ -1330,15 +1401,19 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 				     return str.length > length ? str.substring(0, length - 3) + '...' : str
 				  }
               
-			    messageList.append('<li>'+
-		      '<a href="complaints_view.html?id='+specs_id+'&title='+truncateString(title, 25)+'" class="item-link item-content" data-context-name="languages">'+
-		          '<!--<div class="item-media"><i class="fa fa-user" aria-hidden="true"></i></div>-->' +
-		          '<div class="item-inner">'+
-		            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+truncateString(title, 140)+'</div>'+
-		          '</div>'+
-		      '</a>'+
-		    '</li>');
+			   
 					
+						messageList.append('<li style="border: 1px solid #88868c; color: black; background-color: white; border-radius: 5px;">'+
+				      '<a href="complaints_view.html?id='+specs_id+'&title='+truncateString(title, 25)+'"  class="item-link item-content">'+
+				        '<div class="item-media"> <i class="fa fa-commenting-o color-red " aria-hidden="true" style="font-size: 30px;"></i> </div>'+
+				        '<div class="item-inner">'+
+				          '<div class="item-title-row">'+
+				            '<div class="item-title" style="font-weight: bold !important;" >'+truncateString(title, 140)+'</div>'+
+				          '</div>'+
+				          '<div class="item-subtitle">'+truncateString(message, 140)+'</div>'+
+				        '</div>'+
+				      '</a>'+
+				    '</li>');
 					
 		
 		
@@ -1517,6 +1592,32 @@ var myMessages = myApp.messages('.messages', {
 }).trigger();
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
  myApp.onPageInit('messages_view', function(page) {
 
 
@@ -1655,9 +1756,12 @@ var myMessages = myApp.messages('.messages', {
 }).trigger();
 
 
-/*
+
 //sample code to prevent back button from existing the app
-document.addEventListener('backbutton', function (e) {
+function onDeviceReady(){
+
+document.addEventListener("backbutton", function (e) {
+	
             e.preventDefault();
             //Check for open panels 
             if ($$('.panel.active').length > 0) {
@@ -1681,5 +1785,7 @@ document.addEventListener('backbutton', function (e) {
                 ['OK', 'Cancel']      // button labels
             );
         }, false); 
-*/
+}
+
+document.addEventListener("deviceready", onDeviceReady, false);
                

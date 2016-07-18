@@ -3,13 +3,52 @@
 <html>
 
 <head>
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    
+    <!-- Bootstrap core CSS  -->
+<link rel="canonical" href="https://quickblox.github.io/quickblox-javascript-sdk/samples/webrtc" />
+
+    <link rel="shortcut icon" href="https://quickblox.com/favicon.ico">
+
+    <!-- use http://una.im/CSSgram/ for filters -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/cssgram.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+
+
+
+<!-- SCRIPT -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+ <script src="js/quickblox.min.js"></script>
+    
+
+    <script src="js/config.js"></script>
+    <script src="js/msgBoard.js"></script>
+    <script src="js/app.js"></script>
+    
+    
+    
+    
     <meta charset="utf-8" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'  'unsafe-eval' data: gap: 'unsafe-inline' https://ssl.gstatic.com;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: gap: 'unsafe-inline' https://ssl.gstatic.com;" />
     <meta http-equiv="Cache-control" content="no-cache">
+    
+    <meta http-equiv="cache-control" content="max-age=0" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+<meta http-equiv="pragma" content="no-cache" />
+   
     <!-- dhtmlxScheduler 
 		<script src="source/dhtmlx_scheduler/sources/dhtmlxscheduler.js"></script>
 		<link rel="stylesheet" href="source/dhtmlx_scheduler/sources/skins/dhtmlxscheduler.css">
@@ -30,9 +69,8 @@
 		  firebase.initializeApp(config);
 		</script> -->
   
-  <script src='js/jquery.js'></script>
-  
- <script type="text/javascript" src="js/wickedpicker.js"></script>
+    
+
     <!-- Good default declaration:
     * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
     * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
@@ -55,20 +93,12 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     
-
-    <script type="text/javascript" src="cordova.js"></script>
+ 
+    
+ 
+ 
 </head>
-<!-- <style>
-	.views {
-    background-size: 100%;
-    background: url("img/doctor.jpg") no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-</style> -->
-<body class="theme-red" >
+<body class="theme-red layout-white layout-gray-custom" >
 
   
   <div class="views">
@@ -77,76 +107,134 @@
         <!-- Pages container, because we use fixed navbar and toolbar, it has additional appropriate classes-->
         <div class="pages navbar-fixed toolbar-fixed" data-background="img/doctor.jpg">
           <!-- Page, "data-page" contains page name -->
-          <div data-page="index" class="page">
+          <div data-page="index" class="page ">
  
             <!-- Top Navbar. In Material theme it should be inside of the page -->
             <div class="navbar">
               <div class="navbar-inner">
                 
-                <div class="center user-name"></div>
-                <div class="right">
-                    <a href="messages_list.html" class="link"><i class="fa fa-envelope" aria-hidden="true"></i>&nbsp;</a><a href="users_view.html" class="link"><i class="fa fa-user" 
-                    aria-hidden="true"></i>&nbsp;</a></div>
+                <div class="left user-name"><a href="index.html" class="color-white"><i class="fa fa-plus-circle" aria-hidden="true"> </i></a>&nbsp; Doctordial</div>
+                <div class="right"> </div>
               </div>
             </div>              
           
-            <!-- Sub navbar
-    <div class="subnavbar">
+           
+    <div class="subnavbar theme-white color-black" style="border: 1px solid #8f929a">
         <div class="buttons-row">
-            <a href="#tab1" class="button active">My Doc</a>
-            <a href="#tab2" class="button">Find</a>
-            <a href="#tab3" class="button">History</a>
+             <a href="messages_list.html" class="link button color-black"><i class="fa fa-envelope" aria-hidden="true"></i>&nbsp; Messages</a>
+                    <a href="users_view.html" class="link button color-black"><i class="fa fa-user" aria-hidden="true"></i>&nbsp; Profile</a>
         </div>
-    </div> -->
+    </div> 
  
             <!-- Bottom Toolbar. In Material theme it should be inside of the page-->
            
  
   
-			<div class="page-content">
+			<div class="page-content" style="color: black;">
 	
-			<div align="center" style="font-size: 80px; margin-top: 50px; margin-bottom: 2px; height: 60%; ">
-	          <img src="img/doctordial-logo.jpg" class="blink"/> 		
-			 </div>    
-			
-			
-			
+				<div class="card demo-card-header-pic">
+				  <div style=" color: black;" valign="bottom" class="card-header color-white no-border">Personal Doctor</div>
+				  <div class="card-content">
+				   
+				   
+						<div class="list-block media-list inset">
+						  <ul>
+						    <li style="color: black;">
+						      <a href="#" class="item-link item-content" onclick="viewPersonalDoc()">
+						        <div class="item-media" style="width: 20%;" > <img src="img/doctor1.jpg" style="width: 100%;"></img> </div>
+						        <div class="item-inner">
+						          <div class="item-title-row">
+						            <div class="item-title" style="font-size: 18px; font-weight: bold;"><span class="personal-doctor-name">Dr. Olakunle Smith</span></div>
+						          </div>
+						          <div class="item-subtitle"> Consultant Gynaecologist</div><br/>
+						          <div class="item-subtitle"> <i class="fa fa-map-marker" aria-hidden="true"></i> Maryland, Lagos</div>
+						        </div>
+						      </a><br/>
+						     
+						    </li>
+						  </ul>
+						</div> 
+				   
+				  </div>
+				</div>
 			
 		
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+			   <div class="card">
+				  <div class="card-content">
+				<div class="list-block media-list">
+				  <ul>
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="complaints_list.html" class="item-link item-content">
+				        <div class="item-media"> <i class="fa fa-commenting-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important;" >Type Your Health Question</div>
+				          </div>
+				          <div class="item-text">Get answers from doctors within 24 hours</div>
+				        </div>
+				      </a>
+				    </li>
+				    
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="specializations_list.html" class="item-link item-content">
+				        <div class="item-media"> <i class="fa fa-user-md" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important;" >Find A Doctor</div>
+				          </div>
+				          <div class="item-text">Consult online or book appointments</div>
+				        </div>
+				      </a>
+				    </li>
+				    
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="appointments_schedule_list.html" class="item-link item-content">
+				        <div class="item-media"> <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important;" >My Appointments</div>
+				          </div>
+				          <div class="item-text">See list of pending appointments </div>
+				        </div>
+				      </a>
+				    </li>
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="messages_call_view.html" class="item-link item-content">
+				        <div class="item-media"> <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important; color: red;" >Call doctor</div>
+				          </div>
+				          <div class="item-text"> </div>
+				        </div>
+				      </a>
+				    </li>
+				  </ul>
+				</div>
+				    
+				    
+				    
+				    
+				    
+				    
+				 
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				  </div>
+				</div>
 			
 			
 			
         
-                  		<div class="card">
-						     <p class="buttons-row">
-						        <a href="#" class="button button-big button-fill button-raised" onclick="viewPersonalDoc()">
-						        <i class="fa fa-user" aria-hidden="true"></i> <span class="personal-doctor-name">Personal Doc</span></a>
-						        <a href="specializations_list.html" class="button button-big button-fill button-raised "><i class="fa fa-search" aria-hidden="true"></i> Find a doctor</a>
-						      </p>
-						      <p class="buttons-row">
-						      
-						       <a href="complaints_list.html" class="button button-big button-fill button-raised">
-						       <i class="fa fa-heart-o" aria-hidden="true"></i> Complaints</a>
-						     
-						        <a href="appointments_schedule_list.html" class="button button-big button-fill button-raised ">
-						        <i class="fa fa-clock-o" aria-hidden="true"></i> My Appointments</a>
-						     </p>
-						     
-						</div> 
 			 		 </div>
         
           </div>
@@ -164,10 +252,10 @@
     
     
     
-    <div class="login-screen">
+    <div class="login-screen ">
     <div class="view">
       <div class="page">
-      <div class="page-content login-screen-content">
+      <div class="page-content login-screen-content" style="background-color: white;">
     <div class="login-screen-title">
 	          <img src="img/doctordial-logo.jpg" class="blink"/> 	
     	
@@ -176,22 +264,19 @@
     <!-- Buttons row as tabs controller -->
     <div class="buttons-row">
       <!-- Link to 1st tab, active -->
-      <a href="#loginTab" class="tab-link active button button-raised button-fill"><i class="fa fa-key" aria-hidden="true"></i> Login</a>
+      <a href="#loginTab" class="tab-link active button button-raised button-fill" onclick="this.hide();"><i class="fa fa-key" aria-hidden="true"></i> Login</a>
       <!-- Link to 2nd tab -->
       <a href="#signupTab" class="tab-link button button-raised button-fill"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Signup</a>
-      <!-- Link to 3rd tab -->
-      <a href="#forgotPaaswordTab" class="tab-link button button-raised button-fill"><i class="fa fa-check-square-o" aria-hidden="true"></i> Forgot?</a>
     </div>
   </div>
+ 
   
-  
-  
-    <div class="tabs-animated-wrap">
+    <div class="tabs-animated-wrap" >
         
         <!-- Tabs, tabs wrapper -->
         <div class="tabs">
   <div id="loginTab" class="tab">  
-  <div class="login-screen-title">Login</div>
+  <div class="login-screen-title color-black">Login</div>
   <form id="loginForm" class="list-block">
       <div class="list-block inset">
         <ul>
@@ -231,8 +316,9 @@
 </div>
 
 
+
   <div id="signupTab" class="tab"> 
-    <div class="login-screen-title">Signup</div>
+    <div class="login-screen-title color-black">Signup</div>
        <form id="signupForm">
       <div class="list-block inset">
         <ul>
@@ -311,7 +397,7 @@
   
   </div>
   <div id="forgotPaaswordTab" class="tab"> 
-    <div class="login-screen-title">Forgot Password</div>
+    <div class="login-screen-title color-white">Forgot Password</div>
      <form id="recoverForm" >
       <div class="list-block inset">
         <ul>
@@ -332,26 +418,43 @@
       </div>
     </form> 
   </div>
-  <div id="changePsswordTab" class="tab"> Change Password</div>
   
+
   </div>
-  </div>
   
+ </div>
+ 
+   
+   <div class="well">
+   	 
+   <div id="changePsswordTab" class="tab"> Change Password</div>
   
-  
+      <!-- Link to 3rd tab -->
+      <a href="#forgotPaaswordTab" class="tab-link link"><i class="fa fa-check-square-o" aria-hidden="true"></i> Forgot?</a>
+ 
+   </div>  
+ 
+ 
   </div>
       </div>
     </div>
-</div>
+</div>  
+
+    
+
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="js/framework7.min.js"></script>
     <!-- Path to your app js-->
     <script type="text/javascript" src="js/my-app.js"></script>
-   <script type="text/javascript" src="js/index.js"></script>
-    <script type="text/javascript">
-        app.initialize();
-    </script>
-    
+   
+   
+      <script type="text/javascript" src="cordova.js"></script>
+
+		
+		
+		
+
+		
         
 </body>
 

@@ -1,0 +1,10 @@
+/* === Dark layout === */
+.layout-gray-custom .page,
+.layout-gray-custom .login-screen-content,
+.page.layout-gray-custom,
+.layout-gray-custom .panel,
+.panel.layout-gray-custom {
+  background-color: #dcddde;
+  color: rgba(255, 255, 255, 0.87);
+}
+
