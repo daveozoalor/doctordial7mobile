@@ -32,6 +32,41 @@ var mainView = myApp.addView('.view-main', {
 
 
 
+//for making calls
+
+
+
+//its quite difficult to perform CRUD on quickblox, a lot of headache, so many unexpected behaviours. I'm now growing bald because of it.
+//So, soon as that retrieval is succsseful, we upload the user's details to fireabse for easy CRUD next time we want to make a call.
+//The two functions below help with that.
+
+function findDoctorQuickbloxDetails(doctorUserID){
+
+	//alert("Help findDoctorQuickbloxDetails running");
+	//since user is only registered once on quickblox
+	//during registeration, user's details would also be registered on firebase
+	//so we simply get the quickblox details from the doctor's firebase profile 
+	//then we save on on localStorage
+	//we do this for every doctor the user chats up
+
+	var quickbloxDoctorRef = new Firebase("https://doctordial.firebaseio.com/users/"+doctorUserID);
+				quickbloxDoctorRef.once("value", function(snapshot){
+				localStorage.quickblox_doctor_id = snapshot.val().quickblox_id;
+				localStorage.quickblox_doctor_owner_id = snapshot.val().quickblox_owner_id ;
+				localStorage.quickblox_doctor_full_name = snapshot.val().quickblox_full_name ;
+				localStorage.quickblox_owner_email = snapshot.val().quickblox_email ;
+				localStorage.quickblox_doctor_login = snapshot.val().quickblox_login ;
+				
+			});
+
+}
+
+
+
+
+
+
+
 //for date and time
 var currentdate = new Date(); 
 var todaysdate = "Now: " + currentdate.getDate() + "/"
@@ -158,7 +193,8 @@ ref.createUser(formData,
 		    return false; //required to prevent default router action
 		  } else {
 		  	//save data in local storage
-		  	localStorage.user_id = authData.uid;
+		  	localStorage.doctordial_user_id = authData.uid;
+		  	localStorage.doctordial_user_id = authData.uid;
 		  	localStorage.email = sentEmail;
 		  	
 		  	ref.child("users/"+authData.uid).once("value", function(snapshot){
@@ -178,7 +214,7 @@ ref.createUser(formData,
 		  	}else{
 				localStorage.lastname = '';
 			}
-		  	localStorage.fullname = snapshot.val().firstname + ' '+ snapshot.val().middlename + ' '+ snapshot.val().lastname ;
+		  	localStorage.full_name = snapshot.val().firstname + ' '+ snapshot.val().middlename + ' '+ snapshot.val().lastname ;
 		  	
 		  	//get personal doctor's details
 		  	
@@ -308,7 +344,7 @@ $$('.demo-progressbar-load-hide .button').on('click', function () {
 
 		// Create a callback which logs the current auth state
 		function checkLoggedIn(authData) {
-		  if (localStorage.user_id != null) {
+		  if (localStorage.doctordial_user_id != null) {
 		    
 		       myApp.closeModal(); //closelogin screen
 		  } else {
@@ -437,7 +473,7 @@ function approveSchedule(appointmentId, acceptedValue, schedule_user_id, schedul
 	
 	         //if its not accepted yet
 	         //if the viewer is not the one that scheduled it
-	   		if(localStorage.user_id != schedule_user_id && acceptedValue != "yes"){ 
+	   		if(localStorage.doctordial_user_id != schedule_user_id && acceptedValue != "yes"){ 
 	   	   myApp.confirm('Do you approve this appointment request?', 'Manage Approval', 
 		      function () {
 		        formData = {
@@ -455,10 +491,10 @@ function approveSchedule(appointmentId, acceptedValue, schedule_user_id, schedul
 		    
 		    
 		    //if the owner of this is view it. 
-	      if(localStorage.user_id == schedule_user_id){
+	      if(localStorage.doctordial_user_id == schedule_user_id){
 	      	mainView.router.loadPage("users_view.html?id="+schedule_doctor_id+"&fullname=JohnLennon");
 	      	}
-	      }else if(localStorage.user_id == schedule_user_id){ //give the user the option to cancle or delete this appointment
+	      }else if(localStorage.doctordial_user_id == schedule_user_id){ //give the user the option to cancle or delete this appointment
 	      
 		  	    myApp.modal({
 				    title:  'Manage Appointment',
@@ -513,10 +549,10 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 }); 
 
 //dummy function I used to create new stuff
-  $("#addAccount").on('click', function () {
+  $$("#addAccount").on('click', function () {
    // var email = pageContainer.find('input[name="email"]').val();
     var formData = myApp.formToJSON('#addNew'); //convert submitted form to json.
-  formData.user_id = localStorage.user_id;
+  formData.user_id = localStorage.doctordial_user_id;
   createAnything(formData, "specializations"); //do the registration and report errors if found
  
   });
@@ -615,7 +651,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		
 		var messageList = $$('.appointment-list-block'); 
 		
-		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToLast(50).on("child_added", function(snapshot) {
+		ref.orderByChild("user_id").startAt(localStorage.doctordial_user_id).endAt(localStorage.doctordial_user_id).limitToLast(50).on("child_added", function(snapshot) {
 		    data = snapshot.val(); 
 		     specs_id = snapshot.key(); //get the id
 		     
@@ -699,7 +735,7 @@ function viewPersonalDoc(){
 
 
 function personalDocNameInsert(){ //insert personal doctor's name into the button on index'
- $$('.user-name').html(localStorage.fullname);
+ $$('.user-name').html(localStorage.full_name);
  if(localStorage.personal_doctor_name != null){
  	var docName = String(localStorage.personal_doctor_name);
  	 $$('.personal-doctor-name').html('Dr. '+docName.replace('undefined',''));
@@ -768,7 +804,7 @@ function pullCalendar(calendarId,dayNumber){
 			    else if(formData.day === "Saturday"){
 					formData.dayNumber = 6;
 				}
-			  formData.user_id = localStorage.user_id;
+			  formData.user_id = localStorage.doctordial_user_id;
 			  createAnything(formData, "appointments"); //do the registration and report errors if found
 			 
 			  }
@@ -787,10 +823,10 @@ myApp.onPageInit('users_view', function (page) {
 				
 				
 	if(page.query.id == null){
-		page.query.id = localStorage.user_id;
+		page.query.id = localStorage.doctordial_user_id;
 	}
 	
-	if(page.query.id != localStorage.user_id){
+	if(page.query.id != localStorage.doctordial_user_id){
 		$$('.contactButtons').html('<p class="buttons-row">'+
 			           '<a href="messages_view.html?id={{url_query.id}}" class="link button button-fill color-red">'+
 			               '<i class="fa fa-comment-o" aria-hidden="true"></i> Chat</a>'+
@@ -870,7 +906,7 @@ $$('.add-personal-doctor').on('click', function () {
 			      
 			      var formData = {personal_doctor_id: page.query.id};
 			      
-			      updateAnything(formData, "users/"+localStorage.user_id); //update this user's record and add personal doctor
+			      updateAnything(formData, "users/"+localStorage.doctordial_user_id); //update this user's record and add personal doctor
 			      
 			      localStorage.personal_doctor_id = page.query.id;
 			       $$('.add-personal-doctor').hide();
@@ -902,12 +938,12 @@ $$('.change-personal-doctor').on('click', function () {
 		});
 	
 	
-	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
+	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.doctordial_user_id);
 	
 	
 		ref.orderByChild("personal_doctor_id").startAt(page.query.id).endAt(page.query.id).once("child_added", function(snapshot) {
 			
-			myApp.alert("Userid: "+localStorage.user_id +" <br/> Doctor ID: "+ page.query.id);
+			myApp.alert("Userid: "+localStorage.doctordial_user_id +" <br/> Doctor ID: "+ page.query.id);
 			
 		  if(snapshot.key() != null){
 		  	
@@ -927,7 +963,7 @@ $$('.change-personal-doctor').on('click', function () {
 				       var personalDoc = {
 					   	personal_doctor_id: page.query.id
 					   }
-				        updateAnything(personalDoc, "users/"+localStorage.user_id+"/");
+				        updateAnything(personalDoc, "users/"+localStorage.doctordial_user_id+"/");
 				        
 				        localStorage.personal_doctor_id = page.query.id; // save it
 				        
@@ -983,7 +1019,7 @@ $$('.change-personal-doctor').on('click', function () {
 							          '<div class="item-input" style="color: black !important;">'+
 							            '<input type="text" style="border: 1px solid #797580; color: black !important; padding-left: 10px;" name="day" placeholder="Doubletap here to select date" readonly id="calendar-events'+totalCalendarCount+'" onclick="pullCalendar('+totalCalendarCount+','+data.dayNumber+')">'+
 							           '<input type="text" style="border: 1px solid #797580; color: black !important;" name="start_time"  value="'+timeTo12HrFormat(data.starttime)+'" placeholder="Time" readonly id="calendar-events'+data.starttime+'" disabled>'+
-							           '<input type="hidden" name="user_id" value="'+localStorage.user_id+'">'+
+							           '<input type="hidden" name="user_id" value="'+localStorage.doctordial_user_id+'">'+
 							           '<input type="hidden" name="doctor_id" value="'+page.query.id+'">'+
 							           '<input type="hidden" name="accepted" value="pending" placeholder="The doctor needs to accept this" >'+
 							           '<div class="row">'+
@@ -1014,7 +1050,7 @@ $$('.change-personal-doctor').on('click', function () {
   
   
   
-				var refUser = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.user_id);
+				var refUser = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.doctordial_user_id);
 				
 				refUser.on("value", function(snapshot) {
 					
@@ -1194,7 +1230,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		
 		  //find list of doctors in this specialization . page.query.id is the query received from the incoming page GET request
 		 // myApp.alert("Dave");
-			ref.orderByChild("receiver_id").equalTo(localStorage.user_id).on("child_added", function(snapshot) {
+			ref.orderByChild("receiver_id").equalTo(localStorage.doctordial_user_id).on("child_added", function(snapshot) {
 			
 		//ref.limitToLast(50).on("child_added", function(snapshot) {
 		        var data = snapshot.val();
@@ -1231,6 +1267,14 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 });
          
 myApp.onPageInit('messages_call_view', function (page) {
+
+   // findDoctorQuickbloxDetails(page.query.doctorUserID);
+
+if(localStorage.quickblox_id === null){ //if the user's details doesn't exist, update it
+	//updateUserQuickblocToFirebase(localStorage.doctordial_user_id);
+}
+
+	testEcho();
 	});
 	
 
@@ -1332,7 +1376,7 @@ myApp.onPageInit('complaints_list', function (page) {
     '<input type="text" name="title" placeholder="Title" style="border: 1px solid #9fa39a; border-radius: 3px; "/> <br/><textarea name="text" placeholder="Symptoms" style="border: 1px solid #9fa39a; border-radius: 3px;"></textarea>'+
     '<input type="hidden" value="'+currenttime+'" name="time" hidden />'+
     '<input type="hidden" value="'+todaysdate+'" name="date" hidden />'+
-    '<input type="hidden" value="'+localStorage.user_id+'" name="user_id" hidden />'+
+    '<input type="hidden" value="'+localStorage.doctordial_user_id+'" name="user_id" hidden />'+
     '</div> </div> </div> </form> </li> </ul> </div>',
     buttons: [
       {
@@ -1382,7 +1426,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 		
 		
 		
-		ref.orderByChild("user_id").startAt(localStorage.user_id).endAt(localStorage.user_id).limitToFirst(50).on("child_added", function(snapshot) {
+		ref.orderByChild("user_id").startAt(localStorage.doctordial_user_id).endAt(localStorage.doctordial_user_id).limitToFirst(50).on("child_added", function(snapshot) {
 			
 			announcementDiv.hide();
 		   var data = snapshot.val();
@@ -1465,7 +1509,7 @@ var myMessages = myApp.messages('.messages', {
 			    var username = data.name || "anonymous";
 			    var message = "<b>"+data.title+"</b> <br/> "+data.text;
 			    
-			    if(localStorage.user_id == data.user_id){ //if this is the sender
+			    if(localStorage.doctordial_user_id == data.user_id){ //if this is the sender
 					 var messageType = 'sent';
 					   }else{
 					   	     var messageType = 'received';
@@ -1527,7 +1571,7 @@ var myMessages = myApp.messages('.messages', {
 				  // Add message
 				  complaintReply.push({
 				  	//userid
-				  	user_id: localStorage.user_id, 
+				  	user_id: localStorage.doctordial_user_id, 
 				  	receiver_user_id: page.query.id,
 				    // Message text
 				    text: messageText,
@@ -1556,7 +1600,7 @@ var myMessages = myApp.messages('.messages', {
 			    var username = data.title || "anonymous";
 			    var message = data.text;
 			    
-			    if(localStorage.user_id == data.user_id){ //if this is the sender
+			    if(localStorage.doctordial_user_id == data.user_id){ //if this is the sender
 					 var messageType = 'sent';
 					   }else{
 					   	     var messageType = 'received';
@@ -1694,7 +1738,7 @@ var myMessages = myApp.messages('.messages', {
 				  // Add message
 				  messagesRef.push({
 				  	//userid
-				  	user_id: localStorage.user_id, 
+				  	user_id: localStorage.doctordial_user_id, 
 				  	receiver_user_id: page.query.id,
 				    // Message text
 				    text: messageText,
@@ -1720,7 +1764,7 @@ var myMessages = myApp.messages('.messages', {
 			    var username = data.name || "anonymous";
 			    var message = data.text;
 			    
-			    if(localStorage.user_id == data.user_id){ //if this is the sender
+			    if(localStorage.doctordial_user_id == data.user_id){ //if this is the sender
 					 var messageType = 'sent';
 			   }else{
 			   	     var messageType = 'received';

@@ -117,7 +117,22 @@
         function initializeUI(arg) {
             var params = arg || {};
 
+        //also show only the owner of this acoount:
+        
             ui.createUsers(QBUsers, ui.$usersList);
+            ui.$usersTitle.text(MESSAGES.title_login);
+
+            if(!params.withoutUpdMsg || params.msg) {
+                qbApp.MsgBoard.update(params.msg);
+            }
+        }
+
+        function initializeUI2(arg, QBUserList) { //custom function written by me to display only users account
+            var params = arg || {};
+
+        //also show only the owner of this acoount:
+        
+            ui.createUsers(QBUserList, ui.$usersList);
             ui.$usersTitle.text(MESSAGES.title_login);
 
             if(!params.withoutUpdMsg || params.msg) {
@@ -191,40 +206,25 @@
           return;
         }
 
-        initializeUI({withoutUpdMsg: false, msg: 'login'});
-
-
-//auotmatically log in a user
-$(document).on('click', '#sign_up', function(e) {
+     // initializeUI({withoutUpdMsg: false, msg: 'login'});  
 
 
 
+        var QBUsersOwner =  [{
+      id: localStorage.quickblox_id,
+      login: localStorage.quickblox_login,
+      password: 'Doctordial1234',
+      full_name: localStorage.quickblox_full_name,
+      colour: 'C7B325'
+    }]
 
-  });
+    initializeUI2({withoutUpdMsg: false, msg: 'login'}, QBUsersOwner);
+
+     
 
 
-function autoSignup(email, password){
-  //create a session for signup
-  QB.createSession(function(err,result){
-    console.log('Session create callback', err, result);
-  });
-    var login = email;
-    var password = password;
 
-    var params = { 'login': login, 'password': password};
 
-    QB.users.create(params, function(err, user){
-      if (user) {
-        alert(JSON.stringify(user));
-      } else  {
-        alert(JSON.stringify(err));
-      }
-
-      $("#progressModal").modal("hide");
-
-      $("html, body").animate({ scrollTop: 0 }, "slow");
-    });
-}
 
         /**
          * EVENTS

@@ -3,7 +3,7 @@
          <!-- Top Navbar. In Material theme it should be inside of the page-->
             <div class="navbar">
               <div class="navbar-inner">
-              <div class="left"><a href="index.html" class="color-white"><i class="fa fa-plus-circle" aria-hidden="true"> </i></a>&nbsp; {{url_query.fullname}}</div> 
+              <div class="left"><a href="index.html" class="color-white"><i class="fa fa-chevron-left" aria-hidden="true"> </i></a>&nbsp; {{url_query.fullname}}</div> 
               <div class="right"> <a href="#" class="link change-personal-doctor"><i class="fa fa-pencil-square-o" aria-hidden="true"> </i> &nbsp; Change doctor</a></div>
               </div>
             </div> 
@@ -33,6 +33,7 @@
 				  <div class="card-content">
 				<div class="list-block media-list">
 				  <ul>
+
 				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
 				      <a href="messages_view.html?id={{url_query.id}}" class="item-link item-content">
 				        <div class="item-media" > <i class="fa fa-commenting-o" aria-hidden="true" style="margin:2px; border-radius:500px;  30px;"></i> </div>
@@ -44,8 +45,9 @@
 				        </div>
 				      </a>
 				    </li>
+
 				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
-				      <a href="messages_call_view.html" class="item-link item-content">
+				      <a href="messages_call_view.html?" class="item-link item-content">
 				        <div class="item-media"> <i class="fa fa-phone" aria-hidden="true"></i> </div>
 				        <div class="item-inner">
 				          <div class="item-title-row">
@@ -67,6 +69,7 @@
 				        </div>
 				      </a>
 				    </li>
+				    
 				  </ul>
 				</div>
 				    

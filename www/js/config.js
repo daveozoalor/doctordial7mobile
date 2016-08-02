@@ -23,13 +23,10 @@
   /**
    * QBAppDefault for qa and dev
    * QBAppProd for production
+   appId: 43487,
+    authKey: 'YBbj2eTUPBL8VJP',
+    authSecret: 'X2kpWVMeK7bF3f6'
    */
-  /*var QBAppProd = {
-    appId: 92,
-    authKey: 'wJHdOcQSxXQGWx5',
-    authSecret: 'BTFsj7Rtt27DAmT'
-  },*/
-  
   var QBAppProd = {
     appId: 43487,
     authKey: 'YBbj2eTUPBL8VJP',
@@ -119,79 +116,23 @@
     }
   ],
   QBUsersProd = [
-    {
-      id: 2436251,
-      login: 'webrtc_user1',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 1',
-      colour: 'FD8209'
-    },
-    {
-      id: 2436254,
-      login: 'webrtc_user2',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 2',
-      colour: '1765FB'
-    },
-    {
-      id: 2436257,
-      login: 'webrtc_user3',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 3',
-      colour: 'F81480'
-    },
-    {
-      id: 2436258,
-      login: 'webrtc_user4',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 4',
-      colour: '39A345'
-    },
-    {
-      id: 2436259,
-      login: 'webrtc_user5',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 5',
-      colour: '921392'
-    },
-    {
-      id: 2436262,
-      login: 'webrtc_user6',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 6',
-      colour: '6594C5'
-    },
-    {
-      id: 2436263,
-      login: 'webrtc_user7',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 7',
-      colour: 'C1061E'
-    },
-    {
-      id: 2436265,
-      login: 'webrtc_user8',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 8',
-      colour: '898989'
-    },
-    {
-      id: 2436266,
-      login: 'webrtc_user9',
-      password: 'x6Bt0VDy5',
-      full_name: 'User 9',
+    
+   /* {
+      id: localStorage.quickblox_id,
+      login: localStorage.quickblox_login,
+      password: 'Doctordial1234',
+      full_name: localStorage.quickblox_full_name,
       colour: 'C7B325'
-    },
-    {
+    },*/
+    {  //enter doctor's detail here
       id: 2436269,
       login: 'webrtc_user10',
       password: 'x6Bt0VDy5',
-      full_name: 'User 10',
+      full_name: 'Dr. Ola',
       colour: 'BDA0CA'
     }
   ];
-
-  /** set QBUsers */
+  /** set QBUsers */ 
   var QBUsers = usersQuery === 'qa' ? QBUsersQA : usersQuery === 'dev' ? QBUsersDev : QBUsersProd;
 
   var MESSAGES = {
