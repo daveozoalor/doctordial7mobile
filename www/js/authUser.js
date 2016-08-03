@@ -9,20 +9,18 @@ var QBApp = {
 
 
 
-function testEcho(){
-  alert("This is from authUser.js");
-}
 
 QB.init(QBApp.appId, QBApp.authKey, QBApp.authSecret);
 
-$(document).ready(function() {
+//hide buttons
+$('#signupTheUserRow').hide();
+$('#updateTheUserDetailsRow').hide();
 
- checkUserUp();
-});
 
 
-function checkUserUp(){
 
+
+function checkUserUp(userEmail){
 
 //if this user is logged in and has not quickblox account yet
 if(typeof localStorage.email !== "undefined" && typeof localStorage.quickblox_id == "undefined"){
@@ -45,6 +43,7 @@ $('#signupTheUserRow').hide();
   // Get users
   //
   $('#get_by').on('click', function() {
+     alert("working");
     var filter_value = localStorage.email;
     var filter_type = '3';
 
@@ -109,7 +108,7 @@ $('#signupTheUserRow').hide();
     }
 
     console.log("filter_value: " + filter_value);
-
+   
     if(request_for_many_user){
       QB.users.listUsers(params, function(err, result){
         if (result) {
@@ -190,11 +189,34 @@ var params = {
 
     QB.users.create(params, function(err, user){
       if (user) {
+      //if successful
         alert(JSON.stringify(user));
           localStorage.quickblox_id = user.id;
           localStorage.quickblox_login = user.login;
           localStorage.quickblox_email = user.email;
-        //if successful, 
+
+          //also update user's firebase account
+         //function to create anything
+        function updateAnything(formData, childVar){
+          var postsRef = new Firebase("https://doctordial.firebaseio.com/");
+             ref = postsRef.child(childVar);
+             ref.update(formData,   function(error) {
+          if (error) {
+            //myApp.alert("Data could not be saved. :" + error,"Error");
+          } else {
+           // myApp.alert("Update successful.","Updated");
+          }
+        });
+        }
+
+        var formData = {
+              quickblox_id : localStorage.quickblox_id,
+              quickblox_login : localStorage.quickblox_login,
+              quickblox_email : localStorage.quickblox_email,
+        }
+        updateAnything(formData, "users/"+doctordial_user_id);
+
+
          //hide the signup button
          $('#signupTheUserRow').hide();
 
@@ -215,3 +237,16 @@ var params = {
 
 }
 }
+
+
+
+$(document).ready(function() {
+
+
+userEmail = localStorage.email;
+
+ checkUserUp(userEmail);
+
+
+
+});

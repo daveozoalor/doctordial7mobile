@@ -17,21 +17,61 @@
 </head>
 <body>
     <div class="wrapper j-wrapper">
-        <header class="header">
-            <div class="fw-inner clearfix">
-                <div class="header__logo">
-                    <img class="header__logo_img" src="images/Logo_qb.svg">
-                    </img>
-                </div>
-
-                <h2 class="header__title">JavaScript WebRTC Sample</h2>
-            </div>
-        </header>
+       
 
         <aside class="msg_board" id="msg_board"></aside>
 
         <main class="main j-main">
+
+
+
+
+
+
+
+
+
             <div class="fw-inner">
+
+ <!-- User create -->
+        <div class="row" id="signupTheUserRow">
+          <form class="form-horizontal" role="form">
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-primary" id="signupButton" >Verify Call Account</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+ <!-- User create -->
+        <div class="row" id="searchUserrow">
+          <form class="form-horizontal" role="form">
+       
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-primary" id="get_by">Check call account</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+ <!-- User update -->
+        <div class="row" id="updateTheUserDetailsRow">
+          <form class="form-horizontal" role="form">
+       
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-primary" id="update">Finish</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+
+
+
+
                 <aside class="users">
                     <h5 class="users__title j-users__title"></h5>
 
@@ -252,6 +292,10 @@
 
     <!-- SCRIPT -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
@@ -261,7 +305,7 @@
   
 
     <script src="js/quickblox.min.js"></script>
-
+<script src="js/authUser.js"></script>
     <script src="js/config.js"></script>
     <script src="js/msgBoard.js"></script>
     <script src="js/app.js"></script>

@@ -1274,7 +1274,6 @@ if(localStorage.quickblox_id === null){ //if the user's details doesn't exist, u
 	//updateUserQuickblocToFirebase(localStorage.doctordial_user_id);
 }
 
-	testEcho();
 	});
 	
 
