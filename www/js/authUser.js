@@ -8,22 +8,11 @@ var QBApp = {
 };
 
 
-
-
+// Init QuickBlox application here
+//
 QB.init(QBApp.appId, QBApp.authKey, QBApp.authSecret);
 
-//hide buttons
-$('#signupTheUserRow').hide();
-$('#updateTheUserDetailsRow').hide();
-
-
-
-
-
-function checkUserUp(userEmail){
-
-//if this user is logged in and has not quickblox account yet
-if(typeof localStorage.email !== "undefined" && typeof localStorage.quickblox_id == "undefined"){
+$(document).ready(function() {
 
   // First of all create a session and obtain a session token
   // Then you will be able to run requests to Users
@@ -35,17 +24,94 @@ if(typeof localStorage.email !== "undefined" && typeof localStorage.quickblox_id
   // Init Twitter Digits
   //
 
+  // Create user
+  //
+  $('#sign_up').on('click', function() {
+    var login = $('#usr_sgn_p_lgn').val();
+    var password = $('#usr_sgn_p_pwd').val();
 
-//hide the update users detail section
-$('#updateTheUserDetailsRow').hide();
-$('#signupTheUserRow').hide();
+
+    var params = { 'login': login, 'password': password};
+    
+    alert("Started processing");
+
+    QB.users.create(params, function(err, user){
+      if (user) {
+
+        alert("Success: " + JSON.stringify(user));
+      } else  {
+        alert("Failure: " + JSON.stringify(err));
+      }
+    });
+  });
+
+
+  // Login user
+  //
+  $('#sign_in').on('click', function() {
+    var login = $('#usr_sgn_n_lgn').val();
+    var password = $('#usr_sgn_n_pwd').val();
+
+    var params = { 'login': login, 'password': password};
+
+    QB.login(params, function(err, user){
+      if (user) {
+        $('#output_place').val(JSON.stringify(user));
+      } else  {
+        $('#output_place').val(JSON.stringify(err));
+      }
+
+      $("#progressModal").modal("hide");
+
+      $("html, body").animate({ scrollTop: 0 }, "slow");
+    });
+  });
+
+  // Login user with social provider
+  //
+  $('#sign_in_social').on('click', function() {
+
+    var provider = $('#usr_sgn_n_social_provider').val();
+    var token = $('#usr_sgn_n_social_token').val();
+    var secret = $('#usr_sgn_n_social_secret').val();
+
+    var params = { 'provider': provider, 'keys[token]': token, 'keys[secret]': secret};
+
+    QB.login(params, function(err, user){
+      if (user) {
+        $('#output_place').val(JSON.stringify(user));
+      } else  {
+        $('#output_place').val(JSON.stringify(err));
+      }
+
+      $("#progressModal").modal("hide");
+
+      $("html, body").animate({ scrollTop: 0 }, "slow");
+    });
+  });
+
+  // Logout user
+  //
+  $('#sign_out').on('click', function() {
+     QB.logout(function(err, result){
+      if (result) {
+        $('#output_place').val(JSON.stringify(result));
+      } else  {
+        $('#output_place').val(JSON.stringify(err));
+      }
+
+      $("#progressModal").modal("hide");
+
+      $("html, body").animate({ scrollTop: 0 }, "slow");
+    });
+  });
 
   // Get users
   //
   $('#get_by').on('click', function() {
-     alert("working");
-    var filter_value = localStorage.email;
-    var filter_type = '3';
+    alert("Clicked");
+    var filter_value = $('#usrs_get_by_filter').val();
+    var filter_type = $("#sel_filter_for_users").val();
 
     var params;
 
@@ -108,7 +174,7 @@ $('#signupTheUserRow').hide();
     }
 
     console.log("filter_value: " + filter_value);
-   
+
     if(request_for_many_user){
       QB.users.listUsers(params, function(err, result){
         if (result) {
@@ -129,104 +195,29 @@ $('#signupTheUserRow').hide();
     }else{
       QB.users.get(params, function(err, user){
         if (user) {
-          alert(JSON.stringify(user));
-
-          //signup save the contents of this user in localHost, and firebase
-          $('#searchUserrow').hide();
-
-          localStorage.quickblox_id = user.id;
-          localStorage.quickblox_owner_id = user.owner_id;
-          localStorage.quickblox_login = user.login;
-          localStorage.quickblox_email = user.email;
-          localStorage.quickblox_full_name = user.full_name;
-
+          $('#output_place').val(JSON.stringify(user));
         } else  {
-          alert(JSON.stringify(err));
-
-          //assuming user doesnt exist, signup this user
-          //signUpUser(filter_value, "Doctordial1234");
-           $('#searchUserrow').hide();
-
-          $('#signupTheUserRow').show();
+          $('#output_place').val(JSON.stringify(err));
         }
 
+        $("#progressModal").modal("hide");
+
+        $("html, body").animate({ scrollTop: 0 }, "slow");
       });
     }
   });
 
+  // Update user
+  //
+  $('#update').on('click', function() {
+    var user_id = $('#usr_upd_id').val();
+    var user_fullname = $('#usr_upd_full_name').val();
 
-
-
-
-      $('#update').on('click', function() {
-    var user_id = localStorage.quickblox_id;
-
-var params = {
-      full_name: localStorage.full_name,
-      email: localStorage.email
-    }
-    QB.users.update(parseInt(user_id), params, function(err, user){
+    QB.users.update(parseInt(user_id), {full_name: user_fullname}, function(err, user){
       if (user) {
-        alert(JSON.stringify(user));
-           $('#searchUserrow').hide();
-
-          $('#signupTheUserRow').hide();
-
+        $('#output_place').val(JSON.stringify(user));
       } else  {
-        alert(JSON.stringify(err));
-        $('#updateTheUserDetailsRow').hide();
-      }
-
-    });
-  });
-
-
- $('#signupButton').on('click', function() {
-    var login = localStorage.email;
-    var password = 'Doctordial1234';
-
-    var params = { 'login': login, 'password': password};
-
-    QB.users.create(params, function(err, user){
-      if (user) {
-      //if successful
-        alert(JSON.stringify(user));
-          localStorage.quickblox_id = user.id;
-          localStorage.quickblox_login = user.login;
-          localStorage.quickblox_email = user.email;
-
-          //also update user's firebase account
-         //function to create anything
-        function updateAnything(formData, childVar){
-          var postsRef = new Firebase("https://doctordial.firebaseio.com/");
-             ref = postsRef.child(childVar);
-             ref.update(formData,   function(error) {
-          if (error) {
-            //myApp.alert("Data could not be saved. :" + error,"Error");
-          } else {
-           // myApp.alert("Update successful.","Updated");
-          }
-        });
-        }
-
-        var formData = {
-              quickblox_id : localStorage.quickblox_id,
-              quickblox_login : localStorage.quickblox_login,
-              quickblox_email : localStorage.quickblox_email,
-        }
-        updateAnything(formData, "users/"+doctordial_user_id);
-
-
-         //hide the signup button
-         $('#signupTheUserRow').hide();
-
-        //show the update personal detail's button
-        $('#updateTheUserDetailsRow').show();
-
-
-      } else  {
- $('#signupTheUserRow').hide();
-         $('#updateTheUserDetailsRow').show();
+        $('#output_place').val(JSON.stringify(err));
       }
 
       $("#progressModal").modal("hide");
@@ -235,18 +226,54 @@ var params = {
     });
   });
 
-}
-}
+  // Delete user
+  //
+  $('#delete_by').on('click', function() {
+    var user_id = $('#usr_delete_id').val();
+    var operation_type = $("#sel_filter_for_delete_user option:selected").val();
 
+    var params;
 
+    switch (operation_type) {
+      // delete by id
+      case "1":
+        params = parseInt(user_id);
+        break;
 
-$(document).ready(function() {
+      // delete by external id
+      case "2":
+        params = {external: user_id};
+        break;
+    }
 
+    QB.users.delete(params, function(err, user){
+      if (user) {
+        $('#output_place').val(JSON.stringify(user));
+      } else  {
+        $('#output_place').val(JSON.stringify(err));
+      }
 
-userEmail = localStorage.email;
+      $("#progressModal").modal("hide");
 
- checkUserUp(userEmail);
+      $("html, body").animate({ scrollTop: 0 }, "slow");
+    });
+  });
 
+  // Reset email
+  //
+  $('#reset').on('click', function() {
+    var user_email = $('#usr_rst_email').val();
 
+    QB.users.resetPassword(user_email, function(err, user){
+      if (user) {
+        $('#output_place').val(JSON.stringify(user));
+      } else  {
+        $('#output_place').val(JSON.stringify(err));
+      }
 
+      $("#progressModal").modal("hide");
+
+      $("html, body").animate({ scrollTop: 0 }, "slow");
+    });
+  });
 });

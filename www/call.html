@@ -14,6 +14,10 @@
     <!-- use http://una.im/CSSgram/ for filters -->
     <link rel="stylesheet" href="css/cssgram.min.css">
     <link rel="stylesheet" href="css/styles.css">
+
+
+    <!-- SCRIPT -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
 <body>
     <div class="wrapper j-wrapper">
@@ -33,16 +37,6 @@
 
             <div class="fw-inner">
 
- <!-- User create -->
-        <div class="row" id="signupTheUserRow">
-          <form class="form-horizontal" role="form">
-            <div class="form-group">
-              <div class="col-sm-offset-2 col-sm-10">
-                <button type="button" class="btn btn-primary" id="signupButton" >Verify Call Account</button>
-              </div>
-            </div>
-          </form>
-        </div>
 
  <!-- User create -->
         <div class="row" id="searchUserrow">
@@ -50,11 +44,14 @@
        
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
+               <input type="hidden" class="hidden" id="usrs_get_by_filter" value="daveozoalor@gmail.com">
+               <input type="hidden" class="hidden" id="sel_filter_for_users" value="3">
                 <button type="button" class="btn btn-primary" id="get_by">Check call account</button>
               </div>
             </div>
           </form>
         </div>
+ 
 
  <!-- User update -->
         <div class="row" id="updateTheUserDetailsRow">
@@ -62,12 +59,37 @@
        
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
-                <button type="button" class="btn btn-primary" id="update">Finish</button>
+                <button type="button" class="btn btn-primary" id="update" >Finish</button>
               </div>
             </div>
           </form>
         </div>
 
+
+
+     <!-- User create -->
+        <div class="row">
+          <h3>User Sign Up</h3>
+          <form class="form-horizontal" role="form">
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="usr_sgn_p_lgn">Login:</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="usr_sgn_p_lgn" placeholder="Enter login">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="usr_sgn_p_pwd">Password:</label>
+              <div class="col-sm-6">
+                <input type="password" class="form-control" id="usr_sgn_p_pwd" placeholder="Enter password">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-primary" id="sign_up">Signup</button>
+              </div>
+            </div>
+          </form>
+        </div>
 
 
 
@@ -160,7 +182,7 @@
             </div>
         </main>
 
-        <footer class="footer j-footer invisible">
+       <!-- <footer class="footer j-footer invisible">
             <div class="footer__inner">
                 <h4>
                     <a class="fw-link" href="https://github.com/QuickBlox/quickblox-javascript-sdk/tree/gh-pages/samples/webrtc">
@@ -168,7 +190,7 @@
                     </a>
                 </h4>
             </div>
-        </footer>
+        </footer> -->
 
         <!-- SOUNDS -->
         <audio id="callingSignal" loop preload="auto">
@@ -290,8 +312,6 @@
         <button class='fw-link j-logout'>Logout</button>
     </script>
 
-    <!-- SCRIPT -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
     
 
@@ -310,10 +330,5 @@
     <script src="js/msgBoard.js"></script>
     <script src="js/app.js"></script>
     
-    <script type="text/javascript">
-      var host = "quickblox.github.io";
-      if ((host == window.location.host) && (window.location.protocol != "https:"))
-        window.location.protocol = "https";
-    </script>
 </body>
 </html>

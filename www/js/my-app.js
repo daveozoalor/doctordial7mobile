@@ -1,22 +1,26 @@
 // Initialize your app
 var myApp = new Framework7(
 {
-	pushState: 0,
+	pushState: true,
 	swipeBackPage: true,
+	uniqueHistory: true,
+	dynamicPageUrl: true,
+	precompileTemplates: true,
+	 template7Pages: true, //gotcha!
    // Hide and show indicator during ajax requests
     onAjaxStart: function (xhr) {
         myApp.showIndicator();
     },
     onAjaxComplete: function (xhr) {
         myApp.hideIndicator();
-    },
-    
-    preroute: function (mainView, options) {
-    	
-    },
-  
+    }
      
  });
+
+
+
+
+
 
 // Export selectors engine
 var $$ = Dom7;
@@ -24,8 +28,9 @@ var $$ = Dom7;
 // Add view
 var mainView = myApp.addView('.view-main', {
     // Because we use fixed-through navbar we can enable dynamic navbar
-    //domCache: true,
+    domCache: true,
 });
+
 
 
 
@@ -230,10 +235,6 @@ ref.createUser(formData,
 		  	
 		  	
 		  	
-		  	
-		  	
-		  	
-		  	
 		  	personalDocNameInsert(); //
 		     myApp.alert("Login successful ", 'Success!');
 		       myApp.closeModal('.login-screen'); //closelogin screen
@@ -243,13 +244,38 @@ ref.createUser(formData,
 		});
 
 		}
-		
-		
-		//if the user email is not set, ask user to login again
-		if(!localStorage.email || localStorage.email == null){
-			logoutPop();
-		}
-		
+	
+		//messages log
+       
+       if(typeof localStorage.quickblox_id === "undefined"){
+       			myApp.alert("Please follow the link in the next page to activate your call account.", "Alert");
+
+       			mainView.router.loadPage("quickblox_check_user.html");
+       }
+
+
+
+
+
+
+
+
+
+	
+	function checkCaller(){
+			//if caller isnt on quickblox, redirect to page to signup
+
+			if(typeof localStorage.quickblox_id == "undefined"){
+				mainView.router.loadPage("messages_log.html");
+			}else if(typeof localStorage.quickblox_doctord_id == "undefined"){
+				myApp.alert("Sorry, this person has not activated their call account yet.",'Alert');
+			}
+			else if(typeof localStorage.quickblox_doctord_id != "undefined" && typeof localStorage.quickblox_id != "undefined"){
+				mainView.router.loadPage("messages_call_view.html");
+			}
+			//if caller is on quickblox, but callee is not, post warning message
+			//if both are on quickblox, catch fun with the calls
+	}
 		
 
 $$('.demo-progressbar-load-hide .button').on('click', function () {
@@ -392,31 +418,53 @@ $$('.demo-progressbar-load-hide .button').on('click', function () {
 		    mainView.router.loadPage("appointments_schedule_list.html");
 		  }
 		 
-		  
+	
 
-	 function logoutPop(){
-		          	   myApp.modal({
-		    title:  'Are you sure you wish to logout?',
-		    text: '<div class="list-block"></div>',
-		    buttons: [
-		      {
-		        text: 'yes',
-		        onClick: function() {
-		           var ref = new Firebase("https://doctordial.firebaseio.com");
+	
+
+function logoutUser(){
+	   var ref = new Firebase("https://doctordial.firebaseio.com");
 		          	myApp.alert("You are loging out", "Logout");
 		          	  ref.unauth(); //logout
 		          	  localStorage.removeItem("user_id");
+		          	  localStorage.removeItem("email");
 		          	  localStorage.removeItem("personal_doctor_id");
+
+                       //users quickblox details
+		          	  localStorage.removeItem("quickblox_id");
+		          	  localStorage.removeItem("quickblox_login");
+		          	  localStorage.removeItem("quickblox_email");
+
+		          	  //quickblox doctor to call details
+		          	  localStorage.removeItem("quickblox_doctor_id");
+		          	  localStorage.removeItem("quickblox_doctor_email");
+		          	  localStorage.removeItem("quickblox_doctor_login");
 		          	 myApp.loginScreen(); // open Login Screen if user is not logged in 
-		        }
-		      },
-		      {
-		        text: 'cancel',
-		        bold: true,
-		        
-		      },
-		    ]
-		  });
+}
+	 function logoutPop(message){
+		          	if(typeof message === "undefined"){
+		          	   		message('Are you sure you wish to logout?');
+		          	   	}   
+
+		          	   	myApp.modal({
+
+							    title: message,
+							    text: '<div class="list-block"></div>',
+							    buttons: [
+								      {
+								        text: 'yes',
+								        onClick: function() {
+								        logoutUser();
+								        }
+								      },
+								      {
+								        text: 'cancel',
+								        bold: true,
+								        
+								      },
+							    ]
+
+						  });
 	 }
 		
 
@@ -538,6 +586,64 @@ function approveSchedule(appointmentId, acceptedValue, schedule_user_id, schedul
 
 
 
+
+
+
+myApp.onPageInit('messages_log', function (page) {
+
+//get the list of all the logs where this person is the sender_id or the receiver_id
+
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+}); 
+
+  
+var messageList = $$('.messageslog-list-block');
+		
+  
+  //get the list from database
+	   var ref = new Firebase("https://doctordial.firebaseio.com/messageslog");
+		// Attach an asynchronous callback to read the data at our posts reference
+		//var specializations;
+		
+		
+		
+		ref.limitToLast(50).on("child_added", function(snapshot) {
+		   var data = snapshot.val();
+		   //specializations = JSON.stringify(snapshot.val());
+					//doctors list
+					
+			    var name = data.name || "anonymous";
+			    var message = data.description;
+			    var specs_id = snapshot.key(); //get the id
+
+			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+             // myApp.alert(JSON.stringify(snapshot.val()));
+			    //ADD MESSAGE
+			   
+					
+			    messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
+				      '<a href="messages_view.html?id='+specs_id+'&categoryname='+name+'" class="item-link item-content">'+
+				        '<div class="item-media"> <i class="fa fa-commenting-o" aria-hidden="true" style="font-size: 30px;"></i> </div>'+
+				        '<div class="item-inner">'+
+				          '<div class="item-title-row">'+
+				            '<div class="item-title" style="font-weight: bold !important;" >'+name+'</div>'+
+				          '</div>'+
+				          '<div class="item-text">'+message+'</div>'+
+				        '</div>'+
+				      '</a>'+
+				    '</li>');
+					
+					
+		
+		
+			
+		}, function (errorObject) {
+		  console.log("The read failed: " + errorObject.code);
+		});
+		
+});
 
 
 
@@ -735,7 +841,7 @@ function viewPersonalDoc(){
 
 
 function personalDocNameInsert(){ //insert personal doctor's name into the button on index'
- $$('.user-name').html(localStorage.full_name);
+ $$('.user-name').html('<i class="fa fa-user" aria-hidden="true" style="font-size: 30px;"></i>' + localStorage.full_name);
  if(localStorage.personal_doctor_name != null){
  	var docName = String(localStorage.personal_doctor_name);
  	 $$('.personal-doctor-name').html('Dr. '+docName.replace('undefined',''));
@@ -743,13 +849,29 @@ function personalDocNameInsert(){ //insert personal doctor's name into the butto
 	
 }
 
+
  
- 
+		//if the user email is not set, ask user to login again
+		if(typeof localStorage.email === "undefined" || localStorage.email == null){
+			
+			logoutPop("Sorry, you have to log in again");
+		} 
+
+
+
+		
 myApp.onPageInit('index', function (page) {
   //name of user on top
 personalDocNameInsert();
   //name of personal doctor
  
+
+
+
+
+
+
+
 });
 
 myApp.onPageInit('appointments_list', function (page) {
@@ -839,7 +961,6 @@ myApp.onPageInit('users_view', function (page) {
 	
 		ref.once("value", function(snapshot) {
 			data = snapshot.val();
-			//myApp.alert("Userid: "+page.query.id+" User id from server: "+snapshot.val().email);
 			
 			$$('#profile-name').html(' '+data.firstname);
 			
@@ -888,8 +1009,12 @@ myApp.onPageInit('users_view', function (page) {
 
 
 
+
 myApp.onPageInit('doctors_view', function (page) {
 	
+
+
+
 	 //dont show the add button if this is the viewer's personal doc
 		if(localStorage.personal_doctor_id != null && localStorage.personal_doctor_id == page.query.id){
 		 //hide button
@@ -1055,7 +1180,6 @@ $$('.change-personal-doctor').on('click', function () {
 				refUser.on("value", function(snapshot) {
 					
 				
-					myApp.alert(snapshot.val().doctors.specialization_id);
 					  if(snapshot.val().doctors != null){ //check if this user is a doctor
 					  	myApp.alert("This is a doctor");
 				$$('.addNewAppointment').html('<h4>What times of the week are you usually free?</h4>'+
@@ -1250,7 +1374,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 					      '</a>'+
 					    '</li>');
 					
-				}
+				       }
 			 
 					
 		
@@ -1289,16 +1413,17 @@ var mySearchbar = myApp.searchbar('.searchbar', {
     searchIn: '.item-title'
 }); 
 
+/*
 //dummy function I used to create new category of doctors
   $("#addAccountDoctor").on('click', function () {
    // var email = pageContainer.find('input[name="email"]').val();
     var formData = myApp.formToJSON('#addNewDoctor'); //convert submitted form to json.
   if(formData != null){
   	  updateAnything(formData, "users/"+formData.user_id+"/doctors"); //do the registration and report errors if found
-  }
+  } 
 
  
-  });
+  }); */
   
  
   //get the list from database
@@ -1328,6 +1453,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			    var lastname = snapshot.val().lastname || '';
 			    var fullname = title+' '+firstname+' '+middlename+' '+lastname;
 			    
+
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
 			    if(data.doctors.specialization_id == page.query.id){
@@ -1469,8 +1595,6 @@ var mySearchbar = myApp.searchbar('.searchbar', {
  
 });
   
-
-
 
  myApp.onPageInit('complaints_view', function(page) {
 
@@ -1632,7 +1756,7 @@ var myMessages = myApp.messages('.messages', {
 				  
 			  });
 
-}).trigger();
+});
 
 
 
@@ -1659,9 +1783,103 @@ var myMessages = myApp.messages('.messages', {
  	
  	
  	
+ 
+
  	
- 	
+ myApp.onPageInit('messages_logs', function(page) {
+
+
+
+       var quickBloxCheck = new Firebase('https://doctordial.firebaseio.com/users');
+
+
+ // Add a callback that is triggered for each chat message. .child("receiver_user_id")equalTo(page.query.id)
+			/*  	quickBloxCheck.orderByChild(page.query.id).equalTo(page.query.id).once("value", function(snapshot) {
+			   
+			    //GET DATA
+			    var data = snapshot.val();
+			    localStorage.quickblox_doctor_id = data.quickblox_id;
+			    localStorage.quickblox_doctor_login = data.quickblox_login;
+			    localStorage.quickblox_doctor_name = data.firstname;
+				 alert("Successfully found user record");
+
+				 if(typeof data.quickblox_id == 'undefined'){
+				myApp.alert("This doctor cannot make calls");
+				 }
+
+			    });
+   */
+
+ });
+
+
  myApp.onPageInit('messages_view', function(page) {
+
+//find these user's details in firebase
+//check if he is on quickblox yet, then disable/enable the call button if so
+
+
+var quickBloxCheck = new Firebase('https://doctordial.firebaseio.com/messageslog');
+
+ // Add a callback that is triggered for each chat message. .child("receiver_user_id")equalTo(page.query.id)
+			 // quickBloxCheck.child(page.query.id).limitToLast(1).on('child_added', function (snapshot) {
+			    quickBloxCheck.orderByChild("sender_id").equalTo(page.query.id).once("child_added", function(snapshot) {
+			   
+			    //GET DATA
+			    var data = snapshot.val();
+			    localStorage.quickblox_doctor_id = data.quickblox_id;
+			    localStorage.quickblox_doctor_login = data.quickblox_login;
+			    localStorage.quickblox_doctor_name = data.firstname;
+				 alert("Successfully found user record");
+
+				 if(typeof data.quickblox_id == 'undefined'){
+				myApp.alert("This doctor cannot make calls");
+				 }
+
+			    });
+
+
+
+
+
+var messageslogRef = new Firebase('https://doctordial.firebaseio.com/messageslog');
+
+    //find a message log where this user is the sender and update it
+			  //messageslogRef.orderByChild("sender_id").equalTo(localStorage.doctordial_user_id).once("child_added", function(snapshot) {
+			   messageslogRef.orderByChild("sender_id").equalTo(page.query.id).on("value", function(snapshot) {
+			    //GET DATA
+			    var data = snapshot.val();
+			    		  //update messageslog
+                  formDataMesssages = {
+                  	sender_id: localStorage.doctordial_user_id,
+                  	receiver_id: page.query.id,
+                  	type: 'text',
+                  	time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				 
+                  }
+				  updateAnything(formDataMesssages,  snapshot.key());
+  alert("updated existing");
+
+			    }
+, function (errorObject) {
+
+	//failed so create the message log
+                  formDataMesssages = {
+                  	sender_id: localStorage.doctordial_user_id,
+                  	receiver_id: page.query.id,
+                  	type: 'text',
+                  	time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				 
+                  }
+				  createAnything(formDataMesssages, "messageslog");
+
+alert("created new");
+  //console.log("The read failed: " + errorObject.code);
+});
+			    
+
+
+
 
 
 
@@ -1748,7 +1966,10 @@ var myMessages = myApp.messages('.messages', {
 				    // Day
 				    day: !conversationStarted ? 'Today' : false,
 				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
-				  })
+				  });
+
+
+		
 				  
 				
 				  // Update conversation flag
@@ -1767,6 +1988,7 @@ var myMessages = myApp.messages('.messages', {
 					 var messageType = 'sent';
 			   }else{
 			   	     var messageType = 'received';
+
 			   }
 			    var day = data.day;
 			    var time = data.time;
@@ -1796,39 +2018,5 @@ var myMessages = myApp.messages('.messages', {
 				  
 			  });
 
-}).trigger();
+});
 
-
-
-//sample code to prevent back button from existing the app
-function onDeviceReady(){
-
-document.addEventListener("backbutton", function (e) {
-	
-            e.preventDefault();
-            //Check for open panels 
-            if ($$('.panel.active').length > 0) {
-                f7.closePanel();
-                return;
-            }
-            // Check for go back in history 
-            var view = f7.getCurrentView();
-            if (!view) return;
-            if (view.history.length > 1) {
-                view.router.back();
-                return;
-            }
-            // Quit app
-            navigator.notification.confirm(
-                'Exit Application ?',              // message
-                function (n) {
-                    if (n == 1) navigator.app.exitApp(); 
-                },
-                'Exit',        // title
-                ['OK', 'Cancel']      // button labels
-            );
-        }, false); 
-}
-
-document.addEventListener("deviceready", onDeviceReady, false);
-               

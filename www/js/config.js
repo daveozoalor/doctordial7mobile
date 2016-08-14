@@ -125,10 +125,10 @@
       colour: 'C7B325'
     },*/
     {  //enter doctor's detail here
-      id: 2436269,
-      login: 'webrtc_user10',
-      password: 'x6Bt0VDy5',
-      full_name: 'Dr. Ola',
+      id: localStorage.quickblox_doctor_id,
+      login: localStorage.quickblox_doctor_login,
+      password: 'Doctordial1234',
+      full_name: 'Dr. '+localStorage.quickblox_doctor_name,
       colour: 'BDA0CA'
     }
   ];
