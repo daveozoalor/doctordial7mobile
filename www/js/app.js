@@ -214,7 +214,7 @@
       id: localStorage.quickblox_id,
       login: localStorage.quickblox_login,
       password: 'Doctordial1234',
-      full_name: localStorage.quickblox_full_name,
+      full_name: localStorage.full_name,
       colour: 'C7B325'
     }]
 

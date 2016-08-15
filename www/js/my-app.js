@@ -45,7 +45,7 @@ var mainView = myApp.addView('.view-main', {
 //So, soon as that retrieval is succsseful, we upload the user's details to fireabse for easy CRUD next time we want to make a call.
 //The two functions below help with that.
 
-function findDoctorQuickbloxDetails(doctorUserID){
+/*function findDoctorQuickbloxDetails(doctorUserID){
 
 	//alert("Help findDoctorQuickbloxDetails running");
 	//since user is only registered once on quickblox
@@ -67,7 +67,7 @@ function findDoctorQuickbloxDetails(doctorUserID){
 }
 
 
-
+*/
 
 
 
@@ -110,7 +110,7 @@ function updateAnything(formData, childVar){
   if (error) {
     myApp.alert("Data could not be saved. :" + error,"Error");
   } else {
-    myApp.alert("Update successful.","Updated");
+    //myApp.alert("Update successful.","Updated");
   }
 });
 }
@@ -263,20 +263,20 @@ ref.createUser(formData,
 
 	
 	function checkCaller(){
-			//if caller isnt on quickblox, redirect to page to signup
 
-			if(typeof localStorage.quickblox_id == "undefined"){
-				mainView.router.loadPage("messages_log.html");
-			}else if(typeof localStorage.quickblox_doctord_id == "undefined"){
-				myApp.alert("Sorry, this person has not activated their call account yet.",'Alert');
+		if(typeof localStorage.doctordial_user_id !== "undefined"){ //if the user is logged in
+			//if caller isnt on quickblox, redirect to page to signup
+			if(typeof localStorage.quickblox_id == "undefined"){ //the person doesnt have their quickbox details saved on device
+				mainView.router.loadPage("quickblox_check_user.html");
 			}
-			else if(typeof localStorage.quickblox_doctord_id != "undefined" && typeof localStorage.quickblox_id != "undefined"){
-				mainView.router.loadPage("messages_call_view.html");
-			}
+			
 			//if caller is on quickblox, but callee is not, post warning message
 			//if both are on quickblox, catch fun with the calls
+		}
+			
 	}
 		
+checkCaller();
 
 $$('.demo-progressbar-load-hide .button').on('click', function () {
     var container = $$('.demo-progressbar-load-hide p:first-child');
@@ -589,64 +589,6 @@ function approveSchedule(appointmentId, acceptedValue, schedule_user_id, schedul
 
 
 
-myApp.onPageInit('messages_log', function (page) {
-
-//get the list of all the logs where this person is the sender_id or the receiver_id
-
-var mySearchbar = myApp.searchbar('.searchbar', {
-    searchList: '.list-block-search',
-    searchIn: '.item-title'
-}); 
-
-  
-var messageList = $$('.messageslog-list-block');
-		
-  
-  //get the list from database
-	   var ref = new Firebase("https://doctordial.firebaseio.com/messageslog");
-		// Attach an asynchronous callback to read the data at our posts reference
-		//var specializations;
-		
-		
-		
-		ref.limitToLast(50).on("child_added", function(snapshot) {
-		   var data = snapshot.val();
-		   //specializations = JSON.stringify(snapshot.val());
-					//doctors list
-					
-			    var name = data.name || "anonymous";
-			    var message = data.description;
-			    var specs_id = snapshot.key(); //get the id
-
-			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
-             // myApp.alert(JSON.stringify(snapshot.val()));
-			    //ADD MESSAGE
-			   
-					
-			    messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
-				      '<a href="messages_view.html?id='+specs_id+'&categoryname='+name+'" class="item-link item-content">'+
-				        '<div class="item-media"> <i class="fa fa-commenting-o" aria-hidden="true" style="font-size: 30px;"></i> </div>'+
-				        '<div class="item-inner">'+
-				          '<div class="item-title-row">'+
-				            '<div class="item-title" style="font-weight: bold !important;" >'+name+'</div>'+
-				          '</div>'+
-				          '<div class="item-text">'+message+'</div>'+
-				        '</div>'+
-				      '</a>'+
-				    '</li>');
-					
-					
-		
-		
-			
-		}, function (errorObject) {
-		  console.log("The read failed: " + errorObject.code);
-		});
-		
-});
-
-
-
 myApp.onPageInit('specializations_list', function (page) {
   
 var mySearchbar = myApp.searchbar('.searchbar', {
@@ -690,7 +632,7 @@ var messageList = $$('.specialization-list-block');
 					
 			    messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
 				      '<a href="doctors_list.html?id='+specs_id+'&categoryname='+name+'" class="item-link item-content">'+
-				        '<div class="item-media"> <i class="fa fa-commenting-o" aria-hidden="true" style="font-size: 30px;"></i> </div>'+
+				        '<div class="item-media color-teal" style="font-size:20px;"> <i class="fa fa-caret-right" aria-hidden="true" style="font-size: 30px;"></i> </div>'+
 				        '<div class="item-inner">'+
 				          '<div class="item-title-row">'+
 				            '<div class="item-title" style="font-weight: bold !important;" >'+name+'</div>'+
@@ -779,7 +721,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 			   messageList.append('<a href="#" style="background-color: white; color: black; border: 1px solid #7e7e7e;" class="item-link item-content" onclick="approveSchedule(specs_id, data.accepted,data.user_id,data.doctor_id);">'+
 				        '<div class="item-inner">'+
 				         '<div class="item-title-row">'+
-				            '<div class="item-title" style="color: black;"><i class="fa fa-clock-o" aria-hidden="true"></i> '+data.day+'</div>'+
+				            '<div class="item-title color-teal" ><i class="fa fa-clock-o" aria-hidden="true"></i> '+data.day+'</div>'+
 				            '<div class="item-after"  > '+data.start_time+'</div>'+
 				          '</div>'+
 				          '<div class="item-text">approval: '+data.accepted+'</div>'+
@@ -948,18 +890,13 @@ myApp.onPageInit('users_view', function (page) {
 		page.query.id = localStorage.doctordial_user_id;
 	}
 	
-	if(page.query.id != localStorage.doctordial_user_id){
-		$$('.contactButtons').html('<p class="buttons-row">'+
-			           '<a href="messages_view.html?id={{url_query.id}}" class="link button button-fill color-red">'+
-			               '<i class="fa fa-comment-o" aria-hidden="true"></i> Chat</a>'+
-			           '<a href="#" class="link button button-fill color-red"><i class="fa fa-phone" aria-hidden="true"></i> Call</a>'+
-			        '</p>');
-	}
+	
 	
 	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+page.query.id);
 	
 	
 		ref.once("value", function(snapshot) {
+
 			data = snapshot.val();
 			
 			$$('#profile-name').html(' '+data.firstname);
@@ -991,7 +928,7 @@ myApp.onPageInit('users_view', function (page) {
 					        );
 			
 			}
-			if(data.lastname != null){
+			if(data.gender != null){
 				$$('.profile-details').append('<li class="item-content">'+
 					          '<div class="item-inner">'+
 					            '<div class="item-title"><b>Gender:</b> '+data.gender+'</div>'+
@@ -1000,6 +937,15 @@ myApp.onPageInit('users_view', function (page) {
 					        );
 			
 			}
+
+
+			if(page.query.id != localStorage.doctordial_user_id){
+		$$('.contactButtons').html('<p class="buttons-row">'+
+			           '<a href="messages_view.html?id={{url_query.id}}&fullname='+data.firstname+'" class="link button button-fill color-red">'+
+			               '<i class="fa fa-comment-o" aria-hidden="true"></i> Chat</a>'+
+			           '<a href="#" class="link button button-fill color-red"><i class="fa fa-phone" aria-hidden="true"></i> Call</a>'+
+			        '</p>');
+	}
 			
 		});
 		
@@ -1328,75 +1274,27 @@ var time2 = time_part_array[2] || '';
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-myApp.onPageInit('messages_list', function (page) {
-   //var page = e.detail.page;
-  // alert(page.query.categoryname);
-var mySearchbar = myApp.searchbar('.searchbar', {
-    searchList: '.list-block-search',
-    searchIn: '.item-title'
-}); 
-
-  //get the list from database
-	   var ref = new Firebase("https://doctordial.firebaseio.com/messages");
-		// Attach an asynchronous callback to read the data at our posts reference
-		var specializations;
-		var messageList = $$('.doctors-list-block');
-		
-		
-		  //find list of doctors in this specialization . page.query.id is the query received from the incoming page GET request
-		 // myApp.alert("Dave");
-			ref.orderByChild("receiver_id").equalTo(localStorage.doctordial_user_id).on("child_added", function(snapshot) {
-			
-		//ref.limitToLast(50).on("child_added", function(snapshot) {
-		        var data = snapshot.val();
-			    var text = data.text || "anonymous";
-			    var message = data.name;
-			    var time = data.time; //get the id
-			    var time = data.receiver_id; //get the id
-
-			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
-			    if(data.doctors.specialization_id == page.query.id){
-					   messageList.append('<li>'+
-					      '<a href="doctors_view.html?id='+data+'" class="item-link item-content" data-context-name="doctor-card">'+
-					          '<!--<div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>-->' +
-					          '<div class="item-inner">'+
-					            '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.text+'</div>'+
-					          '</div>'+
-					      '</a>'+
-					    '</li>');
-					
-				       }
-			 
-					
-		
-		
-			
-		}, function (errorObject) {
-		  console.log("The read failed: " + errorObject.code);
-		});
-			
-			
-		
-		
- 
-});
          
+         function decideQuickbloxPage(){
+
+			if(typeof localStorage.quickblox_doctor_id === "undefined" || localStorage.quickblox_doctor_id === "undefined" ){
+							myApp.alert("Sorry, this person cannot make or receive calls because they have not activated their call account yet.",'Alert');
+						mainView.router.back(); //return to previous page
+						}
+					if(typeof localStorage.quickblox_id === "undefined" || localStorage.quickblox_id === "undefined"){ //this user does not have a quickblox account
+			             
+			                myApp.alert("Please use the button below to activate your call account", "Info");
+							mainView.router.loadPage("messages_call_settings.html");
+
+						}
+         }
+
 myApp.onPageInit('messages_call_view', function (page) {
 
-   // findDoctorQuickbloxDetails(page.query.doctorUserID);
 
-if(localStorage.quickblox_id === null){ //if the user's details doesn't exist, update it
-	//updateUserQuickblocToFirebase(localStorage.doctordial_user_id);
-}
+decideQuickbloxPage();
+   // findDoctorQuickbloxDetails(page.query.doctorUserID);
+//if the other user's detail is not saved here, means the other user is not on quickblox
 
 	});
 	
@@ -1461,7 +1359,7 @@ var mySearchbar = myApp.searchbar('.searchbar', {
 					    
 					    
 					    messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
-				      '<a href="doctors_view.html?id='+snapshot.key()+'&about='+about+'&gender='+data.gender+'&fullname='+fullname+'" class="item-link item-content" data-context-name="doctor-card" class="item-link item-content">'+
+				      '<a href="doctors_view.html?id='+snapshot.key()+'&fullname='+fullname+'&about='+about+'&gender='+data.gender+'&fullname='+fullname+'" class="item-link item-content" data-context-name="doctor-card" class="item-link item-content">'+
 				        '<div class="item-media" width="20%"> <img src="img/doctor1.jpg" /> </div>'+
 				        '<div class="item-inner">'+
 				          '<div class="item-title-row">'+
@@ -1786,29 +1684,87 @@ var myMessages = myApp.messages('.messages', {
  
 
  	
- myApp.onPageInit('messages_logs', function(page) {
+ myApp.onPageInit('messages_log', function(page) {
 
 
+       var messageslogRef = new Firebase('https://doctordial.firebaseio.com/messageslog');
 
-       var quickBloxCheck = new Firebase('https://doctordial.firebaseio.com/users');
-
-
- // Add a callback that is triggered for each chat message. .child("receiver_user_id")equalTo(page.query.id)
-			/*  	quickBloxCheck.orderByChild(page.query.id).equalTo(page.query.id).once("value", function(snapshot) {
-			   
+    //find a message log where this user is the sender and update it
+			  //messageslogRef.orderByChild("sender_id").equalTo(localStorage.doctordial_user_id).once("child_added", function(snapshot) {
+ 
+			 messageslogRef.on("child_added", function(snapshot) {
 			    //GET DATA
+          
+			   //alert("child has been added: sender ID : "+snapshot.val().sender_id ); 
+
 			    var data = snapshot.val();
-			    localStorage.quickblox_doctor_id = data.quickblox_id;
-			    localStorage.quickblox_doctor_login = data.quickblox_login;
-			    localStorage.quickblox_doctor_name = data.firstname;
-				 alert("Successfully found user record");
+               dataMessagesLog = "now";
+         //if this user has sent a message to this other user before, simply update that record
+                  //Otherwise create now.
+			    if(snapshot.val().sender_id === localStorage.doctordial_user_id  || snapshot.val().receiver_id === localStorage.doctordial_user_id){
+			    //update messageslog
+               if(snapshot.val().sender_id === localStorage.doctordial_user_id){
+               	  spec_id = snapshot.val().sender_id;
 
-				 if(typeof data.quickblox_id == 'undefined'){
-				myApp.alert("This doctor cannot make calls");
-				 }
+               	  //search firebase using this person opponent id and get the fullname
+				var newUserlogRef = new Firebase('https://doctordial.firebaseio.com/users/'+snapshot.val().receiver_id);
+                 newUserlogRef.once("value", function(snapshotuser) {
 
+
+
+                 	var dataMessagesLog = snapshotuser.val();
+                   var firstname = snapshotuser.val().firstname;
+                   var lastname = snapshotuser.val().lastname;
+                    name = firstname + ' ' + lastname;
+
+                 });
+                 
+
+               }else{
+               	spec_id = snapshot.val().receiver_id;
+
+               	     	  //search firebase using this person opponent id and get the fullname
+				var newUserlogRef = new Firebase('https://doctordial.firebaseio.com/users/'+snapshot.val().sender_id);
+                 newUserlogRef.once("value", function(snapshotuser) {
+
+                 	var dataMessagesLog = snapshotuser.val();
+                   var firstname = snapshotuser.val().firstname;
+                   var lastname = snapshotuser.val().lastname;
+                    name = firstname + ' ' + lastname;
+
+                 });
+                 
+
+               }
+
+
+
+   
+var messageList = $$('.messageslog-list-block');
+		
+   messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
+				      '<a href="messages_view.html?id='+spec_id+'&fullname='+name+'" class="item-link item-content">'+
+				        '<div class="item-media color-red"> <i class="fa fa-envelope-o" aria-hidden="true" style="font-size: 30px;"></i> </div>'+
+				        '<div class="item-inner">'+
+				          '<div class="item-title-row">'+
+				            '<div class="item-title" style="font-weight: bold !important;" >'+name+'</div>'+
+				          '</div>'+
+				          '<div class="item-text">last message: '+snapshot.val().time+'</div>'+
+				        '</div>'+
+				      '</a>'+
+				    '</li>');
+
+                /*  formDataMesssages = {
+                  	read: true,
+                  	read_time: !conversationStarted ? (new Date()).getDay() + ':' +(new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				 
+                  }
+				  updateAnything(formDataMesssages,  "messageslog/"+snapshot.key());
+              */
+			    } 
+
+		
 			    });
-   */
 
  });
 
@@ -1819,21 +1775,20 @@ var myMessages = myApp.messages('.messages', {
 //check if he is on quickblox yet, then disable/enable the call button if so
 
 
-var quickBloxCheck = new Firebase('https://doctordial.firebaseio.com/messageslog');
+var quickBloxCheck = new Firebase('https://doctordial.firebaseio.com/users/'+page.query.id);
 
  // Add a callback that is triggered for each chat message. .child("receiver_user_id")equalTo(page.query.id)
 			 // quickBloxCheck.child(page.query.id).limitToLast(1).on('child_added', function (snapshot) {
-			    quickBloxCheck.orderByChild("sender_id").equalTo(page.query.id).once("child_added", function(snapshot) {
+			    quickBloxCheck.once("value", function(snapshot) {
 			   
 			    //GET DATA
 			    var data = snapshot.val();
 			    localStorage.quickblox_doctor_id = data.quickblox_id;
 			    localStorage.quickblox_doctor_login = data.quickblox_login;
 			    localStorage.quickblox_doctor_name = data.firstname;
-				 alert("Successfully found user record");
 
 				 if(typeof data.quickblox_id == 'undefined'){
-				myApp.alert("This doctor cannot make calls");
+				myApp.alert("Sorry, this person you are chatting with cannot make calls, they have not activated their call account.", "Alert");
 				 }
 
 			    });
@@ -1846,38 +1801,46 @@ var messageslogRef = new Firebase('https://doctordial.firebaseio.com/messageslog
 
     //find a message log where this user is the sender and update it
 			  //messageslogRef.orderByChild("sender_id").equalTo(localStorage.doctordial_user_id).once("child_added", function(snapshot) {
-			   messageslogRef.orderByChild("sender_id").equalTo(page.query.id).on("value", function(snapshot) {
+			  foundPastRecord = "no";   
+
+			 messageslogRef.on("child_added", function(snapshot) {
 			    //GET DATA
+           
+			   //alert("child has been added: sender ID : "+snapshot.val().sender_id ); 
+
 			    var data = snapshot.val();
-			    		  //update messageslog
+         
+         //if this user has sent a message to this other user before, simply update that record
+                  //Otherwise create now.
+			    if((snapshot.val().sender_id === localStorage.doctordial_user_id && snapshot.val().receiver_id === page.query.id) || (snapshot.val().sender_id === page.query.id && snapshot.val().receiver_id === localStorage.doctordial_user_id)){
+			    //update messageslog
+			    foundPastRecord = "yes"; //set this variable
                   formDataMesssages = {
-                  	sender_id: localStorage.doctordial_user_id,
-                  	receiver_id: page.query.id,
                   	type: 'text',
-                  	time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+                  	time: !conversationStarted ? (new Date()).getDay() + ':' +(new Date()).getHours() + ':' + (new Date()).getMinutes() : false
 				 
                   }
-				  updateAnything(formDataMesssages,  snapshot.key());
-  alert("updated existing");
-
+				  updateAnything(formDataMesssages,  "messageslog/"+snapshot.key());
+              
 			    }
-, function (errorObject) {
 
-	//failed so create the message log
+		
+			    });
+			    
+	    if(localStorage.foundPastRecord != "yes") {
+			    	//create new record
                   formDataMesssages = {
                   	sender_id: localStorage.doctordial_user_id,
                   	receiver_id: page.query.id,
                   	type: 'text',
-                  	time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+                  	time: !conversationStarted ? (new Date()).getDay() + ':' + (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
 				 
                   }
 				  createAnything(formDataMesssages, "messageslog");
 
-alert("created new");
-  //console.log("The read failed: " + errorObject.code);
-});
-			    
 
+foundPastRecord = "done"; //set it to something else
+			    }
 
 
 
@@ -1977,7 +1940,6 @@ var myMessages = myApp.messages('.messages', {
 				});                
 
 
-			  // Add a callback that is triggered for each chat message. .child("receiver_user_id")equalTo(page.query.id)
 			  messagesRef.limitToLast(10).on('child_added', function (snapshot) {
 			    //GET DATA
 			    var data = snapshot.val();
@@ -1996,8 +1958,8 @@ var myMessages = myApp.messages('.messages', {
 			    
 
 			    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
-			 
-			
+			 //show only messages where this person is the sender or receiver.
+			if(localStorage.doctordial_user_id == data.user_id || localStorage.doctordial_user_id == data.receiver_user_id){ //if this is the sender
 				try{
 					myMessages.addMessage({
 				  	
@@ -2015,6 +1977,10 @@ var myMessages = myApp.messages('.messages', {
 				}catch(err){
 					//alert("got the error"+err);
 				}
+				}
+
+
+
 				  
 			  });
 

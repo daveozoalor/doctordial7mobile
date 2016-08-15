@@ -5,8 +5,10 @@
             <div class="navbar">
               <div class="navbar-inner">
                 
-                <div class="left user-name"><a href="index.html" class="color-white"><i class="fa fa-chevron-left" aria-hidden="true"> </i></a>&nbsp; Doctordial</div>
-                <div class="right"> </div>
+                <div class="left user-name"><a href="index.html" class="color-white link"><i class="fa fa-chevron-left" aria-hidden="true"> </i></a>&nbsp; 
+                <a href="users_view.html?id={{url_query.id}}" class="color-white link"><i class="fa fa-user" aria-hidden="true"> </i>&nbsp;  {{url_query.fullname}}</a>
+                </div>
+                <div class="right"> <a href="messages_call_view.html?id={{url_query.id}}&fullname={{url_query.fullname}}" class="color-white link" ><i class="fa fa-phone" aria-hidden="true"> </i></a> </div>
               </div>
             </div>               
 

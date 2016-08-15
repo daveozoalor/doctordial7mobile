@@ -136,12 +136,12 @@
   var QBUsers = usersQuery === 'qa' ? QBUsersQA : usersQuery === 'dev' ? QBUsersDev : QBUsersProd;
 
   var MESSAGES = {
-    'login': 'Login as any user on this computer and another user on another computer.',
+    'login': '',
     'create_session': 'Creating a session...',
     'connect': 'Connecting...',
-    'connect_error': 'Something wrong with connect to chat. Check internet connection or user info and trying again.',
+    'connect_error': 'Something is not working right. Check your internet connection and try again.',
     'login_as': 'Logged in as ',
-    'title_login': 'Choose a user to login with:',
+    'title_login': 'Click your name below to continue:',
     'title_callee': 'Choose users to call:',
     'calling': 'Calling...',
     'webrtc_not_avaible': 'WebRTC is not available in your browser',

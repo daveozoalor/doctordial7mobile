@@ -67,10 +67,10 @@ $('.userSuccessRow').hide();
 			}
 
 formData = {
-	 localStorage.quickblox_id = user.id,
-          localStorage.quickblox_login = user.login,
-          localStorage.quickblox_email = user.email,
-          localStorage.quickblox_owner_id = user.owner_id
+	 quickblox_id : user.id,
+          quickblox_login : user.login,
+          quickblox_email : user.email,
+          quickblox_owner_id : user.owner_id
 }
 
 updateAnything(formData, "users/"+localStorage.doctordial_user_id);
