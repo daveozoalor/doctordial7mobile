@@ -1,57 +1,202 @@
 <!DOCTYPE html>
-<!--
-    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
 
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
 
 <head>
+
+
+
+
+    <script src="js/jquery.js"></script>
+
+
+   
+     <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script >
+
+   
+   
+    </script>
+
+
+
+
+
+
+
+ <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBg0VeSMt-xhzPi-UogfO0TBhFIUnWVs24",
+    authDomain: "doctordial.firebaseapp.com",
+    databaseURL: "https://doctordial.firebaseio.com",
+    storageBucket: "project-162854887831486239.appspot.com",
+  };
+  firebase.initializeApp(config);
+</script>
+
+   <script type="text/javascript" charset="utf-8">
+    var pictureSource;   // picture source
+    var destinationType; // sets the format of returned value 
+ // Wait for device API libraries to load
+    //
+   
+
+    // PhoneGap is ready to be used!
+    //
+  
+
+    function onLoad() {
+        //nothing
+ 
+document.addEventListener("deviceready", function() {
+        pictureSource=navigator.camera.PictureSourceType;
+        destinationType=navigator.camera.DestinationType;
+            alert(" document event called");
+    } , false);
+       }
+    // Called when a photo is successfully retrieved
+    //
+    function onPhotoDataSuccess(imageData) {
+      // Get image handle
+      //
+      var smallImage = document.getElementById('smallImage');
+      // Unhide image elements
+      //
+      smallImage.style.display = 'block';
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      smallImage.src = "data:image/jpeg;base64," + imageData;
+    }
+    
+  // Called when a photo is successfully retrieved
+    //
+    function onPhotoFileSuccess(imageData) {
+      // Get image handle
+      console.log(JSON.stringify(imageData));
+      
+      // Get image handle
+      //
+      var smallImage = document.getElementById('smallImage');
+      // Unhide image elements
+      //
+      smallImage.style.display = 'block';
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      smallImage.src = imageData;
+    }
+    // Called when a photo is successfully retrieved
+    //
+    function onPhotoURISuccess(imageURI) {
+      alert("On photo success called");
+      // Uncomment to view the image file URI 
+      console.log(imageURI);
+      // Get image handle
+      //
+      var largeImage = document.getElementById('largeImage');
+      // Unhide image elements
+      //
+      largeImage.style.display = 'block';
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      largeImage.src = imageURI;
+    }
+    // A button will call this function
+    //
+    function capturePhotoWithData() {
+      // Take picture using device camera and retrieve image as base64-encoded string
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50 });
+    }
+    function capturePhotoWithFile() {
+        navigator.camera.getPicture(onPhotoFileSuccess, onFail, { quality: 50, destinationType: Camera.DestinationType.FILE_URI });
+    }
+    // Called if something bad happens.
+    // 
+    function onFail(message) {
+      alert('Failed because: ' + message + " check console.");
+      console.log("Reason for failure: " + message);
+    }
+    // A button will call this function
+    //
+    function getPhoto(source) {
+      alert("Get photo has been called");
+
+
+navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+    destinationType: Camera.DestinationType.FILE_URI });
+
+function onSuccess(imageURI) {
+    var image = document.getElementById('myImage');
+    image.src = imageURI;
+}
+
+function onFail(message) {
+    alert('Failed because: ' + message);
+}
+
+
+
+
+      // Retrieve image file location from specified source
+      navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50, 
+        destinationType: destinationType.FILE_URI,
+        sourceType: source });
+    }
+    
+    </script>
+
+    <!-- Bootstrap core CSS  -->
+<link rel="canonical" href="https://quickblox.github.io/quickblox-javascript-sdk/samples/webrtc" />
+
+    <link rel="shortcut icon" href="https://quickblox.com/favicon.ico">
+
+    <!-- use http://una.im/CSSgram/ for filters 
+    <link rel="stylesheet" href="css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="css/cssgram.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+
+
+
+<!-- SCRIPT -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+ <script src="js/quickblox.min.js"></script>
+    
+
+    <script src="js/config.js"></script>
+    <script src="js/msgBoard.js"></script>
+    <script src="js/app.js"></script>
+    
+    
+    
+    
     <meta charset="utf-8" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'  'unsafe-eval' data: gap: 'unsafe-inline' https://ssl.gstatic.com;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: gap: 'unsafe-inline' https://ssl.gstatic.com;" />
     <meta http-equiv="Cache-control" content="no-cache">
-    <!-- dhtmlxScheduler 
-		<script src="source/dhtmlx_scheduler/sources/dhtmlxscheduler.js"></script>
-		<link rel="stylesheet" href="source/dhtmlx_scheduler/sources/skins/dhtmlxscheduler.css">
-
-		<script type="text/javascript" src="source/dhtmlx_scheduler_firebase.js"></script>-->
-
-		<!-- FireBase -->
     
+    <meta http-equiv="cache-control" content="max-age=0" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+<meta http-equiv="pragma" content="no-cache" />
+   
+ 
+		<!-- FireBase -->
     <script src="js/firebase.js"></script>
-  <script src='js/jquery.js'></script>
-    <!-- Good default declaration:
-    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-        * Enable inline JS: add 'unsafe-inline' to default-src
-        * Enable eval(): add 'unsafe-eval' to default-src
-    * Create your own at http://cspisawesome.com
-    -->
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
 
     <title>Doctor Dial</title>
     
-       <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!-- Path to Framework7 Library CSS-->
     <link rel="stylesheet" href="css/framework7.material.min.css">
@@ -61,74 +206,173 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     
-    <script type="text/javascript" src="cordova.js"></script>
+
+    
+ 
+ 
 </head>
-
-<body class="theme-red">
-
+<body class="theme-red layout-white layout-gray-custom" onload="onLoad()">
 
   
   <div class="views">
       <!-- Your main view, should have "view-main" class -->
-      <div class="view view-main">
+      <div class="view view-main" >
         <!-- Pages container, because we use fixed navbar and toolbar, it has additional appropriate classes-->
-        <div class="pages navbar-fixed toolbar-fixed">
+        <div class="pages navbar-fixed toolbar-fixed" data-background="img/doctor.jpg">
           <!-- Page, "data-page" contains page name -->
-          <div data-page="index" class="page">
+          <div data-page="index" class="page ">
  
             <!-- Top Navbar. In Material theme it should be inside of the page -->
             <div class="navbar">
               <div class="navbar-inner">
                 
-                <div class="center"></div>
+                <div class="left user-name"><a href="index.html" class="color-white">&nbsp;<i class="fa fa-plus-circle" aria-hidden="true"> </i></a>&nbsp;Doctordial</div>
+                <div class="right"> <a href="users_view.html" class="link button color-white"><i class="fa fa-user" aria-hidden="true"></i>&nbsp; Profile</a></div>
               </div>
             </div>              
           
-            <!-- Sub navbar
-    <div class="subnavbar">
+           
+    <div class="subnavbar theme-white color-black" style="border: 1px solid #8f929a">
         <div class="buttons-row">
-            <a href="#tab1" class="button active">My Doc</a>
-            <a href="#tab2" class="button">Find</a>
-            <a href="#tab3" class="button">History</a>
+                  
         </div>
-    </div> -->
+    </div> 
  
             <!-- Bottom Toolbar. In Material theme it should be inside of the page-->
            
  
   
-			<div class="page-content">
+			<div class="page-content" style="color: black;">
 	
-			<div align="center" style="font-size: 80px; margin-top: 2px; margin-bottom: 2px; ">
-	          <img src="img/doctordial-logo.jpg" class="blink"/> 		
-			 </div>    
-        
-                  		<div class="card">
-						  
-						     <p class="buttons-row">
-						        <a href="#" class="button button-big button-fill button-raised  personal-doctor"><i class="fa fa-user" aria-hidden="true"></i> Personal Doc</a>
-						        <a href="specializations_list.html" class="button button-big button-fill button-raised "><i class="fa fa-search" aria-hidden="true"></i> Find a doctor</a>
-						      </p>
-						      <p class="buttons-row">
-						      
-						       <a href="complaints_list.html" class="button button-big button-fill button-raised">
-						       <i class="fa fa-heart-o" aria-hidden="true"></i> Complaints</a>
+				<div class="card demo-card-header-pic">
+				  <div style=" color: black;" valign="bottom" class="card-header color-white no-border">Personal Doctor</div>
+				  <div class="card-content">
+				   
+				   
+						<div class="list-block media-list inset">
+						  <ul>
+						    <li style="color: black;">
+						      <a href="#" class="item-link item-content" onclick="viewPersonalDoc()">
+						        <div class="item-media" style="width: 20%;" > <img src="img/doctor1.jpg" style="width: 100%;"></img> </div>
+						        <div class="item-inner">
+						          <div class="item-title-row">
+						            <div class="item-title" style="font-size: 18px; font-weight: bold;"><span class="personal-doctor-name">Dr. Olakunle Smith</span></div>
+						          </div>
+						          <div class="item-subtitle"> Consultant Gynaecologist</div><br/>
+						          <div class="item-subtitle"> <i class="fa fa-map-marker" aria-hidden="true"></i> Maryland, Lagos</div>
+						        </div>
+						      </a><br/>
 						     
-						        <a href="appointments_list.html" class="button button-big button-fill button-raised ">
-						        <i class="fa fa-clock-o" aria-hidden="true"></i> Appointments (2)</a>
-						     </p>
-						     
-						   <p class="buttons-row"> 
-						        <a href="messages_list.html" class="button button-big button-fill button-raised ">
-						        <i class="fa fa-clock-o" aria-hidden="true"></i> Messages (5)</a>
-						      
-						        <a href="accounts_view.html" class="button button-big button-fill button-raised ">₦ Account</a>
-						      </p>
-						       <p>
-						        <a href="#" class="button button-big button-fill button-raised  logout">
-						        <i class="fa fa-power-off" aria-hidden="true"></i> Logout</a>
-						      </p>
+						    </li>
+						  </ul>
 						</div> 
+				   
+				  </div>
+				</div>
+			
+		
+			   <div class="card">
+				  <div class="card-content">
+				<div class="list-block media-list">
+				  <ul>
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="complaints_list.html" class="item-link item-content">
+				        <div class="item-media color-red"> <i class="fa fa-commenting" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important;" >Type Your Health Question</div>
+				          </div>
+				          <div class="item-text">Get answers from doctors within 24 hours</div>
+				        </div>
+				      </a>
+				    </li>
+				    
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="specializations_list.html" class="item-link item-content">
+				        <div class="item-media color-blue"> <i class="fa fa-user-md" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important;" >Find A Doctor</div>
+				          </div>
+				          <div class="item-text">Consult online or book appointments</div>
+				        </div>
+				      </a>
+				    </li>
+				    
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="appointments_schedule_list.html" class="item-link item-content">
+				        <div class="item-media color-indigo"> <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important;" >My Appointments</div>
+				          </div>
+				          <div class="item-text">See list of pending appointments </div>
+				        </div>
+				      </a>
+				    </li>
+				      <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="messages_log.html" class="item-link item-content">
+				        <div class="item-media color-deeporange"> <i class="fa fa-envelope" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title messageCountBadge" style="font-weight: bold !important;" >
+                       <span class="nameOfChat">Messages </span>
+                      
+                    </div>
+				          </div>
+				          <div class="item-text">Recent call and message records </div>
+				        </div>
+				      </a>
+				    </li>
+				    <!-- 
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="messages_call_view.html?doctorUserID=a94ae289-ce2b-46f6-9c01-e76ab2812dd7" class="item-link item-content">
+				        <div class="item-media"> <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important; color: red;" >Call doctor</div>
+				          </div>
+				          <div class="item-text"> </div>
+				        </div>
+				      </a>
+				    </li>
+				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
+				      <a href="messages_call_settings.html?doctorUserID=a94ae289-ce2b-46f6-9c01-e76ab2812dd7" class="item-link item-content">
+				        <div class="item-media"> <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
+				        <div class="item-inner">
+				          <div class="item-title-row">
+				            <div class="item-title" style="font-weight: bold !important; color: red;" >Call Settings</div>
+				          </div>
+				          <div class="item-text"> </div>
+				        </div>
+				      </a>
+				    </li> -->
+				  </ul>
+				</div>
+				    
+				    
+				    
+				    
+				    
+				    
+				 
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				    
+				  </div>
+				</div>
+			
+			
+			
+        
 			 		 </div>
         
           </div>
@@ -146,34 +390,33 @@
     
     
     
-    <div class="login-screen">
+    <div class="login-screen ">
     <div class="view">
       <div class="page">
-      <div class="page-content login-screen-content">
+      <div class="page-content login-screen-content" style="background-color: white;">
     <div class="login-screen-title">
 	          <img src="img/doctordial-logo.jpg" class="blink"/> 	
     	
     </div>
+
+     <!-- <a href="#" class="button button-fill color-blue googleLogin">Login With Google+</a> -->
       <div class="content-block">
     <!-- Buttons row as tabs controller -->
     <div class="buttons-row">
       <!-- Link to 1st tab, active -->
-      <a href="#loginTab" class="tab-link active button button-raised button-fill"><i class="fa fa-key" aria-hidden="true"></i> Login</a>
+      <a href="#loginTab" class="tab-link active button button-raised button-round button-fill color-green" onclick="this.hide();"><i class="fa fa-key" aria-hidden="true"></i> Login</a>
       <!-- Link to 2nd tab -->
-      <a href="#signupTab" class="tab-link button button-raised button-fill"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Signup</a>
-      <!-- Link to 3rd tab -->
-      <a href="#forgotPaaswordTab" class="tab-link button button-raised button-fill"><i class="fa fa-check-square-o" aria-hidden="true"></i> Forgot?</a>
+      <a href="#signupTab" class="tab-link button button-raised  button-round color-blue button-fill"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Signup</a>
     </div>
   </div>
+ 
   
-  
-  
-    <div class="tabs-animated-wrap">
+    <div class="tabs-animated-wrap" >
         
         <!-- Tabs, tabs wrapper -->
         <div class="tabs">
   <div id="loginTab" class="tab">  
-  <div class="login-screen-title">Login</div>
+  <div class="login-screen-title color-black">Login</div>
   <form id="loginForm" class="list-block">
       <div class="list-block inset">
         <ul>
@@ -197,16 +440,30 @@
       </div>
       <div class="list-block">
         <ul>
-          <li><a href="#" class="button login-button button-raised button-fill  ripple-green"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Sign In</a></li>
+        
+          <div class="demo-progressbar-load-hide">
+        <p style="height:2px"></p>
+        
+             <li>
+
+             <a href="#" class="button login-button button-raised button-fill  ripple-green button-big button-round color-green"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Sign In</a>
+       
+       </li>
+      </div>
         </ul>
+        
+        
+        	
+			
       </div>
     </form> 
 
 </div>
 
 
+
   <div id="signupTab" class="tab"> 
-    <div class="login-screen-title">Signup</div>
+    <div class="login-screen-title color-black">Signup</div>
        <form id="signupForm">
       <div class="list-block inset">
         <ul>
@@ -251,14 +508,6 @@
             </div>
           </li>
          
-		          <li class="item-content">
-		        <div class="item-inner">
-		          <div class="item-title label"><i class="fa fa-clock" aria-hidden="true"></i> Birth date</div>
-		          <div class="item-input">
-		            <input type="date" name="dateofbirth" placeholder="Birth day" value="2014-04-30">
-		          </div>
-		      </div>
-		    </li> 
 		    
 		    <li class="item-content">
             <div class="item-inner">
@@ -274,8 +523,14 @@
 		    <li class="item-content">
             <div class="item-inner">
               <div class="item-input">
-              <a href="#" id="signupButton" class="button list-button button-raised button-fill  ripple-green">
+                 <div class="demo-progressbar-load-hide">
+        <p style="height:2px"></p>
+        
+             <li>
+              <a href="#" id="signupButton" class="button list-button button-raised button-big  button-fill color-green ripple-green">
                  <i class="fa fa-unlock-alt" aria-hidden="true"></i> Sign Up</a>
+                 </li>
+                 </div>
               </div>
             </div>
 		   </li>
@@ -285,7 +540,7 @@
   
   </div>
   <div id="forgotPaaswordTab" class="tab"> 
-    <div class="login-screen-title">Forgot Password</div>
+    <div class="login-screen-title color-white">Forgot Password</div>
      <form id="recoverForm" >
       <div class="list-block inset">
         <ul>
@@ -306,22 +561,44 @@
       </div>
     </form> 
   </div>
-  <div id="changePsswordTab" class="tab"> Change Password</div>
   
+
   </div>
-  </div>
   
+ </div>
+ 
+   
+   <div class="well">
+   	 
+   <div id="changePsswordTab" class="tab"> Change Password</div>
   
-  
+      <!-- Link to 3rd tab -->
+      <a href="#forgotPaaswordTab" class="tab-link link"><i class="fa fa-check-square-o" aria-hidden="true"></i> Forgot?</a>
+ 
+   </div>  
+ 
+ 
   </div>
       </div>
     </div>
-  </div>
+</div>  
+
+      
+
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="js/framework7.min.js"></script>
     <!-- Path to your app js-->
     <script type="text/javascript" src="js/my-app.js"></script>
- 
+   
+   
+      <script type="text/javascript" src="cordova.js"></script>
+
+		
+		
+		
+
+		
+        
 </body>
 
 

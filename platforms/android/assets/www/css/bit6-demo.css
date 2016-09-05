@@ -1,0 +1,47 @@
+
+.hidden{
+	display: none !important;
+}
+#incomingCall {
+  position: absolute;
+  top: 60px;
+  z-index: 100;
+  left: auto;
+  right: auto;
+  width: 300px;
+}
+
+#videoContainer {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 80px;
+  margin: 0px;
+  text-align: center;
+}
+
+#videoContainer.simple > .remote {
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+}
+
+#videoContainer.simple > .local {
+  max-width: 30%;
+  max-height: 30%;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  border-left: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  width: auto;
+  height: auto;
+}
+
+#videoContainer.grid > video {
+  max-width: 50%;
+  max-height: 50%;
+  padding: 0 4px 4px 0;
+}
+
