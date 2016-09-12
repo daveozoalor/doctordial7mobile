@@ -10,9 +10,6 @@
         "cordova-plugin-battery-status": {
             "PACKAGE_NAME": "ng.doctordial.mobile7"
         },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "ng.doctordial.mobile7"
-        },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "ng.doctordial.mobile7"
         },
@@ -62,6 +59,9 @@
             "PACKAGE_NAME": "ng.doctordial.mobile7"
         },
         "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "ng.doctordial.mobile7"
+        },
+        "cordova-plugin-camera": {
             "PACKAGE_NAME": "ng.doctordial.mobile7"
         }
     },

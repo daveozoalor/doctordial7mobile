@@ -1,22 +1,49 @@
- <div class="page  navbar-fixed" data-page="users_edit">
+ <div class="page  navbar-fixed " data-page="users_edit">
         
        
          <!-- Top Navbar. In Material theme it should be inside of the page-->
             <div class="navbar">
               <div class="navbar-inner">
-                <div class="left"><a href="#" class="color-white back"><i class="fa fa-chevron-left" aria-hidden="true"></i> </a>&nbsp;Edit Profile</div>
+                <div class="left">
+                <a href="#" class="color-white back">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i> </a>&nbsp;Edit Profile</div>
               </div>
             </div> 
-    
-     <div class="subnavbar theme-white color-black" style="border: 1px solid #8f929a; border-bottom-radius: 5px;">
-        <div class="buttons-row">
-                  
-        </div>
-    </div> 
-      
+
+
+
+
+
+
+
           <div class="page-content">
           
-          	
+
+
+           <!-- In data-picker attribute we specify CSS selector of picker we need to open-->
+              <p><a href="#" data-picker=".picker-1" class="open-picker">Open Picker </a></p>
+              
+
+          	<div class="card facebook-card">
+			  <div class="card-header">
+			    <div class="facebook-name">John Doe</div>
+			    <div class="facebook-date">Monday at 2:15 PM</div>
+			  </div>
+			  <div class="card-content">
+			    <div class="card-content-inner">
+			      <p>What a nice photo i took yesterday!</p>
+			      <img id="myImage" width="100%">
+			      <p class="color-gray">Likes: 112    Comments: 43</p>
+			    </div>
+			  </div>
+			  <div class="card-footer">
+			    <a href="#" class="link">Like</a>
+			    <a href="#" class="link">Comment</a>
+			    <a href="#" class="link">Share</a>
+			  </div>
+			</div>  
+
+
            <!-- Form has additional "store-data" class to enable form storage on this form -->
 			<form id="users-edit-form" class="store-data list-block bg-white color-black "  >
 			  <ul>
@@ -132,8 +159,26 @@
 			 </div>
 			 
 
-			 	  <a href="#" onclick="uploadPicture()" class="floating-button floating-button-to-popover open-popover  bg-green color-white">
-    <i class="icon icon-camera "></i>
+  <!-- Picker -->
+  <div class="picker-modal picker-1">
+    <div class="toolbar  bg-teal">
+      <div class="toolbar-inner">
+        <div class="left"></div>
+        <div class="right"><a href="#" class="close-picker color-white">Done</a></div>
+      </div>
+    </div>
+    <div class="picker-modal-inner">
+      <div class="content-block">
+      
+        <p class="buttons-row">
+  <a href="#" class="button button button-big button-fill color-gray" onclick="getPictureFromGallery()"><i class="fa fa-picture-o" aria-hidden="true"></i> Photo Gallery</a>
+  <a href="#" class="button button button-big button-fill color-gray" onclick="uploadPicture()"><i class="fa fa-camera" aria-hidden="true"></i> Camera</a>
+       </p>
+
+
+      </div>
+    </div>
+  </div>
         </div>
         
         
@@ -144,40 +189,3 @@
 
 
 
-
-
-
-
-
-
-
-<!-- Popover -->
-<div class="popover demo-popover">
-  <div class="popover-inner">
-    <div class="list-block">
-      <ul>
-        <li>
-          <a href="#" class="item-content item-link">
-            <div class="item-inner">
-              <div class="item-title">Link 1</div>
-            </div>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="item-content item-link">
-            <div class="item-inner">
-              <div class="item-title">Link 2</div>
-            </div>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="item-content item-link">
-            <div class="item-inner">
-              <div class="item-title">Link 3</div>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
