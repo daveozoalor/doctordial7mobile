@@ -209,13 +209,14 @@
      // initializeUI({withoutUpdMsg: false, msg: 'login'});  
 
 
-//alert("Localhost Quickblox: "+ localStorage.quickblox_id);
+//alert("Localhost Quickblox: "+ localStorage.quickblox_login);
         var QBUsersOwner =  [{
             id: localStorage.quickblox_id,
             login: localStorage.quickblox_login,
             password: 'Doctordial1234',
             full_name: localStorage.firstname,
-            colour: 'C7B325'
+            colour: 'C7B325',
+            avatar: localStorage.quickblox_photo  || 'img/missing-profile.jpg'
           }]
 
 

@@ -55,7 +55,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!-- Path to Framework7 Library CSS-->
-    <link rel="stylesheet" href="css/framework7.material.min.css">
+    <link rel="stylesheet" href="css/framework7.material.css">
     <link rel="stylesheet" href="css/framework7.material.colors.min.css">
     <!-- Path to your custom app styles-->
     <link rel="stylesheet" href="css/my-app.css">
@@ -70,9 +70,9 @@
       <!-- Your main view, should have "view-main" class -->
       <div class="view view-main" >
         <!-- Pages container, because we use fixed navbar and toolbar, it has additional appropriate classes-->
-        <div class="pages navbar-fixed toolbar-fixed" data-background="img/doctor.jpg">
+        <div class="pages" >
           <!-- Page, "data-page" contains page name -->
-          <div data-page="index" class="page ">
+          <div data-page="index" class="page" >
  
             <!-- Top Navbar. In Material theme it should be inside of the page -->
             <div class="navbar">
@@ -251,7 +251,7 @@
     <!-- Buttons row as tabs controller -->
     <div class="buttons-row">
       <!-- Link to 1st tab, active -->
-      <a href="#loginTab" class="tab-link active button button-raised button-round button-fill color-green" onclick="this.hide();"><i class="fa fa-key" aria-hidden="true"></i> Login</a>
+      <a href="#loginTab" class="tab-link active button button-raised button-round button-fill color-green" ><i class="fa fa-key" aria-hidden="true"></i> Login</a>
       <!-- Link to 2nd tab -->
       <a href="#signupTab" class="tab-link button button-raised  button-round color-blue button-fill"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Signup</a>
     </div>
@@ -415,15 +415,6 @@
  </div>
  
    
-   <div class="well">
-   	 
-   <div id="changePsswordTab" class="tab"> Change Password</div>
-  
-      <!-- Link to 3rd tab -->
-      <a href="#forgotPaaswordTab" class="tab-link link"><i class="fa fa-check-square-o" aria-hidden="true"></i> Forgot?</a>
- 
-   </div>  
- 
  
   </div>
       </div>

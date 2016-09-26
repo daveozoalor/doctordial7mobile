@@ -113,6 +113,7 @@
       password: 'dev_user_4',
       full_name: 'User 4',
       colour: '60e27a'
+
     }
   ],
   QBUsersProd = [
@@ -137,8 +138,9 @@
       id: localStorage.quickblox_doctor_id,
       login: localStorage.quickblox_doctor_login,
       password: 'Doctordial1234',
-      full_name: localStorage.quickblox_doctor_full_name,
-      colour: 'BDA0CA'
+      full_name: localStorage.quickblox_doctor_fullname,
+      colour: 'BDA0CA',
+      avatar: localStorage.quickblox_doctor_photo || 'img/missing-profile.jpg'
     }
   ];
 
@@ -147,7 +149,7 @@
   var QBUsers = usersQuery === 'qa' ? QBUsersQA : usersQuery === 'dev' ? QBUsersDev : QBUsersProd;
 
   var MESSAGES = {
-    'login': '',
+    'login': 'Start Connection',
     'create_session': 'Creating a session...',
     'connect': 'Connecting...',
     'connect_error': 'Something is not working right. Check your internet connection and try again.',

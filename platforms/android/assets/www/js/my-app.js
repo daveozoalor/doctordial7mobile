@@ -28,12 +28,18 @@ var $$ = Dom7;
 // Add view
 var mainView = myApp.addView('.view-main');
 
-
-
-
-
-
-
+/*
+//initialize onboarding
+var options = {
+  'bgcolor': '#fff',
+  'fontcolor': 'gray'
+}
+var welcomescreen = myApp.welcomescreen(welcomescreen_slides, options);
+welcomescreen.open(); 
+*/
+$('#tutorial-close-btn').click(function(e){
+	alert("clicked");
+})
 //for making calls
 
 
@@ -55,7 +61,8 @@ function findDoctorQuickbloxDetails(doctorUserID){
 	quickbloxDoctorRef.once("value", function(snapshot){
 		localStorage.quickblox_doctor_id = snapshot.val().quickblox_id;
 		localStorage.quickblox_doctor_owner_id = snapshot.val().quickblox_owner_id ;
-		localStorage.quickblox_doctor_full_name = snapshot.val().quickblox_full_name ;
+		localStorage.quickblox_doctor_full_name = snapshot.val().firstname +' '+ snapshot.val().lastname ;
+		localStorage.quickblox_doctor_photo = snapshot.val().photo || 'img/missing-profile.jpg';
 		localStorage.quickblox_owner_email = snapshot.val().quickblox_email ;
 		localStorage.quickblox_doctor_login = snapshot.val().quickblox_login ;
 
@@ -109,7 +116,7 @@ function createAnything(formData, childVar){
 						} else {
 				    //myApp.alert("Update successful.","Updated");
 				}
-			});
+	s		});
 				}
 
 
@@ -164,6 +171,7 @@ function createUserAccount(formData){
 
 			myApp.alert("Successfully created account. Please login","Registration Successful");
 			localStorage.setItem(formData);
+			console.log("Login successful now closing modal");
     myApp.closeModal(); // open Login Screen//load another page with auth form
 }
 });
@@ -172,6 +180,8 @@ function createUserAccount(formData){
 
 		//handle login
 		function loginFire(sentEmail,sentPassword){ //get this login from database 
+			myApp.showPreloader();
+
 			var ref = new Firebase("https://doctordial.firebaseio.com");
 			
 			ref.authWithPassword({
@@ -179,6 +189,7 @@ function createUserAccount(formData){
 				password : sentPassword
 			}, function(error, authData) {
 				if (error) {
+					myApp.hidePreloader();
 					switch (error.code) {
 						case "INVALID_EMAIL":
 						myApp.alert("The specified user account email is invalid.","Error");
@@ -194,16 +205,21 @@ function createUserAccount(formData){
 					}
 		    return false; //required to prevent default router action
 		} else {
-		  	//save data in local storage
-		  	localStorage.doctordial_email = sentEmail;
-		  	localStorage.email = sentEmail;
+		 
 		  	
 
 		  	var ref = new Firebase("https://doctordial.firebaseio.com/users");
 
 		  	ref.orderByChild('email').equalTo(sentEmail).on("child_added", function(snapshot){
-		  		
-		  		localStorage.doctordial_user_id = snapshot.key();
+
+		  		myApp.hidePreloader();
+
+		  		 	//save data in local storage
+		  	localStorage.doctordial_email = sentEmail;
+		  	localStorage.email = sentEmail;
+
+		  		localStorage.doctordial_user_id = snapshot.key(); //this is not the original user id on firebase. 
+		  		//its just the key of the table where the user's details are saved in /users/{{key}}
 
 		  		if(snapshot.val().firstname){
 		  			localStorage.firstname = snapshot.val().firstname || ' ' ;	
@@ -221,7 +237,8 @@ function createUserAccount(formData){
 		  			localStorage.lastname = '';
 		  		}
 		  		localStorage.full_name = snapshot.val().firstname + ' '+ snapshot.val().middlename + ' '+ snapshot.val().lastname ;
-
+               
+                localstorage.quickblox_photo = snapshot.val().photo; 
 		  	localStorage.doctordial_profile_id = snapshot.key(); // save the profile id (the second user id)
 		  	//get personal doctor's details
 		  	if(snapshot.val().personal_doctor_id != null){
@@ -402,14 +419,16 @@ function createUserAccount(formData){
 
 			});
 
-		       //run login function
-			//messages must be initialized here
-			$$('.login-button').on('click', function () {
-				var email = $$('input[name="loginemail"]').val();
+
+
+function loginButton(){
+	var email = $$('input[name="loginemail"]').val();
 				var password = $$('input[name="loginpassword"]').val();
 				loginFire(email, password);
 
-			});  
+}
+				
+  
 
 
 		  //schedule appointment
@@ -427,6 +446,7 @@ function createUserAccount(formData){
 
 
 		  function logoutUser(){
+		  	myApp.hidePreloader(); //incase preloader is on
 	//myApp.alert("You are loging out", "Logout");
 	var ref = new Firebase("https://doctordial.firebaseio.com");
 
@@ -478,6 +498,52 @@ function createUserAccount(formData){
 
 		          		logoutUser();
 		          	}	
+
+
+
+//check if user has personal doctor
+if(typeof localStorage.personal_doctor_id == "undefined"){
+	
+ $('.persnTry').html('<div class="card-content">'+
+        '<div class="card-content-inner"><div class="personalDocLayer" style="">'+
+        '<a href="#" class="button button-big button-round " onclick="viewPersonalDoc()" >'+
+        '<i class="fa fa-plus-square" aria-hidden="true"></i> Add Personal Doctor</a></div></div></div>');
+}else{
+       $('#persnTry').hide();
+  $('.personalDoctorFoundLayer').html('<div class="card demo-card-header-pic">'+
+				  '<div style=" color: black;" valign="bottom" class="card-header color-white no-border">'+
+'<i class="fa fa-user-md" aria-hidden="true"></i>'+ 
+          'My Doctor</div>'+
+				  '<div class="card-content">'+
+						'<div class="list-block media-list inset">'+
+						  '<ul>'+
+						    '<li style="color: black;">'+
+						      '<a href="#" class="item-link item-content" onclick="viewPersonalDoc()">'+
+						        '<div class="item-media" style="width: 20%;" > <img src="img/doctor1.jpg" style="width: 100%;"></img> </div>'+
+						        '<div class="item-inner">'+
+						          '<div class="item-title-row">'+
+						            '<div class="item-title" style="font-size: 18px; font-weight: bold;"><span class="personal-doctor-name">Dr. Olakunle Smith</span></div>'+
+						          '</div>'+
+						          '<div class="item-subtitle"> Consultant Gynaecologist</div><br/>'+
+						          '<div class="item-subtitle"> <i class="fa fa-map-marker" aria-hidden="true"></i> Maryland, Lagos</div>'+
+						        '</div>'+
+						      '</a><br/>'+
+						    '</li>'+
+						  '</ul>'+
+						'</div>'+
+				  '</div>'+
+				'</div>')
+
+}
+
+
+
+
+
+
+
+
+
 
 // Generate dynamic page
 var dynamicPageIndex = 0;
@@ -601,7 +667,7 @@ function createContentPage() {
 
 
 	  myApp.onPageInit('specializations_list', function (page) {
-
+ myApp.showPreloader();
 	  	var mySearchbar = myApp.searchbar('.searchbar', {
 	  		searchList: '.list-block-search',
 	  		searchIn: '.item-title'
@@ -640,7 +706,7 @@ var messageList = $$('.specialization-list-block');
              // myApp.alert(JSON.stringify(snapshot.val()));
 			    //ADD MESSAGE
 
-
+ myApp.hidePreloader();
 			    messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
 			    	'<a href="doctors_list.html?id='+specs_id+'&categoryname='+name+'" class="item-link item-content">'+
 			    	'<div class="item-media color-teal" style="font-size:20px;"> <i class="fa fa-caret-right" aria-hidden="true" style="font-size: 30px;"></i> </div>'+
@@ -696,21 +762,38 @@ var messageList = $$('.specialization-list-block');
 
 
 	  myApp.onPageInit('appointments_schedule_list', function (page) {
-
+ myApp.showPreloader();
 	  	var mySearchbar = myApp.searchbar('.searchbar', {
 	  		searchList: '.list-block-search',
 	  		searchIn: '.item-title'
 	  	}); 
 
+		var messageList = $$('.appointment-list-block'); 
 
 	  //get the list from database
 	  var ref = new Firebase("https://doctordial.firebaseio.com/appointments_schedule_list");
 		// Attach an asynchronous callback to read the data at our posts reference
 		//var specializations;
 		
-		var messageList = $$('.appointment-list-block'); 
-		
-		ref.orderByChild("user_id").startAt(localStorage.doctordial_user_id).endAt(localStorage.doctordial_user_id).limitToLast(50).on("child_added", function(snapshot) {
+
+         //check if user is a patient or doctor
+             // Get a database reference to our posts
+var refUserToFind = new Firebase("https://doctordial.firebaseio.com/users/"+localStorage.doctordial_profile_id);
+// Attach an asynchronous callback to read the data at our posts reference
+refUserToFind.on("value", function(snapshotUser) {
+myApp.hidePreloader();
+	if(typeof snapshotUser.val().doctors == "undefined"){ //not a doctor
+       
+       var idOfCurrentUser = 'user_id';
+
+       
+	}else{
+		 var idOfCurrentUser = 'doctor_id';
+		 
+	}
+	
+
+ref.orderByChild(idOfCurrentUser).equalTo(localStorage.doctordial_profile_id).limitToLast(50).on("child_added", function(snapshot) {
 			data = snapshot.val(); 
 		     specs_id = snapshot.key(); //get the id
 		     
@@ -728,18 +811,56 @@ var messageList = $$('.specialization-list-block');
 						
 					}
 
+  
+  if(idOfCurrentUser == "doctor_id"){
+  	var otherUserId = snapshot.val().user_id;
+  }else{
+  	var otherUserId = snapshot.val().doctor_id;
+  }
 
-					messageList.append('<a href="#" style="background-color: white; color: black; border: 1px solid #7e7e7e;" class="item-link item-content" onclick="approveSchedule(specs_id, data.accepted,data.user_id,data.doctor_id);">'+
-						'<div class="item-inner">'+
-						'<div class="item-title-row">'+
-						'<div class="item-title color-teal" ><i class="fa fa-clock-o" aria-hidden="true"></i> '+data.day+'</div>'+
-						'<div class="item-after"  > '+data.start_time+'</div>'+
-						'</div>'+
-						'<div class="item-text">approval: '+data.accepted+'</div>'+
-						'</div>'+
-						'</a>');
-					
-					
+
+    
+
+  // Get a database reference to our posts
+var ref = new Firebase("https://doctordial.firebaseio.com/users/"+otherUserId);
+// Attach an asynchronous callback to read the data at our posts reference
+ref.once("value", function(snapshotUser2) {
+
+var dataUser = snapshotUser2.val();
+  
+var userFullName =  dataUser.firstname + " " + dataUser.lastname;
+
+
+if(data.photo){
+	var photoUrl = data.photo;
+}else{
+	var photoUrl = 'img/missing-profile.jpg';
+}
+
+myApp.hidePreloader();
+
+messageList.append('<div class="card facebook-card" onclick="approveSchedule(specs_id, data.accepted,data.user_id,data.doctor_id);">'+
+  '<div class="card-header">'+
+    '<div class="facebook-avatar"><img src="'+photoUrl+'" width="50" height="50" style="border-radius: 500px;"> &nbsp; </div>'+
+    '<div class="facebook-name">'+userFullName+'</div>'+
+    '<div class="facebook-date">'+data.day+'  '+data.start_time+'</div>'+
+  '</div>'+
+  '<div class="card-content">'+
+    '<div class="card-content-inner">'+
+      '<span class="color-black">Approval:  '+data.accepted+'</span> <i class="fa fa-chevron-right color-gray" style="float: right"aria-hidden="true"></i>'+
+    '</div>'+
+  '</div>'+
+'</div>');
+
+
+
+}, function (errorObject) {
+  console.log("The read failed: " + errorObject.code);
+});
+
+
+
+										
 					//our aim is to divide the time difference into snaps of 15 minutes each,
 					var diff = new Date("Aug 08 2012 9:30") - new Date("Aug 08 2012 5:30"); 
 					diff_time = diff/(60*1000);
@@ -767,6 +888,25 @@ var messageList = $$('.specialization-list-block');
 			}, function (errorObject) {
 				console.log("The read failed: " + errorObject.code);
 			});
+
+
+
+
+
+
+
+
+
+
+
+
+
+}, function (errorObject) {
+  console.log("The read failed: " + errorObject.code);
+});
+
+
+
 
 
 	});
@@ -871,7 +1011,7 @@ if(localStorage.personal_doctor_name != null){
 
 
 			myApp.onPageInit('users_view', function (page) {
-				
+				 myApp.showPreloader();
 				$$('.open-about').on('click', function () {
 					myApp.popup('.popup-about');
 				});
@@ -889,7 +1029,7 @@ if(localStorage.personal_doctor_name != null){
 
 				if(page.query.id == localStorage.doctordial_user_id){
 
-					$$('.menuList').append('<a href="users_edit.html" class="link button color-black open-popup link">'+
+					$$('.menuList').prepend('<a href="users_edit.html" class="link button open-popup">'+
 						'<i class="fa fa-pencil-square-o" aria-hidden="true"> </i>&nbsp;Edit Profile&nbsp;  </a>');
 				}
 
@@ -899,6 +1039,8 @@ if(localStorage.personal_doctor_name != null){
 
 				ref.once("value", function(snapshot) {
 
+
+ myApp.hidePreloader();
 					data = snapshot.val();
 
 					$$('#profile-name').html(' '+data.firstname);
@@ -950,6 +1092,14 @@ if(localStorage.personal_doctor_name != null){
 
 					     }
 
+					     if(data.photo != null){
+					     	var image = document.getElementById('myImage');
+				            image.src=  data.photo;
+
+					     }
+
+
+
 
 					     if(data.bloodsugar != null){
 					     	$$('.profile-details').append('<li class="item-content">'+
@@ -971,12 +1121,10 @@ if(localStorage.personal_doctor_name != null){
 
 					     }
 
-
 					     if(page.query.id !== localStorage.doctordial_user_id){
 					     	$$('.contactButtons').html('<p class="buttons-row">'+
-					     		'<a href="messages_view.html?id={{url_query.id}}&fullname='+data.firstname+'" class="link button button-fill color-red">'+
-					     		'<i class="fa fa-comment-o" aria-hidden="true"></i> Chat</a>'+
-					     		'<a href="#" class="link button button-fill color-red"><i class="fa fa-phone" aria-hidden="true"></i> Call</a>'+
+					     		'<a href="messages_view.html?id='+page.query.id+'&fullname='+data.firstname+' '+data.lastname+'" class="link button button-fill color-red">'+
+					     		'<i class="fa fa-comment-o" aria-hidden="true"></i> Send Message</a>'+
 					     		'</p>');
 					     }
 
@@ -1101,7 +1249,7 @@ function timeTo12HrFormat(time)
 
 
 myApp.onPageInit('doctors_view', function (page) {
-	
+	 myApp.showPreloader();
 	 //dont show the add button if this is the viewer's personal doc
 	 if(localStorage.personal_doctor_id != null && localStorage.personal_doctor_id == page.query.id){
 		   //hide button
@@ -1117,9 +1265,13 @@ myApp.onPageInit('doctors_view', function (page) {
 	var ref = new Firebase("https://doctordial.firebaseio.com/users/"+page.query.id);
 	
 	//check if this user already has a personal doctor
+
+
 	ref.once("value", function(snapshot) {
 		var dataDoc = snapshot.val();
 
+		var fullname = snapshot.val().firstname + ' '+ snapshot.val().lastname;
+ myApp.hidePreloader();
             //save these doctor's quickblox details on this user's phone for later use
             if(typeof dataDoc.quickblox_id !== "undefined"){
             	localStorage.quickblox_doctor_id =  dataDoc.quickblox_id;
@@ -1127,6 +1279,21 @@ myApp.onPageInit('doctors_view', function (page) {
             	localStorage.quickblox_doctor_full_name =  dataDoc.quickblox_full_name;
             	localStorage.quickblox_doctor_owner_id =  dataDoc.quickblox_owner_id;
             }
+
+          if(snapshot.val().photo){
+          	var userPhotoUrl = snapshot.val().photo;
+          }else{
+          	var userPhotoUrl = 'img/missing-profile.jpg';
+          }
+            $('.profilePictureBox').html('<div class="card facebook-card" >'+
+			  '<div class="card-header no-border">'+
+			  '<i class="fa fa-user-md" aria-hidden="true"></i>  Dr. '+fullname+' '+
+			  '</div>'+
+			  '<div class="card-content">'+
+			  '<img src="'+userPhotoUrl+'" width="100%"></div>'+
+			  '<!-- <p>'+snapshot.val().about+'</p> -->'+
+			'</div>');
+
             
         });
 }else{
@@ -1143,7 +1310,7 @@ myApp.onPageInit('doctors_view', function (page) {
 if(localStorage.doctordial_profile_id != page.query.id){
 
 //add doctor button on index page. 
-$$('.add-personal-doctor').on('click', function () {
+	$$('#add_personal_doctor').on('click', function () {
 			//redirect to doctor categories
 			myApp.confirm('Would you like to set this doctor as your personal doctor? This will replace your current personal doctor','Add Peronsal Doctor', 
 				function () {
@@ -1154,14 +1321,14 @@ $$('.add-personal-doctor').on('click', function () {
 			      updateAnything(formData, "users/"+localStorage.doctordial_profile_id); //update this user's record and add personal doctor
 			      
 			      localStorage.personal_doctor_id = page.query.id;
-			      $$('.add-personal-doctor').hide();
+			      $$('#personal_doctor_div').hide();
 			  },
 			  function () {
 
 			  }
 			  );
 
-		});		
+		});
 
 //add doctor button on index page. 
 $$('.change-personal-doctor').on('click', function () {
@@ -1229,6 +1396,18 @@ $$('.change-personal-doctor').on('click', function () {
 }			
 
 
+/*
+$('.contact-list').append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px;">'+
+				      '<a href="messages_view.html?id='+page.query.id+'&fullname='+page.query.fullname+'" class="item-link item-content">'+
+				        '<div class="item-media color-red" > <i class="fa fa-commenting-o" aria-hidden="true" style="margin:2px;  font-size: 30px;"></i> </div>'+
+				        '<div class="item-inner">'+
+				          '<div class="item-title-row">'+
+				            '<div class="item-title" style="font-weight: bold !important;" >Chat </div>'+
+				          '</div>'+
+				          '<div class="item-text">Leave a message and start a live chat</div>'+
+				        '</div>'+
+				      '</a>'+
+				    '</li>'); */
 
 	  //get the list from database
 	  var ref = new Firebase("https://doctordial.firebaseio.com/appointments");
@@ -1246,46 +1425,28 @@ $$('.change-personal-doctor').on('click', function () {
 				//doctors list
 			    var specs_id = snapshot.key(); //get the id
 
-			    messageList.append('<form id="scheduleAppointmentFormSubmit"><div class="list-block accordion-list" style="border: 1px solid #7a8b74;">'+
-			    	'<ul>'+
-			    	'<li class="accordion-item"><a href="#" class="item-content item-link">'+
-			    	'<div class="item-inner" style="background-color: 1px solid #eceeed !important">'+
-			    	'<div class="item-title">'+
-			    	'<i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'s '+timeTo12HrFormat(data.starttime)+' - '+timeTo12HrFormat(data.endtime)+'</div>'+
-			    	'</div></a>'+
-			    	'<div class="accordion-item-content">'+
-			    	'<div class="content-block">'+
-			    	'<p>'+
-			    	'<div class="list-block">'+
-			    	'<ul>'+
-			    	'<li>'+
-			    	'<div class="item-content">'+
-			    	'<div class="item-inner">'+
-			    	'<div class="item-input" style="color: black !important;">'+
-			    	'<input type="text" style="border: 1px solid #797580; color: black !important; padding-left: 10px;" name="day" placeholder="Doubletap here to select date" readonly id="calendar-events'+totalCalendarCount+'" onclick="pullCalendar('+totalCalendarCount+','+data.dayNumber+')">'+
+
+
+              messageList.append('<li class="accordion-item"><a href="#" class="item-content item-link">'+
+									        '<div class="item-inner">'+
+									          '<div class="item-title"><i class="fa fa-plus-square" aria-hidden="true"></i> '+data.day+'s '+timeTo12HrFormat(data.starttime)+' - '+timeTo12HrFormat(data.endtime)+'</div>'+
+									        '</div></a>'+
+									      '<div class="accordion-item-content">'+
+									        '<div class="content-block">'+
+									          '<p>'+
+									          '<input type="text" style="border: 1px solid #797580; color: black !important; padding-left: 10px;" name="day" placeholder="Doubletap here to select date" readonly id="calendar-events'+totalCalendarCount+'" onclick="pullCalendar('+totalCalendarCount+','+data.dayNumber+')">'+
 			    	'<input type="text" style="border: 1px solid #797580; color: black !important;" name="start_time"  value="'+timeTo12HrFormat(data.starttime)+'" placeholder="Time" readonly id="calendar-events'+data.starttime+'" disabled>'+
 			    	'<input type="hidden" name="user_id" value="'+localStorage.doctordial_user_id+'">'+
-			    	'<input type="hidden" name="doctor_id" value="'+page.query.id+'">'+
+			    	'<input type="hidden" class="color-black" name="doctor_id" value="'+page.query.id+'">'+
 			    	'<input type="hidden" name="accepted" value="pending" placeholder="The doctor needs to accept this" >'+
-			    	'<div class="row">'+
-			    	'<div class="col-50">'+
-			    	'<a href="#" class="button button-big button-red button-fill hideThisButton" onclick="createScheduleAppointment()" id="scheduleAppointmentSubmitButton">Submit</a>'+
-			    	'</div></div>'+
-			    	'</div>'+
-			    	'</div>'+
-			    	'</div>'+
-			    	'</li>'+
-			    	'</ul>'+
-			    	'</div>'+ 
-			    	'</p>'+
-			    	'</div>'+
-			    	'</div>'+
-			    	'</li>'+
-			    	'</ul>'+
-			    	'</div></form>');
+									          '<a href="#" class="button button-big button-red button-fill hideThisButton" onclick="createScheduleAppointment()" id="scheduleAppointmentSubmitButton">Submit</a>'+
+			    	
+									          '</p>'+
+									        '</div>'+
+									      '</div>'+
+									    '</li>');
 
-
-
+			  
 
 
 
@@ -1443,7 +1604,8 @@ decideQuickbloxPage();
 
 
 
-			   myApp.onPageInit('doctors_list', function (page) {
+myApp.onPageInit('doctors_list', function (page) {
+	 myApp.showPreloader();
    //var page = e.detail.page;
   // alert(page.query.categoryname);
   var mySearchbar = myApp.searchbar('.searchbar', {
@@ -1451,31 +1613,19 @@ decideQuickbloxPage();
   	searchIn: '.item-title'
   }); 
 
-/*
-//dummy function I used to create new category of doctors
-  $("#addAccountDoctor").on('click', function () {
-   // var email = pageContainer.find('input[name="email"]').val();
-    var formData = myApp.formToJSON('#addNewDoctor'); //convert submitted form to json.
-  if(formData != null){
-  	  updateAnything(formData, "users/"+formData.user_id+"/doctors"); //do the registration and report errors if found
-  } 
-
- 
-}); */
-
 
   //get the list from database
   var ref = new Firebase("https://doctordial.firebaseio.com/users");
 		// Attach an asynchronous callback to read the data at our posts reference
 		var specializations;
-		var messageList = $$('.doctors-list-block');
+		var messageList = $$('.doctors2-list-block');
 		
 		
 		  //find list of doctors in this specialization . page.query.id is the query received from the incoming page GET request
 		 // myApp.alert("Dave");
 		 ref.orderByChild("doctors").on("child_added", function(snapshot) {
 			  //myApp.alert("Dave"+snapshot.val().doctors.specialization_id);
-
+ myApp.hidePreloader();
 		//ref.limitToLast(50).on("child_added", function(snapshot) {
 			var data = snapshot.val();
 			var email = data.email || "anonymous";
@@ -1495,20 +1645,33 @@ decideQuickbloxPage();
 
 			    //list doctors in this category except this viewer's profile
 			    if(data.doctors.specialization_id == page.query.id){
+         
+         if(snapshot.val().photo){
+         	var usersPictureUrl = snapshot.val().photo; 
+         }else{
+         	var usersPictureUrl = 'img/missing-profile.jpg';
+         }
+          
+
+          
+
+
+            
+        messageList.append('<hr/><li style="color: black;">'+
+						      '<a href="doctors_view.html?id='+snapshot.key()+'&fullname='+fullname+'&about='+about+'&gender='+data.gender+'&fullname='+fullname+'" class="item-link item-content" >'+
+						        '<div class="item-media" style="width: 20%;" > <img src="'+usersPictureUrl+'" style="width: 100%; border-radius: 500px;"></img> </div>'+
+						        '<div class="item-inner">'+
+						          '<div class="item-title-row">'+
+						            '<div class="item-title" style="font-size: 18px; font-weight: bold;"><span class="personal-doctor-name">'+title+' '+fullname+'</span></div>'+
+						          '</div>'+
+						          '<div class="item-subtitle"> '+page.query.categoryname+'</div><br/>'+
+						          '<div class="item-subtitle"> <i class="fa fa-map-marker" aria-hidden="true"></i> '+gender+'. '+city+'. '+state+'</div>'+
+						        '</div>'+
+						      '</a>'+
+						    '</li> ')
 
 
 
-			    	messageList.append('<li style="border: 1px solid #88868c; color: black; border-radius: 5px; background: white;">'+
-			    		'<a href="doctors_view.html?id='+snapshot.key()+'&fullname='+fullname+'&about='+about+'&gender='+data.gender+'&fullname='+fullname+'" class="item-link item-content" data-context-name="doctor-card" class="item-link item-content">'+
-			    		'<div class="item-media" width="20%"> <img src="img/doctor1.jpg" /> </div>'+
-			    		'<div class="item-inner">'+
-			    		'<div class="item-title-row">'+
-			    		'<div class="item-title" style="font-weight: bold !important;" > '+title+' '+fullname+'</div>'+
-			    		'</div>'+
-			    		'<div class="item-text">'+gender+'  '+city+'  '+state+'</div>'+
-			    		'</div>'+
-			    		'</a>'+
-			    		'</li>');
 
 			    }
 
@@ -1528,8 +1691,8 @@ decideQuickbloxPage();
 
 
 
-
-			   myApp.onPageInit('complaints_list', function (page) {
+myApp.onPageInit('complaints_list', function (page) {
+	 myApp.showPreloader();
   //create new coomplaint
   $$('.create-complaint-modal').on('click', function () {
   	
@@ -1573,7 +1736,7 @@ decideQuickbloxPage();
 		// Attach an asynchronous callback to read the data at our posts reference
 		var messageList = $$('.specialization-list-block');
 		
-		
+		 myApp.hidePreloader();
 		
 		var announcementDiv = $$('.announcementDiv');
 		
@@ -1636,7 +1799,7 @@ decideQuickbloxPage();
 
 			   myApp.onPageInit('complaints_view', function(page) {
 
-
+ myApp.showPreloader();
 
 
 // Conversation flag
@@ -1659,7 +1822,7 @@ var myMessagebar = myApp.messagebar('.messagebar', {
 			  // CREATE A REFERENCE TO FIREBASE
 			  var messagesRef = new Firebase('https://doctordial.firebaseio.com/complaints');
 
-
+ myApp.hidePreloader();
                //find this message, 
                var thismessage = messagesRef.child(page.query.id);
                thismessage.once("value", function(snapshot) {
@@ -1865,6 +2028,29 @@ ref = postsRef.child("users/"+user.uid);
 
 
 
+
+// Create a callback which logs the current auth state
+function authDataCallback(authData) {
+  if (authData) {
+
+  	localStorage.doctordial_authData_uid = authData.uid;
+    console.log("User " + authData.uid + " is logged in with " + authData.provider);
+    
+  } else { //if not successful
+    console.log("User is logged out");
+    logoutUser()
+  }
+}
+// Register the callback to be fired every time auth state changes
+var ref = new Firebase("https://doctordial.firebaseio.com");
+ref.onAuth(authDataCallback);
+
+
+
+
+
+
+
 function updateUserProfileButton(){
 	var formData = myApp.formToJSON('#users-edit-form'); //convert submitted form to json.
 
@@ -1877,27 +2063,10 @@ function updateUserProfileButton(){
 
 
 
-
 			function getPictureFromGallery(){
-
 				navigator.camera.getPicture(onSuccess, onFail, { 
 					destinationType: Camera.DestinationType.FILE_URI,
-					sourceType : Camera.PictureSourceType.CAMERA,
-					saveToPhotoAlbum: true,
-					allowEdit: true,
-					quality: 100,
-					correctOrientation: true,
-
-				});
-
-
-			}
-
-			function uploadPicture(){
-
-				navigator.camera.getPicture(onSuccess, onFail, { 
-					destinationType: Camera.DestinationType.FILE_URI,
-					sourceType : Camera.PictureSourceType.CAMERA,
+					sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
 					saveToPhotoAlbum: true,
 					allowEdit: true,
 					quality: 100,
@@ -1911,12 +2080,31 @@ function updateUserProfileButton(){
 
 
 
-			function onSuccess(imageData) {
-				var image = document.getElementById('myImage');
+			function getPictureFromCamera(){
+				navigator.camera.getPicture(onSuccess, onFail, { 
+					destinationType: Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.CAMERA,
+					saveToPhotoAlbum: true,
+					allowEdit: true,
+					quality: 100,
+					correctOrientation: true,
+
+				});
+
+
+			}
+
+
+
+
+function onSuccess(imageData) {
+
+		var image = document.getElementById('myImage');
 				image.src=  imageData;
+		
 
 
-var file =imageData; //useless idiot like me :) 
+var file = imageData; //useless idiot like me :) 
 
 // Create the file metadata
 var metadata = {
@@ -1924,11 +2112,41 @@ var metadata = {
 };
 
 
-var file = url.substring(url.lastIndexOf('/')+1); //get name of file from file path
-// Create a root reference
+var fileName = file.substring(file.lastIndexOf('/')+1); //get name of file from file path
+
+
 var storageRef = firebase.storage().ref();
+
+
+var getFileBlob = function (url, cb) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.responseType = "blob";
+        xhr.addEventListener('load', function() {
+            cb(xhr.response);
+        });
+        xhr.send();
+};
+
+var blobToFile = function (blob, name) {
+        blob.lastModifiedDate = new Date();
+        blob.name = name;
+        return blob;
+};
+
+var getFileObject = function(filePathOrUrl, cb) {
+       getFileBlob(filePathOrUrl, function (blob) {
+       	
+          cb(blobToFile(blob, fileName));
+       });
+};
+
+getFileObject(imageData, function (fileObject) {
+  
+
+var timeStamp = Math.floor(Date.now() / 1000);
 // Upload file and metadata to the object 'images/mountains.jpg'
-var uploadTask = storageRef.child('images/' + file.name).put(file, metadata);
+var uploadTask = storageRef.child(localStorage.doctordial_authData_uid+"/"+timeStamp+"/"+ fileName).put(fileObject);
 
 // Listen for state changes, errors, and completion of the upload.
 uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
@@ -1936,6 +2154,21 @@ uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
     var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
     console.log('Upload is ' + progress + '% done');
+
+
+myApp.showPreloader('Uploading Image '+progress+'%');
+if(progress >= 100){
+myApp.hidePreloader();
+}
+
+
+$('.progressBarDiv').html('<div class="content-block-title">Upload <b>'+progress+'% </b> completed</div>'+
+  '<div class="content-block">'+
+    '<div class="content-block-inner">'+
+     '</div>'+
+  '</div>')
+
+
     switch (snapshot.state) {
       case firebase.storage.TaskState.PAUSED: // or 'paused'
       console.log('Upload is paused');
@@ -1948,37 +2181,230 @@ uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
 	switch (error.code) {
 		case 'storage/unauthorized':
       // User doesn't have permission to access the object
+      alert("Storage unauthorized");
       break;
 
       case 'storage/canceled':
       // User canceled the upload
+      alert("Error: storage/canceled");
       break;
 
       case 'storage/unknown':
       // Unknown error occurred, inspect error.serverResponse
+      alert("Error: storage/unknown");
       break;
   }
 }, function() {
   // Upload completed successfully, now we can get the download URL
   var downloadURL = uploadTask.snapshot.downloadURL;
+
+
+  console.log("The download URL: "+downloadURL);
+
+    var formData = {
+      	photo: downloadURL
+      }
+    //update user's profile with url uploadUrl
+    	updateAnything(formData, "users/"+localStorage.doctordial_profile_id);
+    
+    localstorage.quickblox_photo = downloadURL; //update quickblox photo url
 });
 
 
-
-
-
-
-
-
+}); 
 
 
 }
+
+
+
 function onFail(message) {
 //alert('Failed because: ' + message);
 setTimeout(function(){
 	navigator.notification.alert(message);
 }, 0);
 }
+
+
+
+
+
+
+
+//upload images in message
+
+			function MessageGetPictureFromGallery(){
+				navigator.camera.getPicture(MesssageOnSuccess, onFail, { 
+					destinationType: Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
+					saveToPhotoAlbum: true,
+					allowEdit: true,
+					quality: 100,
+					correctOrientation: true,
+
+				});
+
+
+			}
+
+
+
+
+			function MessageGetPictureFromCamera(){
+				navigator.camera.getPicture(MesssageOnSuccess, onFail, { 
+					destinationType: Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.CAMERA,
+					saveToPhotoAlbum: true,
+					allowEdit: true,
+					quality: 100,
+					correctOrientation: true,
+
+				});
+
+
+			}
+
+
+
+
+
+function MessaggeOnSuccess(imageData) {
+		var image = document.getElementById('myImage');
+				image.src=  imageData;
+		
+
+
+var file = imageData; //useless idiot like me :) 
+
+// Create the file metadata
+var metadata = {
+	contentType: 'image/jpeg'
+};
+
+
+var fileName = file.substring(file.lastIndexOf('/')+1); //get name of file from file path
+
+
+var storageRef = firebase.storage().ref();
+
+
+var getFileBlob = function (url, cb) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.responseType = "blob";
+        xhr.addEventListener('load', function() {
+            cb(xhr.response);
+        });
+        xhr.send();
+};
+
+var blobToFile = function (blob, name) {
+        blob.lastModifiedDate = new Date();
+        blob.name = name;
+        return blob;
+};
+
+var getFileObject = function(filePathOrUrl, cb) {
+       getFileBlob(filePathOrUrl, function (blob) {
+       	
+          cb(blobToFile(blob, fileName));
+       });
+};
+
+getFileObject(imageData, function (fileObject) {
+  
+
+var timeStamp = Math.floor(Date.now() / 1000);
+// Upload file and metadata to the object 'images/mountains.jpg'
+var uploadTask = storageRef.child(localStorage.doctordial_authData_uid+"/"+timeStamp+"/"+ fileName).put(fileObject);
+
+// Listen for state changes, errors, and completion of the upload.
+uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+	function(snapshot) {
+    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    console.log('Upload is ' + progress + '% done');
+
+
+
+$('.progressBarDiv').html('<div class="content-block-title">Upload <b>'+progress+'% </b> completed</div>'+
+  '<div class="content-block">'+
+    '<div class="content-block-inner">'+
+     '</div>'+
+  '</div>')
+
+
+    switch (snapshot.state) {
+      case firebase.storage.TaskState.PAUSED: // or 'paused'
+      console.log('Upload is paused');
+      break;
+      case firebase.storage.TaskState.RUNNING: // or 'running'
+      console.log('Upload is running');
+      break;
+  }
+}, function(error) {
+	switch (error.code) {
+		case 'storage/unauthorized':
+      // User doesn't have permission to access the object
+      alert("Storage unauthorized");
+      break;
+
+      case 'storage/canceled':
+      // User canceled the upload
+      alert("Error: storage/canceled");
+      break;
+
+      case 'storage/unknown':
+      // Unknown error occurred, inspect error.serverResponse
+      alert("Error: storage/unknown");
+      break;
+  }
+}, function() {
+  // Upload completed successfully, now we can get the download URL
+  var downloadURL = uploadTask.snapshot.downloadURL;
+
+
+  console.log("The download URL: "+downloadURL);
+
+   
+    	  // Add message
+				  messagesRef.push({
+				  	//userid
+				  	user_id: localStorage.doctordial_user_id, 
+				  	receiver_user_id: page.query.id,
+				    // Message text
+				    text: messageText,
+				    // Random message type
+				    // Avatar and name:
+				    avatar: downloadURL,
+				   // name: name,
+				    // Day
+				    day: !conversationStarted ? 'Today' : false,
+				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				});
+    
+
+    
+});
+
+
+}); 
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1995,7 +2421,7 @@ setTimeout(function(){
 
 myApp.onPageInit('messages_log', function(page) {
 
-
+myApp.showPreloader();
 
 	var messageList = $$('.messageslog-list-block');
 
@@ -2007,7 +2433,7 @@ myApp.onPageInit('messages_log', function(page) {
     //find a message log where this user is the sender and update it
     messageslogRef.orderByChild('time').on("child_added", function(snapshot) {
 
-
+myApp.hidePreloader();
     	otherUserId = snapshot.key(); 
                  //alert("User ID: "+ otherUserId + " Localstorage: " + localStorage.doctordial_profile_id);
                	  //search firebase using this person opponent id and get the fullname
@@ -2093,7 +2519,6 @@ function updateMessagesLog(mainUserId, otherUserId, seenStatus){
 
 
 
-
 myApp.onPageInit('messages_view', function(page) {
 
 
@@ -2105,8 +2530,16 @@ myApp.onPageInit('messages_view', function(page) {
 			mainView.router.loadPage('index.html');
 		});
 
+	}
+
+//shorten the name atop the page
+if(page.query.fullname.length > 14) {
+		page.query.fullname = page.query.fullname.substring(0,14)+'...';
 
 	}
+	
+$('.user-name').html('<a href="#" class="color-white link back"><i class="fa fa-chevron-left" aria-hidden="true"> </i>&nbsp; &nbsp; </a>&nbsp;'+ 
+                '<a href="users_view.html?id='+page.query.id+'" class="color-white link">&nbsp;  '+page.query.fullname+'</a>')
 
 //set my messages with this person to 'seen'
 updateMessagesLog(localStorage.doctordial_profile_id, page.query.id, 1);
@@ -2126,6 +2559,8 @@ quickBloxCheck.once("value", function(snapshot) {
 				 	localStorage.quickblox_doctor_id = data.quickblox_id;
 				 	localStorage.quickblox_doctor_login = data.quickblox_login;
 				 	localStorage.quickblox_doctor_name = data.firstname;
+				 	localStorage.quickblox_doctor_fullname = data.firstname;
+				 	localStorage.quickblox_doctor_photo = data.photo || 'img/missing-profile.jpg';
 				 }
 
 				});
@@ -2161,16 +2596,17 @@ var myMessagebar = myApp.messagebar('.messagebar', {
 	maxHeight: 150
 });  
 
+
 // Do something here when page loaded and initialized
 	//var scrolled = 0;
-			  // CREATE A REFERENCE TO FIREBASE
-			  var messagesRef = new Firebase('https://doctordial.firebaseio.com/messages');
+	  // CREATE A REFERENCE TO FIREBASE
+	  var messagesRef = new Firebase('https://doctordial.firebaseio.com/messages');
 
-			  // REGISTER DOM ELEMENTS
-			  var messageField = $$('#messageInput');
-			  var nameField = $$('#nameInput');
-			  var messageList = $$('.messages');
-			  var sendMessageButton = $$('#sendMessageButton');
+	  // REGISTER DOM ELEMENTS
+	  var messageField = $$('#messageInput');
+	  var nameField = $$('#nameInput');
+	  var messageList = $$('.messages');
+	  var sendMessageButton = $$('#sendMessageButton');
 
 			  // LISTEN FOR KEYPRESS EVENT
 			/*  sendMessageButton.click(function (e) {
@@ -2194,6 +2630,13 @@ var myMessagebar = myApp.messagebar('.messagebar', {
 				var myMessagebar = myApp.messagebar('.messagebar');
 
 				
+				function uploadNewAvatarMessage(){
+				
+
+
+				}
+
+
 				function addNewPostMessage(){
 				  // Message text
 				  var messageText = myMessagebar.value().trim();
@@ -2225,7 +2668,7 @@ var myMessagebar = myApp.messagebar('.messagebar', {
 				    //avatar: avatar,
 				   // name: name,
 				    // Day
-				    day: !conversationStarted ? 'Today' : false,
+				    day: !conversationStarted ? (new Date()).getDay() + '/' + (new Date()).getMonth() +'/' + (new Date()).getYear() : false,
 				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
 				});
 
@@ -2291,8 +2734,8 @@ var myMessagebar = myApp.messagebar('.messagebar', {
 				    //avatar: avatar,
 				    //name: name,
 				    // Day
-				    day: !conversationStarted ? 'Today' : false,
-				    time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+				    day: day,
+				    time: time,
 				});
 				}catch(err){
 					//alert("got the error"+err);

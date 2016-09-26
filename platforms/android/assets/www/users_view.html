@@ -1,4 +1,4 @@
- <div class="page" data-page="users_view">
+ <div class="page navbar-fixed" data-page="users_view">
         
        
         
@@ -9,28 +9,49 @@
             <div class="navbar">
               <div class="navbar-inner">
                <div class="left user-name"><a href="#" class="color-white back"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>&nbsp; Profile</div>
-                <div class="right"  ></div>
+               
+              <div class="right menuList">
+                 <!-- <a href="accounts_view.html" class="link button color-black back">₦ Account</a>-->
+             <a href="#" class="link button" onclick="logoutPop('Are you sure you wish to logout?')"><i class="fa fa-power-off" aria-hidden="true"></i>&nbsp; Logout</a>
               </div>
+
+              </div>
+
+
             </div> 
-    
-     <div class="subnavbar theme-white color-black" style="border: 1px solid #8f929a">
-        <div class="buttons-row menuList">
-             
-             <!-- <a href="accounts_view.html" class="link button color-black back">₦ Account</a>-->
-             <a href="#" class="link button color-black" onclick="logoutPop('Are you sure you wish to logout?')"><i class="fa fa-power-off" aria-hidden="true"></i>&nbsp; Logout</a>
+ 
+          <div class="toolbar toolbar-bottom theme-gray">
+            <div class="toolbar-inner">
+                <a href="#" class="link back"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+                <a href="specializations_list.html" class="link"><i class="fa fa-user-md" aria-hidden="true" ></i></a>
+                <a href="appointments_schedule_list.html" class="link"><i class="fa fa-clock-o" aria-hidden="true" ></i></a>
+                <a href="messages_log.html" class="link"><i class="fa fa-envelope" aria-hidden="true" ></i></a>
+                <a href="index.html" class="link"><i class="fa fa-home" aria-hidden="true"></i></a>
+                
+            </div>
         </div>
-    </div> 
-         
       
           <div class="page-content">
           
           	
-      
+        <div class="card facebook-card">
+       
+        <div class="card-content">
+          <div class="card-content-inner">
+            <img id="myImage" width="100%">
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="#" class="link open-picker" data-picker=".picker-1"><i class="fa fa-camera" aria-hidden="true"></i>{{url_query.fullname}}</a>
+        </div>
+      </div>  
+
+
+
           <div class="card demo-card-header-pic">
-			  <div style="background-image:url(img/female-doctor1.jpg); background-repeat:no-repeat; height: 200px; color: #1e1e1e;" valign="bottom" class="card-header color-white no-border">{{url_query.fullname}}</div>
-			  <div class="card-content">
+
+        <div class="card-content">
 			    <div class="card-content-inner">
-			      <p class="color-gray">Updated on May 21, 2016</p>
 			      <p>{{url_query.about}}</p>
 			      
 			      
@@ -56,6 +77,21 @@
 			 
 
 			 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
         </div>
         
         

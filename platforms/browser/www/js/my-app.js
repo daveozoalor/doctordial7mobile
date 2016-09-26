@@ -164,6 +164,7 @@ function createUserAccount(formData){
 
 			myApp.alert("Successfully created account. Please login","Registration Successful");
 			localStorage.setItem(formData);
+			console.log("Login successful now closing modal");
     myApp.closeModal(); // open Login Screen//load another page with auth form
 }
 });
@@ -405,6 +406,7 @@ function createUserAccount(formData){
 		       //run login function
 			//messages must be initialized here
 			$$('.login-button').on('click', function () {
+
 				var email = $$('input[name="loginemail"]').val();
 				var password = $$('input[name="loginpassword"]').val();
 				loginFire(email, password);
@@ -889,7 +891,7 @@ if(localStorage.personal_doctor_name != null){
 
 				if(page.query.id == localStorage.doctordial_user_id){
 
-					$$('.menuList').append('<a href="users_edit.html" class="link button color-black open-popup link">'+
+					$$('.menuList').prepend('<a href="users_edit.html" class="link button open-popup">'+
 						'<i class="fa fa-pencil-square-o" aria-hidden="true"> </i>&nbsp;Edit Profile&nbsp;  </a>');
 				}
 
@@ -1916,7 +1918,7 @@ function updateUserProfileButton(){
 				image.src=  imageData;
 
 
-var file =imageData; //useless idiot like me :) 
+var file = imageData; //useless idiot like me :) 
 
 // Create the file metadata
 var metadata = {
@@ -1924,18 +1926,21 @@ var metadata = {
 };
 
 
-var file = url.substring(url.lastIndexOf('/')+1); //get name of file from file path
+var fileName = url.substring(url.lastIndexOf('/')+1); //get name of file from file path
 // Create a root reference
+myApp.alert("File Name: "+ fileName);
+
 var storageRef = firebase.storage().ref();
 // Upload file and metadata to the object 'images/mountains.jpg'
-var uploadTask = storageRef.child('images/' + file.name).put(file, metadata);
+var uploadTask = storageRef.child('images/' + fileName).put(file, metadata);
 
+myApp.alert("Upload Task: "+ uploadTask);
 // Listen for state changes, errors, and completion of the upload.
 uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
 	function(snapshot) {
     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
     var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    console.log('Upload is ' + progress + '% done');
+    alert('Upload is ' + progress + '% done');
     switch (snapshot.state) {
       case firebase.storage.TaskState.PAUSED: // or 'paused'
       console.log('Upload is paused');
@@ -1948,14 +1953,17 @@ uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
 	switch (error.code) {
 		case 'storage/unauthorized':
       // User doesn't have permission to access the object
+      alert("Storage unauthorized");
       break;
 
       case 'storage/canceled':
       // User canceled the upload
+      alert("Error: storage/canceled");
       break;
 
       case 'storage/unknown':
       // Unknown error occurred, inspect error.serverResponse
+      alert("Error: storage/unknown");
       break;
   }
 }, function() {

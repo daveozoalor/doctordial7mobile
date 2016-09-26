@@ -33,7 +33,7 @@ $('.userCreateAccountRow').hide();
 
 $('.userSuccessRow').hide();
    $('.userFailureRow').hide();
-
+  $('.loading').hide();
   // Create user
   //
   $('#sign_up').on('click', function() {

@@ -7,39 +7,24 @@
                 <div class="left">
                 <a href="#" class="color-white back">
                 <i class="fa fa-chevron-left" aria-hidden="true"></i> </a>&nbsp;Edit Profile</div>
+
+
               </div>
             </div> 
 
 
 
-
-
-
-
           <div class="page-content">
           
-
-
-           <!-- In data-picker attribute we specify CSS selector of picker we need to open-->
-              <p><a href="#" data-picker=".picker-1" class="open-picker">Open Picker </a></p>
-              
-
           	<div class="card facebook-card">
-			  <div class="card-header">
-			    <div class="facebook-name">John Doe</div>
-			    <div class="facebook-date">Monday at 2:15 PM</div>
-			  </div>
+			 
 			  <div class="card-content">
 			    <div class="card-content-inner">
-			      <p>What a nice photo i took yesterday!</p>
 			      <img id="myImage" width="100%">
-			      <p class="color-gray">Likes: 112    Comments: 43</p>
 			    </div>
 			  </div>
 			  <div class="card-footer">
-			    <a href="#" class="link">Like</a>
-			    <a href="#" class="link">Comment</a>
-			    <a href="#" class="link">Share</a>
+			    <a href="#" class="link open-picker" data-picker=".picker-1"><i class="fa fa-camera" aria-hidden="true"></i> Upload Picture</a>
 			  </div>
 			</div>  
 
@@ -164,7 +149,7 @@
     <div class="toolbar  bg-teal">
       <div class="toolbar-inner">
         <div class="left"></div>
-        <div class="right"><a href="#" class="close-picker color-white">Done</a></div>
+        <div class="right"><a href="#" class="close-picker color-white"><i class="fa fa-check-square" aria-hidden="true"></i> <b>Done</b></a> &nbsp; &nbsp; </div>
       </div>
     </div>
     <div class="picker-modal-inner">
@@ -172,9 +157,10 @@
       
         <p class="buttons-row">
   <a href="#" class="button button button-big button-fill color-gray" onclick="getPictureFromGallery()"><i class="fa fa-picture-o" aria-hidden="true"></i> Photo Gallery</a>
-  <a href="#" class="button button button-big button-fill color-gray" onclick="uploadPicture()"><i class="fa fa-camera" aria-hidden="true"></i> Camera</a>
+  <a href="#" class="button button button-big button-fill color-gray" onclick="getPictureFromCamera()"><i class="fa fa-camera" aria-hidden="true"></i> Camera</a>
        </p>
 
+<div class="progressBarDiv"> </div>
 
       </div>
     </div>

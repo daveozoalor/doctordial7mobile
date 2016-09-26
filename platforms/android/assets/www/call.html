@@ -186,7 +186,7 @@
     <script type="text/template" id="user_tpl">
         <li class="users__item">
             <button class="users__user j-user" data-id="<%= id %>" data-login="<%= login %>" data-password="<%= password %>" data-name="<%= full_name %>">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  width="33" height="32" viewBox="0 0 33 32" version="1.1">
+               <!-- <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  width="33" height="32" viewBox="0 0 33 32" version="1.1">
                   <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                     <g transform="translate(-84.000000, -152.000000)" fill="#000000">
                       <g transform="translate(84.000000, 152.000000)">
@@ -194,8 +194,8 @@
                       </g>
                     </g>
                   </g>
-                </svg>
-
+                </svg> -->
+                <img src="<%= avatar %>" height="34px" width="34px" style="border-radius: 500px;"/>
                 <p class="user__name"><%= full_name %></p>
                 <i class="users__btn_unchecked"></i>
             </button>

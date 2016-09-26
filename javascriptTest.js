@@ -1,1 +1,0 @@
-alert("He aint never stood ");

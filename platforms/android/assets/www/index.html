@@ -3,13 +3,11 @@
 <html>
 
 <head>
+ <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#9c27b0">
+    <link href="http://fonts.googleapis.com/css?family=Roboto:400,300,500,700" rel="stylesheet" type="text/css">
 
 
-
-
-    <!-- <script src="js/jquery.js"></script> -->
-
-  
  <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
 
 <script>
@@ -24,14 +22,16 @@
 </script>
 
   
+<!-- FireBase -->
+    <script src="js/firebase.js"></script>
+     <script src="js/jquery.js"></script> 
+    
     <!-- Bootstrap core CSS  -->
     <link rel="shortcut icon" href="https://quickblox.com/favicon.ico">
 
     <!-- use http://una.im/CSSgram/ for filters 
     <link rel="stylesheet" href="css/bootstrap.min.css">-->
 
-
-    
     
     <meta charset="utf-8" />
     <meta name="format-detection" content="telephone=no" />
@@ -47,21 +47,23 @@
 <meta http-equiv="pragma" content="no-cache" />
    
  
-		<!-- FireBase -->
-    <script src="js/firebase.js"></script>
 
     <title>Doctor Dial</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!-- Path to Framework7 Library CSS-->
-    <link rel="stylesheet" href="css/framework7.material.min.css">
+    <link rel="stylesheet" href="css/framework7.material.css">
     <link rel="stylesheet" href="css/framework7.material.colors.min.css">
     <!-- Path to your custom app styles-->
     <link rel="stylesheet" href="css/my-app.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/welcomescreen.css">
     <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     
+
+
+
 </head>
 <body class="theme-red layout-white layout-gray-custom">
 
@@ -70,9 +72,9 @@
       <!-- Your main view, should have "view-main" class -->
       <div class="view view-main" >
         <!-- Pages container, because we use fixed navbar and toolbar, it has additional appropriate classes-->
-        <div class="pages navbar-fixed toolbar-fixed" data-background="img/doctor.jpg">
+        <div class="pages" >
           <!-- Page, "data-page" contains page name -->
-          <div data-page="index" class="page ">
+          <div data-page="index" class="page" >
  
             <!-- Top Navbar. In Material theme it should be inside of the page -->
             <div class="navbar">
@@ -86,36 +88,57 @@
 
  
             <!-- Bottom Toolbar. In Material theme it should be inside of the page-->
-           
+            <div class="toolbar toolbar-bottom theme-gray">
+            <div class="toolbar-inner">
+                <a href="specializations_list.html" class="link"><i class="fa fa-user-md" aria-hidden="true" ></i></a>
+                <a href="appointments_schedule_list.html" class="link"><i class="fa fa-clock-o" aria-hidden="true" ></i></a>
+                <a href="messages_log.html" class="link"><i class="fa fa-envelope" aria-hidden="true" ></i></a>
+                <a href="index.html" class="link"><i class="fa fa-home" aria-hidden="true"></i></a>
+                
+            </div>
+        </div>
  
   
 			<div class="page-content" style="color: black;">
 	
-				<div class="card demo-card-header-pic">
-				  <div style=" color: black;" valign="bottom" class="card-header color-white no-border">Personal Doctor</div>
-				  <div class="card-content">
-				   
-				   
-						<div class="list-block media-list inset">
-						  <ul>
-						    <li style="color: black;">
-						      <a href="#" class="item-link item-content" onclick="viewPersonalDoc()">
-						        <div class="item-media" style="width: 20%;" > <img src="img/doctor1.jpg" style="width: 100%;"></img> </div>
-						        <div class="item-inner">
-						          <div class="item-title-row">
-						            <div class="item-title" style="font-size: 18px; font-weight: bold;"><span class="personal-doctor-name">Dr. Olakunle Smith</span></div>
-						          </div>
-						          <div class="item-subtitle"> Consultant Gynaecologist</div><br/>
-						          <div class="item-subtitle"> <i class="fa fa-map-marker" aria-hidden="true"></i> Maryland, Lagos</div>
-						        </div>
-						      </a><br/>
-						     
-						    </li>
-						  </ul>
-						</div> 
-				   
-				  </div>
-				</div>
+<br/>
+<br/>
+<br/>
+<div class="card">
+  <div class="card-header" style="border-bottom: 1px solid gray;">
+    <i class="fa fa-volume-control-phone" aria-hidden="true"></i> Quick Dial</div>
+    <div class="card-content">
+      <div class="card-content-inner">
+     <div style="font-size: 25px;">
+        <span> 
+          <a href="tel:+2348095458651" style="color: #6c797b;">+2348095458651</a> 
+           <br/> 
+          <a href="tel:+2348095458652" style="color: #6c797b;">+2348095458652</a> 
+        </span>
+     </div>
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="card" id="persnTry">
+    
+
+
+</div> 
+
+<div class="personalDoctorFoundLayer">
+
+</div>
+
+
+
 			
 		
 			   <div class="card">
@@ -127,13 +150,21 @@
 				        <div class="item-media color-red"> <i class="fa fa-commenting" aria-hidden="true" style="font-size: 30px;"></i> </div>
 				        <div class="item-inner">
 				          <div class="item-title-row">
-				            <div class="item-title" style="font-weight: bold !important;" >Type Your Health Question</div>
+				            <div class="item-title" style="font-weight: bold !important;" >Ask A Question</div>
 				          </div>
-				          <div class="item-text">Get answers from doctors within 24 hours</div>
+				          <div class="item-text">Get answers from doctors</div>
 				        </div>
 				      </a>
 				    </li>
-				    
+				    </ul>
+            </div>
+            </div>
+            </div>
+
+            <div class="card">
+          <div class="card-content">
+        <div class="list-block media-list">
+          <ul>
 				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
 				      <a href="specializations_list.html" class="item-link item-content">
 				        <div class="item-media color-blue"> <i class="fa fa-user-md" aria-hidden="true" style="font-size: 30px;"></i> </div>
@@ -146,6 +177,15 @@
 				      </a>
 				    </li>
 				    
+            </ul>
+            </div>
+            </div>
+            </div>
+
+            <div class="card">
+          <div class="card-content">
+        <div class="list-block media-list">
+          <ul>
 				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
 				      <a href="appointments_schedule_list.html" class="item-link item-content">
 				        <div class="item-media color-indigo"> <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
@@ -157,6 +197,16 @@
 				        </div>
 				      </a>
 				    </li>
+
+            </ul>
+            </div>
+            </div>
+            </div>
+
+             <div class="card">
+          <div class="card-content">
+        <div class="list-block media-list">
+          <ul>
 				      <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
 				      <a href="messages_log.html" class="item-link item-content">
 				        <div class="item-media color-deeporange"> <i class="fa fa-envelope" aria-hidden="true" style="font-size: 30px;"></i> </div>
@@ -171,48 +221,11 @@
 				        </div>
 				      </a>
 				    </li>
-				    <!-- 
-				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
-				      <a href="messages_call_view.html?doctorUserID=a94ae289-ce2b-46f6-9c01-e76ab2812dd7" class="item-link item-content">
-				        <div class="item-media"> <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
-				        <div class="item-inner">
-				          <div class="item-title-row">
-				            <div class="item-title" style="font-weight: bold !important; color: red;" >Call doctor</div>
-				          </div>
-				          <div class="item-text"> </div>
-				        </div>
-				      </a>
-				    </li>
-				    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
-				      <a href="messages_call_settings.html?doctorUserID=a94ae289-ce2b-46f6-9c01-e76ab2812dd7" class="item-link item-content">
-				        <div class="item-media"> <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 30px;"></i> </div>
-				        <div class="item-inner">
-				          <div class="item-title-row">
-				            <div class="item-title" style="font-weight: bold !important; color: red;" >Call Settings</div>
-				          </div>
-				          <div class="item-text"> </div>
-				        </div>
-				      </a>
-				    </li> -->
+				   
 				  </ul>
 				</div>
 				    
-				    
-				    
-				    
-				    
-				    
-				 
-				    
-				    
-				    
-				    
-				    
-				    
-				    
-				    
-				    
-				    
+				       
 				    
 				  </div>
 				</div>
@@ -240,20 +253,79 @@
     <div class="login-screen ">
     <div class="view">
       <div class="page">
-      <div class="page-content login-screen-content" style="background-color: white;">
-    <div class="login-screen-title">
-	          <img src="img/doctordial-logo.jpg" class="blink"/> 	
-    	
+
+
+<!-- swiper properties in data- attributes -->
+<div class="swiper-container swiper-init" data-speed="400" data-space-between="40" data-pagination=".swiper-pagination">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide bg-white" >
+
+
+
+    <div class="card facebook-card" style=" margin: 0px; width: 100%; min-height: 100% !important;">
+ 
+  <div class="card-content">
+    <div class="card-content-inner" style="padding: 0px; text-align: center; ">
+      <img src="img/logo.png" width="100%">
+      
+      <p class="color-black" style="padding: 10px;"">Slide left >>></p>
+      <br/>
+      <br/>
+      <br/>
     </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+        <div class="swiper-slide" style="padding: 0px;">
+
+
+          <div class="card facebook-card" style=" margin: 0px; width: 100%; min-height: 100% !important;">
+ 
+  <div class="card-content">
+    <div class="card-content-inner" style="padding: 0px; text-align: center; ">
+      <img src="img/doctor_card_welcome.png" width="100%">
+      <br/>
+      <br/>
+
+      <p class="color-black" style="padding: 20px; font-size: 20px;">Doctordial is a medical application that connects patients to doctors using text, voice and video calls. Live doctors are available 24/7 to answer your questions online.</p>
+      <p class="color-gray" style="padding: 10px;"">Slide left >>></p>
+      <br/>
+      <br/>
+      <br/>
+    </div>
+  </div>
+</div>
+
+
+
+        </div>
+        <div class="swiper-slide">
+
+      <div class="navbar row" style="height: 20%; display: block; ">
+      <img src="img/logo_no_words.png" width="100%" class="blink"/>  <br/>
+  
+</div>
+
+
+      <div class="page-content login-screen-content" style="background-color: white; ">
+ 
 
      <!-- <a href="#" class="button button-fill color-blue googleLogin">Login With Google+</a> -->
       <div class="content-block">
     <!-- Buttons row as tabs controller -->
     <div class="buttons-row">
       <!-- Link to 1st tab, active -->
-      <a href="#loginTab" class="tab-link active button button-raised button-round button-fill color-green" onclick="this.hide();"><i class="fa fa-key" aria-hidden="true"></i> Login</a>
+      <a href="#loginTab" class="tab-link active button button-raised button-round button-fill color-gray" ><i class="fa fa-key" aria-hidden="true"></i> Login</a>
       <!-- Link to 2nd tab -->
-      <a href="#signupTab" class="tab-link button button-raised  button-round color-blue button-fill"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Signup</a>
+      <a href="#signupTab" class="tab-link button button-raised  button-round color-gray button-fill"><i class="fa fa-unlock" aria-hidden="true"></i> Signup</a>
     </div>
   </div>
  
@@ -267,22 +339,28 @@
   <form id="loginForm" class="list-block">
       <div class="list-block inset">
         <ul>
-          <li class="item-content">
-            <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-envelope-o" aria-hidden="true"></i> Email</div>
-              <div class="item-input">
-                <input type="email" name="loginemail" placeholder="Your email"/>
+             <li>
+              <div class="item-content">
+                <div class="item-media"><i class="icon icon-form-email"></i></div>
+                <div class="item-inner">
+                  <div class="item-input">
+                    <input type="email" name="loginemail"  placeholder="E-mail">
+                  </div>
+                </div>
               </div>
-            </div>
-          </li>
-          <li class="item-content">
-            <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-key" aria-hidden="true"></i>Password</div>
-              <div class="item-input">
-                <input type="password" name="loginpassword" placeholder="Your password"/>
+            </li>
+
+             <li>
+              <div class="item-content">
+                <div class="item-media"><i class="icon icon-form-password"></i></div>
+                <div class="item-inner">
+                  <div class="item-input">
+                    <input type="password" name="loginpassword"  placeholder="Password">
+                  </div>
+                </div>
               </div>
-            </div>
-          </li>
+            </li>
+
         </ul>
       </div>
       <div class="list-block">
@@ -293,12 +371,17 @@
         
              <li>
 
-             <a href="#" class="button login-button button-raised button-fill  ripple-green button-big button-round color-green"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Sign In</a>
+             <a href="#" onclick="loginButton()" class="button login-button button-raised button-fill  ripple-green button-big button-round color-red" style="margin-left: 15%; margin-right: 15%; "> Sign In &nbsp; &nbsp; &nbsp; &nbsp; <i class="fa fa-chevron-right"  aria-hidden="true"></i></a>
        
        </li>
       </div>
         </ul>
         
+<br/>
+<br/>
+
+             <a href="#" onclick="loginButton()" class="button login-button button-raised ripple-green button-big button-round color-gray"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Forgot Password</a>
+
         
         	
 			
@@ -415,37 +498,82 @@
  </div>
  
    
-   <div class="well">
-   	 
-   <div id="changePsswordTab" class="tab"> Change Password</div>
-  
-      <!-- Link to 3rd tab -->
-      <a href="#forgotPaaswordTab" class="tab-link link"><i class="fa fa-check-square-o" aria-hidden="true"></i> Forgot?</a>
- 
-   </div>  
- 
  
   </div>
+
+
+
+
+  </div>
+    
+    </div>
+    <div class="swiper-pagination color-black" style="font-size: 30px; text-align: center;"></div>
+</div>  
+
+
+
+
       </div>
     </div>
 </div>  
 
       
-
-    <!-- Path to Framework7 Library JS-->
-    <script type="text/javascript" src="js/framework7.min.js"></script>
-    <!-- Path to your app js-->
-    <script type="text/javascript" src="js/my-app.js"></script>
-   
    
       <script type="text/javascript" src="cordova.js"></script>
 
-		
-		
-		
-
-		
         
+
+
+
+
+
+
+
+    <!-- Path to Framework7 Library JS-->
+    <script type="text/javascript" src="js/framework7.min.js"></script>
+   
+
+       <script src="js/welcomescreen.js"></script> 
+<script>
+var welcomescreen_slides = [
+  {
+    id: 'slide0',
+    picture: '<div   class="tutorialicon"><img src="img/logo.png" style="min-width: 100%; min-height: 100%; " /></div>',
+    text: 'Your call for better health'
+  },
+  {
+    id: 'slide1',
+    picture: '<div class="tutorialicon">✲</div>',
+    text: 'This is slide 2'
+  },
+  {
+    id: 'slide2',
+    picture: '<div class="tutorialicon">♫</div>',
+    text: 'This is slide 3'
+  },
+  {
+    id: 'slide3',
+    picture: '<div class="tutorialicon">☆</div>',
+    text: 'Thanks for reading! Enjoy this app.<br><br><a id="tutorial-close-btn" href="#">End Tutorial</a>'
+  }
+];
+
+</script>
+    
+ <!-- Path to your app js-->
+    <script type="text/javascript" src="js/my-app.js"></script>
+   
+
+
+
+
+
+
+
+
+
+
+
 </body>
 
 
