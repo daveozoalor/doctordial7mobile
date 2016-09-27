@@ -14,9 +14,7 @@
     <meta name="theme-color" content="#9c27b0">
     <link href="http://fonts.googleapis.com/css?family=Roboto:400,300,500,700" rel="stylesheet" type="text/css">
 
-
- <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 <script>
   // Initialize Firebase
   var config = {
@@ -24,6 +22,7 @@
     authDomain: "doctordial.firebaseapp.com",
     databaseURL: "https://doctordial.firebaseio.com",
     storageBucket: "project-162854887831486239.appspot.com",
+    messagingSenderId: "1005361724372"
   };
   firebase.initializeApp(config);
 </script>
@@ -250,32 +249,6 @@
 			
 
 
-
-            <!-- <div class="card">
-          <div class="card-content">
-              <div class="list-block media-list">
-                <ul>
-                    <li style="border: 1px solid #88868c; color: black; border-radius: 5px;">
-                    <a href="blog_list.html" class="item-link item-content">
-                      <div class="item-media color-deeporange"> <i class="fa fa-envelope" aria-hidden="true" style="font-size: 30px;"></i> </div>
-                      <div class="item-inner">
-                        <div class="item-title-row">
-                          <div class="item-title messageCountBadge" style="font-weight: bold !important;" >
-                             <span class="nameOfChat">Our Blog </span>
-                            
-                          </div>
-                        </div>
-                        <div class="item-text">Recent posts from our blog </div>
-                      </div>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-          </div>
-        </div>
-      
-   -->
-
 			
         
 			 		 </div>
@@ -291,11 +264,37 @@
     
     
     
-    <style>
-.login-screen page{
-  background: url('img/background.jpg') center / cover;
-}
+
+ <style>
+  .demo-card-header-pic .card-header {
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+  }
+   .demo-card-header-pic {
+    margin: 0px;
+   }
+
+   #loginTabButton :active{
+    border: 1px solid gray;
+   }
+
+   .tabs-animated-wrap {
+    color: white;
+   }
+
+   input{
+    background-color:rgba(0, 0, 0, 0); 
+    border: 1px solid #fff; 
+    border-radius: 10px; padding: 10px;
+   }
+
+   .login-screen .fa {
+    color: white;
+   }
+
 </style>
+ 
     
     
     
@@ -304,86 +303,26 @@
       <div class="page">
 
 
-<!-- swiper properties in data- attributes -->
-<div class="swiper-container swiper-init" data-speed="400" data-space-between="40" data-pagination=".swiper-pagination">
-    <div class="swiper-wrapper">
-        <div class="swiper-slide bg-white" >
-
-
-
-    <div class="card facebook-card" style=" margin: 0px; width: 100%; min-height: 100% !important;">
+   <div class="page-content login-screen-content" style="background: url('img/background_img.jpg') center / cover;">
  
-  <div class="card-content">
-    <div class="card-content-inner" style="padding: 0px; text-align: center; ">
-      <img src="img/logo.png" width="100%">
-      
-      <p class="color-black" style="padding: 10px;"">Slide left >>></p>
-      <br/>
-      <br/>
-      <br/>
-    </div>
-  </div>
+
+ 
+<div class="card demo-card-header-pic">
+  <div style="background-image:url('img/logo_no_words.png')" valign="bottom" class="card-header color-white no-border"></div>
+ 
 </div>
 
-
-
-
-
-
-
-
-        </div>
-        <div class="swiper-slide" style="padding: 0px;">
-
-
-          <div class="card facebook-card" style=" margin: 0px; width: 100%; min-height: 100% !important;">
- 
-  <div class="card-content">
-    <div class="card-content-inner" style="padding: 0px; text-align: center; ">
-      <img src="img/doctor_card_welcome.png" width="100%">
-      <br/>
-      <br/>
-
-      <p class="color-black" style="padding: 20px; font-size: 20px;">Doctordial is a medical application that connects patients to doctors using text, voice and video calls. Live doctors are available 24/7 to answer your questions online.</p>
-      <p class="color-gray" style="padding: 10px;"">Slide left >>></p>
-      <br/>
-      <br/>
-      <br/>
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-        <div class="swiper-slide">
-
-      <div class="navbar row" style="height: 20%; display: block; ">
-      <img src="img/logo_no_words.png" width="100%" class="blink"/>  <br/>
-  
-</div>
-
-
-      <div class="page-content login-screen-content" style="background-color: white; ">
- 
+<!-- <img src="img/logo.png" style=" border-radius: 500px; margin: auto;  " /> -->
 
      <!-- <a href="#" class="button button-fill color-blue googleLogin">Login With Google+</a> -->
       <div class="content-block">
     <!-- Buttons row as tabs controller -->
     <div class="buttons-row">
       <!-- Link to 1st tab, active -->
-      <a href="#loginTab" class="tab-link active button button-raised button-round button-fill color-gray" ><i class="fa fa-key" aria-hidden="true"></i> Login</a>
+      <a href="#loginTab" class="tab-link button button-raised button-round color-white "  id="loginTabButton">
+      <i class="fa fa-user" aria-hidden="true"></i> Login</a>
       <!-- Link to 2nd tab -->
-      <a href="#signupTab" class="tab-link button button-raised  button-round color-gray button-fill"><i class="fa fa-unlock" aria-hidden="true"></i> Signup</a>
+      <a href="#signupTab" class="tab-link button button-raised  button-round color-white"><i class="fa fa-unlock" aria-hidden="true"></i> Signup</a>
     </div>
   </div>
  
@@ -392,57 +331,67 @@
         
         <!-- Tabs, tabs wrapper -->
         <div class="tabs">
-  <div id="loginTab" class="tab">  
-  <div class="login-screen-title color-black">Login</div>
+  <div id="loginTab" class="tab " >  
+
   <form id="loginForm" class="list-block">
-      <div class="list-block inset">
+      <div class="list-block inset ">
         <ul>
+
+        <style type="text/css">
+             input{
+    background-color:rgba(0, 0, 0, 0); 
+    border: 1px solid #fff; 
+    border-radius: 10px; padding: 10px;
+   }
+        </style>
              <li>
-              <div class="item-content">
-                <div class="item-media"><i class="icon icon-form-email"></i></div>
+              <div class="item-content ">
+              
+                <div class="item-media color-white">
+                <i class="fa fa-envelope-o color-white" style="font-size: 20px;" aria-hidden="true"></i>
+                </div>
                 <div class="item-inner">
                   <div class="item-input">
-                    <input type="email" name="loginemail"  placeholder="E-mail">
+                    <input style="color: white; background-color:rgba(0, 0, 0, 0); border: 1px solid #fff; border-radius: 10px; padding: 10px;" type="email" name="loginemail"  placeholder="Your Email">
                   </div>
                 </div>
               </div>
             </li>
 
+
              <li>
               <div class="item-content">
-                <div class="item-media"><i class="icon icon-form-password"></i></div>
+                <div class="item-media"><i class="fa fa-unlock-alt color-white" style="font-size: 20px;" aria-hidden="true"></i></div>
                 <div class="item-inner">
                   <div class="item-input">
-                    <input type="password" name="loginpassword"  placeholder="Password">
+                    <input style="color: white; background-color:rgba(0, 0, 0, 0); border: 1px solid #fff; border-radius: 10px; padding: 10px;" type="password" name="loginpassword"  placeholder="Password">
                   </div>
                 </div>
               </div>
             </li>
+  <br/>
+   <a href="#" onclick="loginButton()" class="button login-button button-raised   ripple-green button-big button-round color-white" style="margin: auto"> Sign In &nbsp; &nbsp; &nbsp; &nbsp; <i class="fa fa-chevron-right"  aria-hidden="true"></i></a>
+<br/>
+
+            <!-- <a href="#"  class="googleLogin button login-button button-raised ripple-green button-big button-round color-white bg-red"><i class="fa fa-facebook" aria-hidden="true"></i> Google Login</a>
+<br/> -->
+             <a href="#" class="prompt-recover-password button login-button button-raised ripple-green button-big button-round color-white"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Forgot Password</a>
+
 
         </ul>
       </div>
       <div class="list-block">
-        <ul>
-        
-          <div class="demo-progressbar-load-hide">
-        <p style="height:2px"></p>
-        
-             <li>
-
-             <a href="#" onclick="loginButton()" class="button login-button button-raised button-fill  ripple-green button-big button-round color-red" style="margin-left: 15%; margin-right: 15%; "> Sign In &nbsp; &nbsp; &nbsp; &nbsp; <i class="fa fa-chevron-right"  aria-hidden="true"></i></a>
-       
-       </li>
-      </div>
-        </ul>
-        
+           
 <br/>
 <br/>
 
-             <a href="#" onclick="loginButton()" class="button login-button button-raised ripple-green button-big button-round color-gray"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Forgot Password</a>
-
         
-        	
-			
+            <!-- <a href="#" onclick="facebookLoginButton()" class="button login-button button-raised ripple-green button-big button-round color-white bg-blue"><i class="fa fa-facebook-square" aria-hidden="true"></i>  Facebook Login</a> -->
+
+
+
+          
+      
       </div>
     </form> 
 
@@ -451,104 +400,84 @@
 
 
   <div id="signupTab" class="tab"> 
-    <div class="login-screen-title color-black">Signup</div>
+   
+  <div class="login-screen-title color-white" style="font-size: 15px; "><i class="fa fa-user" aria-hidden="true"></i> Sign up</div>
        <form id="signupForm">
       <div class="list-block inset">
         <ul>
           <li class="item-content">
             <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-envelope-o" aria-hidden="true"></i> Email</div>
+              <div class="item-title label color-white" style="color: white;"><i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp; Email</div>
               <div class="item-input">
-                <input type="email" name="email" placeholder="Your email"/>
+                <input style="color: white;  background-color:rgba(0, 0, 0, 0); border: 1px solid #fff; border-radius: 10px; padding: 10px;" type="email" name="email" />
               </div>
             </div>
           </li>
           <li class="item-content">
             <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-key" aria-hidden="true"></i> Password</div>
+              <div class="item-title label color-white" style="color: white;"><i class="fa fa-key" aria-hidden="true"></i>&nbsp; Password</div>
               <div class="item-input">
-                <input type="password" name="password" placeholder="Your password"/>
+                <input style="color: white;  background-color:rgba(0, 0, 0, 0); border: 1px solid #fff; border-radius: 10px; padding: 10px;" type="password" name="password" />
               </div>
             </div>
           </li>
           <li class="item-content">
             <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-user" aria-hidden="true"></i> First name</div>
+              <div class="item-title label" style="color: white;"><i class="fa fa-user" aria-hidden="true"></i>&nbsp; First name</div>
               <div class="item-input">
-                <input type="text" name="firstname" placeholder="Your Firstname"/>
+                <input style="color: white; background-color:rgba(0, 0, 0, 0); border: 1px solid #fff; border-radius: 10px; padding: 10px;" type="text" name="firstname" />
               </div>
             </div>
           </li>
           <li class="item-content">
             <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-user" aria-hidden="true"></i> Middle name</div>
+              <div class="item-title label" style="color: white;"><i class="fa fa-user" aria-hidden="true"></i>&nbsp; Middle name</div>
               <div class="item-input">
-                <input type="text" name="middlename" placeholder="Your Middle name"/>
+                <input style="color: white; background-color:rgba(0, 0, 0, 0); border: 1px solid #fff; border-radius: 10px; padding: 10px;" type="text" name="middlename" />
               </div>
             </div>
           </li>
           <li class="item-content">
             <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-user" aria-hidden="true"></i> Last name</div>
+              <div class="item-title label" style="color: white;"><i class="fa fa-user" aria-hidden="true"></i>&nbsp; Last name</div>
               <div class="item-input">
-                <input type="text" name="lastname" placeholder="Your Last name"/>
+                <input style="color: white; background-color:rgba(0, 0, 0, 0); border: 1px solid #fff; border-radius: 10px; padding: 10px;" type="text" name="lastname"/>
               </div>
             </div>
           </li>
          
-		    
-		    <li class="item-content">
+        
+        <!-- <li class="item-content">
             <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-female" aria-hidden="true"></i> Gender</div>
+              <div class="item-title label" style="color: white;"><i class="fa fa-female" aria-hidden="true"></i>&nbsp; Gender</div>
               <div class="item-input">
               <select name="gender">
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option style="color: white;" value="male">Male</option>
+              <option style="color: white;" value="female">Female</option>
               </select>
               </div>
             </div>
-		   </li>
-		    <li class="item-content">
+       </li> -->
+        <li class="item-content">
             <div class="item-inner">
               <div class="item-input">
                  <div class="demo-progressbar-load-hide">
         <p style="height:2px"></p>
         
              <li>
-              <a href="#" id="signupButton" class="button list-button button-raised button-big  button-fill color-green ripple-green">
-                 <i class="fa fa-unlock-alt" aria-hidden="true"></i> Sign Up</a>
+              <a href="#" id="signupButton" class="button list-button button-raised button-big  button-fill color-red ripple-red">
+                 <i class="fa fa-unlock-alt" aria-hidden="true"></i>&nbsp; Sign Up</a>
                  </li>
                  </div>
               </div>
             </div>
-		   </li>
+       </li>
         </ul>
       </div>
     </form>  
   
   </div>
-  <div id="forgotPaaswordTab" class="tab"> 
-    <div class="login-screen-title color-white">Forgot Password</div>
-     <form id="recoverForm" >
-      <div class="list-block inset">
-        <ul>
-          <li class="item-content">
-            <div class="item-inner">
-              <div class="item-title label"><i class="fa fa-envelope-o" aria-hidden="true"></i> Email</div>
-              <div class="item-input">
-                <input type="email" name="recoveryEmail" placeholder="Your email"/>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div class="list-block">
-        <ul>
-          <li><a href="#" id="sendRecovery" class="button recovery-button button-raised button-fill  ripple-green">Send Recovery Email</a></li>
-        </ul>
-      </div>
-    </form> 
-  </div>
+
   
 
   </div>
@@ -558,17 +487,6 @@
    
  
   </div>
-
-
-
-
-  </div>
-    
-    </div>
-    <div class="swiper-pagination color-black" style="font-size: 30px; text-align: center;"></div>
-</div>  
-
-
 
 
       </div>
